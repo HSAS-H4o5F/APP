@@ -1,0 +1,99 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: Android
+            os: ubuntu-latest
+            command: flutter build apk --split-per-abi
+            output: build/app/outputs/flutter-apk/
+          - platform: Linux
+            os: ubuntu-latest
+            command: flutter build linux
+            output: build/linux/x64/release/bundle/
+          - platform: macOS
+            os: macos-latest
+            command: flutter build macos
+            output: build/macos/Build/Products/Release/
+          - platform: Web
+            os: ubuntu-latest
+            command: flutter build web
+            output: build/web/
+          - platform: Windows
+            os: windows-latest
+            command: flutter build windows
+            output: build/windows/runner/Release/
+          - platform: iOS
+            os: macos-latest
+            command: flutter build ios
+            output: build/ios/iphoneos/
+
+    name: Build ${{ matrix.platform }} app
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - if: matrix.platform == 'Android'
+        name: Setup Android cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.android/build-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Setup Flutter with cache
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Upgrade Ubuntu packages
+        run: |
+          sudo apt update
+          sudo apt upgrade
+
+      - name: Get flutter dependencies
+        run: flutter pub get
+
+      - if: matrix.platform == 'Android'
+        name: Setup JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: '19'
+
+      - if: matrix.platform == 'Android'
+        name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - if: matrix.platform == 'Android'
+        name: Configure Android Signing
+        run: |
+          cd android/app
+          echo ${{ secrets.KEY }} | base64 --decode > key.jks
+
+      - name: Build ${{ matrix.platform }} app
+        run: ${{ matrix.command }}
+
+      - name: Archive ${{ matrix.platform }} app
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.platform }}-app
+          path: ${{ matrix.output }}
