@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="This file is part of hsas_h4o5f_app.&#10;Copyright (c) &amp;#36;originalComment.match(&quot;Copyright \(c\) (\d+)&quot;, 1, &quot;-&quot;, &quot;&amp;#36;today.year&quot;)&amp;#36;today.year HSAS H4o5F Team. All Rights Reserved.&#10;&#10;hsas_h4o5f_app is free software: you can redistribute it and/or modify it&#10;under the terms of the GNU General Public License as published by the Free&#10;Software Foundation, either version 3 of the License, or (at your option) any&#10;later version.&#10;&#10;hsas_h4o5f_app is distributed in the hope that it will be useful, but WITHOUT&#10;ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS&#10;FOR A PARTICULAR PURPOSE. See the GNU General Public License for more&#10;details.&#10;&#10;You should have received a copy of the GNU General Public License along with&#10;hsas_h4o5f_app. If not, see &lt;https://www.gnu.org/licenses/&gt;." />
+    <option name="myName" value="SmartCommunity" />
+  </copyright>
+</component>
