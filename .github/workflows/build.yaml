@@ -34,10 +34,6 @@ jobs:
             os: windows-latest
             command: flutter build windows
             output: build/windows/runner/Release/
-          - platform: iOS
-            os: macos-latest
-            command: flutter build ios
-            output: build/ios/iphoneos/
 
     name: Build ${{ matrix.platform }} app
     runs-on: ${{ matrix.os }}
@@ -72,7 +68,7 @@ jobs:
       - if: matrix.platform == 'Linux'
         name: Install Linux dependencies
         run: |
-          sudo apt install libgtk-3-0 libblkid1 liblzma5 -y
+          sudo apt install ninja-build libgtk-3-0 libblkid1 liblzma5 -y
 
       - name: Get Flutter dependencies
         run: flutter pub get
