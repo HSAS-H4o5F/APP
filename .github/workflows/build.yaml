@@ -68,7 +68,7 @@ jobs:
       - if: matrix.platform == 'Linux'
         name: Install Linux dependencies
         run: |
-          sudo apt install ninja-build libgtk-3-0 libblkid1 liblzma5 -y
+          sudo apt install ninja-build -y
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -78,20 +78,25 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: temurin
-          java-version: '8'
+          java-version: '19'
 
       - if: matrix.platform == 'Android'
         name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
       - if: matrix.platform == 'Android'
-        name: Configure Android Signing
+        name: Configure Android signing
         run: |
           cd android/app
           echo ${{ secrets.KEY }} | base64 --decode > key.jks
 
+      - if: matrix.platform == 'Android'
+        name: Hack Android package
+        run: |
+          sed -i 's/android {/android {\ncompileOptions { sourceCompatibility JavaVersion.VERSION_19 targetCompatibility JavaVersion.VERSION_19 }/g' ~/.pub-cache/hosted/*/package_info_plus-*/android/build.gradle
+
       - name: Build ${{ matrix.platform }} app
-        run: ${{ matrix.command }}
+        run: ${{ matrix.command }} -v
 
       - name: Archive ${{ matrix.platform }} app
         uses: actions/upload-artifact@v3
