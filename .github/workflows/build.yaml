@@ -67,9 +67,14 @@ jobs:
         name: Upgrade Ubuntu packages
         run: |
           sudo apt update
-          sudo apt upgrade
+          sudo apt upgrade -y
 
-      - name: Get flutter dependencies
+      - if: matrix.platform == 'Linux'
+        name: Install Linux dependencies
+        run: |
+          sudo apt install libgtk-3-0 libblkid1 liblzma5 -y
+
+      - name: Get Flutter dependencies
         run: flutter pub get
 
       - if: matrix.platform == 'Android'
@@ -77,7 +82,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: temurin
-          java-version: '19'
+          java-version: '8'
 
       - if: matrix.platform == 'Android'
         name: Setup Android SDK
