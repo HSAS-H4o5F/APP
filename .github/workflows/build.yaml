@@ -68,7 +68,7 @@ jobs:
       - if: matrix.platform == 'Linux'
         name: Install Linux dependencies
         run: |
-          sudo apt install ninja-build -y
+          sudo apt install ninja-build libgtk-3-0 libblkid1 liblzma5 -y
 
       - name: Get Flutter dependencies
         run: flutter pub get
@@ -93,6 +93,8 @@ jobs:
       - if: matrix.platform == 'Android'
         name: Hack Android package
         run: |
+          sudo apt install tree
+          tree ./.pub-cache
           sed -i 's/android {/android {\ncompileOptions { sourceCompatibility JavaVersion.VERSION_19 targetCompatibility JavaVersion.VERSION_19 }/g' ~/.pub-cache/hosted/*/package_info_plus-*/android/build.gradle
 
       - name: Build ${{ matrix.platform }} app
