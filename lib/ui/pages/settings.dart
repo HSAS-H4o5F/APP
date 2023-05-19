@@ -36,20 +36,24 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settings),
-      ),
-      body: StoreConnector<AppState, SharedPreferences?>(
-        converter: (store) => store.state.sharedPreferences,
-        builder: (context, prefs) {
-          if (prefs == null) return const SizedBox.shrink();
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar.large(
+            title: Text(AppLocalizations.of(context)!.settings),
+          ),
+          StoreConnector<AppState, SharedPreferences?>(
+            converter: (store) => store.state.sharedPreferences,
+            builder: (context, prefs) {
+              if (prefs == null) return const SizedBox();
 
-          return ListView(
-            children: [
-              ServerUrlListTile(prefs: prefs),
-            ],
-          );
-        },
+              return SliverList.list(
+                children: [
+                  ServerUrlListTile(prefs: prefs),
+                ].map((child) => SafeArea(child: child)).toList(),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
