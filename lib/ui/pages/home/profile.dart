@@ -38,7 +38,7 @@ class _HomePageProfileState extends State<HomePageProfile> {
           ElevatedButton(
             onPressed: () async {
               try {
-                (await ParseUser.currentUser() as ParseUser).logout();
+                await (await ParseUser.currentUser() as ParseUser).logout();
               } finally {
                 if (mounted) {
                   context.go('/');
