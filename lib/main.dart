@@ -81,6 +81,31 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
 
   late final GoRouter router;
 
+  Future<void> _init(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!mounted) return;
+
+    StoreProvider.of<AppState>(context)
+        .dispatch(SetSharedPreferencesAction(prefs));
+
+    if (widget.serverUrl != null) {
+      prefs.setStringPreference(
+        serverUrlPreference,
+        widget.serverUrl!,
+      );
+    }
+
+    if (!prefs.containsStringPreference(serverUrlPreference)) {
+      prefs.setStringPreference(
+        serverUrlPreference,
+        defaultServerUrl,
+      );
+    }
+
+    await initParse(prefs.getStringPreference(serverUrlPreference)!);
+  }
+
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
@@ -97,8 +122,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
         GoRoute(
           parentNavigatorKey: _globalNavigatorKey,
           path: '/',
-          // TODO: 使从每个页面启动时都能正常加载
-          builder: (context, state) => LoadingPage(serverUrl: widget.serverUrl),
+          redirect: (context, state) => 'home',
         ),
         GoRoute(
           parentNavigatorKey: _globalNavigatorKey,
@@ -211,63 +235,46 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: router,
+            builder: (context, child) {
+              return FutureBuilder(
+                future: _init(context),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                    case ConnectionState.waiting:
+                    case ConnectionState.active:
+                      return const Scaffold(
+                        body: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    case ConnectionState.done:
+                      if (snapshot.hasError) {
+                        return Scaffold(
+                          body: Center(
+                            child: SingleChildScrollView(
+                              child: Text(
+                                snapshot.error.toString(),
+                                style: DefaultTextStyle.of(context)
+                                    .style
+                                    .copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return child ?? const SizedBox();
+                      }
+                  }
+                },
+              );
+            },
           );
         },
-      ),
-    );
-  }
-}
-
-class LoadingPage extends StatefulWidget {
-  const LoadingPage({Key? key, required this.serverUrl}) : super(key: key);
-
-  final String? serverUrl;
-
-  @override
-  State<LoadingPage> createState() => _LoadingPageState();
-}
-
-class _LoadingPageState extends State<LoadingPage> {
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (!mounted) return;
-
-    StoreProvider.of<AppState>(context)
-        .dispatch(SetSharedPreferencesAction(prefs));
-
-    if (widget.serverUrl != null) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        widget.serverUrl!,
-      );
-    }
-
-    if (!prefs.containsStringPreference(serverUrlPreference)) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        defaultServerUrl,
-      );
-    }
-
-    await initParse(prefs.getStringPreference(serverUrlPreference)!);
-
-    if (!mounted) return;
-
-    context.go('/home');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
       ),
     );
   }
