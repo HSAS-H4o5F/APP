@@ -17,6 +17,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
@@ -67,67 +68,71 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
               minimum: const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    if (widget.type == LoginRegisterPageType.register) ...[
+                child: AutofillGroup(
+                  child: Column(
+                    children: [
+                      if (widget.type == LoginRegisterPageType.register) ...[
+                        MyTextFormField(
+                          controller: _invitationCodeController,
+                          labelText:
+                              AppLocalizations.of(context)!.invitationCode,
+                          onFieldSubmitted: _submit,
+                          autofillHints: const ['invitationCode'],
+                          keyboardType: TextInputType.text,
+                          enabled: !_submitting,
+                        ),
+                        const SizedBox(height: 16),
+                        MyTextFormField(
+                          controller: _emailController,
+                          labelText: AppLocalizations.of(context)!.email,
+                          onFieldSubmitted: _submit,
+                          autofillHints: const [AutofillHints.email],
+                          keyboardType: TextInputType.emailAddress,
+                          enabled: !_submitting,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                       MyTextFormField(
-                        controller: _invitationCodeController,
-                        labelText: AppLocalizations.of(context)!.invitationCode,
+                        controller: _userNameController,
+                        labelText: AppLocalizations.of(context)!.username,
                         onFieldSubmitted: _submit,
+                        autofillHints: const [AutofillHints.username],
                         keyboardType: TextInputType.text,
                         enabled: !_submitting,
                       ),
                       const SizedBox(height: 16),
                       MyTextFormField(
-                        controller: _emailController,
-                        labelText: AppLocalizations.of(context)!.email,
+                        controller: _passwordController,
+                        labelText: AppLocalizations.of(context)!.password,
                         onFieldSubmitted: _submit,
-                        autofillHints: const [AutofillHints.email],
-                        keyboardType: TextInputType.emailAddress,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          tooltip: _showPassword
+                              ? AppLocalizations.of(context)!.hidePassword
+                              : AppLocalizations.of(context)!.showPassword,
+                          onPressed: () => setState(() {
+                            _showPassword = !_showPassword;
+                          }),
+                        ),
+                        autofillHints: const [AutofillHints.password],
+                        obscureText: !_showPassword,
                         enabled: !_submitting,
                       ),
                       const SizedBox(height: 16),
-                    ],
-                    MyTextFormField(
-                      controller: _userNameController,
-                      labelText: AppLocalizations.of(context)!.username,
-                      onFieldSubmitted: _submit,
-                      autofillHints: const [AutofillHints.username],
-                      keyboardType: TextInputType.text,
-                      enabled: !_submitting,
-                    ),
-                    const SizedBox(height: 16),
-                    MyTextFormField(
-                      controller: _passwordController,
-                      labelText: AppLocalizations.of(context)!.password,
-                      onFieldSubmitted: _submit,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _showPassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                      ElevatedButton(
+                        onPressed: _submitting ? null : _submit,
+                        child: Text(
+                          widget.type == LoginRegisterPageType.login
+                              ? AppLocalizations.of(context)!.login
+                              : AppLocalizations.of(context)!.register,
                         ),
-                        tooltip: _showPassword
-                            ? AppLocalizations.of(context)!.hidePassword
-                            : AppLocalizations.of(context)!.showPassword,
-                        onPressed: () => setState(() {
-                          _showPassword = !_showPassword;
-                        }),
                       ),
-                      autofillHints: const [AutofillHints.password],
-                      obscureText: !_showPassword,
-                      enabled: !_submitting,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _submitting ? null : _submit,
-                      child: Text(
-                        widget.type == LoginRegisterPageType.login
-                            ? AppLocalizations.of(context)!.login
-                            : AppLocalizations.of(context)!.register,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -175,10 +180,15 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
       _submitting = false;
     });
 
+    void goToHome() {
+      if (!mounted) return;
+      TextInput.finishAutofillContext();
+      context.go('/home');
+    }
+
     if (response.success) {
       if (widget.type == LoginRegisterPageType.login) {
-        context.go('/home');
-        return;
+        return goToHome();
       }
 
       response = await user.login();
@@ -192,8 +202,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
           ),
         );
 
-        context.go('/home');
-        return;
+        return goToHome();
       }
     }
 
