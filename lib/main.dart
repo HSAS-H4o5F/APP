@@ -122,7 +122,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
         GoRoute(
           parentNavigatorKey: _globalNavigatorKey,
           path: '/',
-          redirect: (context, state) => 'home',
+          redirect: (context, state) => '/home',
         ),
         GoRoute(
           parentNavigatorKey: _globalNavigatorKey,
