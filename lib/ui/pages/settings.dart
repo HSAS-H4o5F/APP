@@ -68,11 +68,20 @@ class ServerUrlListTile extends StatefulWidget {
 }
 
 class _ServerUrlListTileState extends State<ServerUrlListTile> {
-  void _submit(String value) {
-    popDialog(
-      context,
-      value != '' ? value : defaultServerUrl,
-    );
+  late final TextEditingController controller;
+
+  @override
+  void initState() {
+    controller = TextEditingController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -83,9 +92,16 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
         widget.prefs.getStringPreference(serverUrlPreference)!,
       ),
       onTap: () async {
-        final controller = TextEditingController(
-          text: widget.prefs.getStringPreference(serverUrlPreference) ?? '',
+        controller.value = TextEditingValue(
+          text: widget.prefs.getStringPreference(serverUrlPreference)!,
         );
+
+        void submit(String value) {
+          popDialog(
+            context,
+            value != '' ? value : defaultServerUrl,
+          );
+        }
 
         bool validated = true;
 
@@ -108,7 +124,7 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
                     validated = validateServerUrl(controller.value.text);
                   });
                 },
-                onSubmitted: (value) => _submit(value),
+                onSubmitted: (value) => submit(value),
               ),
               actions: [
                 TextButton(
@@ -118,7 +134,7 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => _submit(controller.value.text),
+                  onPressed: () => submit(controller.value.text),
                   child: Text(
                     MaterialLocalizations.of(context).okButtonLabel,
                   ),
@@ -127,8 +143,6 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
             );
           },
         );
-
-        controller.dispose();
 
         if (serverUrl != null) {
           final updated = await widget.prefs.setStringPreference(
