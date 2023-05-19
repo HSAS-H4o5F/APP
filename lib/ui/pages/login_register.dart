@@ -48,89 +48,111 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.type == LoginRegisterPageType.login
-            ? AppLocalizations.of(context)!.login
-            : AppLocalizations.of(context)!.register),
-        actions: [
-          IconButton(
-            onPressed: () => context.push('/settings'),
-            tooltip: AppLocalizations.of(context)!.settings,
-            icon: const Icon(Icons.settings),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Center(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // 仅当页面类型为注册时才返回以下组件
-                  // 使用了 ...[] 运算符，将列表中的元素展开
-                  if (widget.type == LoginRegisterPageType.register) ...[
-                    MyTextFormField(
-                      controller: _invitationCodeController,
-                      labelText: AppLocalizations.of(context)!.invitationCode,
-                      onFieldSubmitted: _submit,
-                      keyboardType: TextInputType.text,
-                      enabled: !_submitting,
-                    ),
-                    const SizedBox(height: 16),
-                    MyTextFormField(
-                      controller: _emailController,
-                      labelText: AppLocalizations.of(context)!.email,
-                      onFieldSubmitted: _submit,
-                      autofillHints: const [AutofillHints.email],
-                      keyboardType: TextInputType.emailAddress,
-                      enabled: !_submitting,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  MyTextFormField(
-                    controller: _userNameController,
-                    labelText: AppLocalizations.of(context)!.username,
-                    onFieldSubmitted: _submit,
-                    autofillHints: const [AutofillHints.username],
-                    keyboardType: TextInputType.text,
-                    enabled: !_submitting,
-                  ),
-                  const SizedBox(height: 16),
-                  MyTextFormField(
-                    controller: _passwordController,
-                    labelText: AppLocalizations.of(context)!.password,
-                    onFieldSubmitted: _submit,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _showPassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      tooltip: _showPassword
-                          ? AppLocalizations.of(context)!.hidePassword
-                          : AppLocalizations.of(context)!.showPassword,
-                      onPressed: () => setState(() {
-                        _showPassword = !_showPassword;
-                      }),
-                    ),
-                    autofillHints: const [AutofillHints.password],
-                    obscureText: !_showPassword,
-                    enabled: !_submitting,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _submitting ? null : _submit,
-                    child: Text(
-                      widget.type == LoginRegisterPageType.login
-                          ? AppLocalizations.of(context)!.login
-                          : AppLocalizations.of(context)!.register,
-                    ),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              sliver: SliverAppBar.large(
+                title: Text(widget.type == LoginRegisterPageType.login
+                    ? AppLocalizations.of(context)!.login
+                    : AppLocalizations.of(context)!.register),
+                actions: [
+                  IconButton(
+                    onPressed: () => context.push('/settings'),
+                    tooltip: AppLocalizations.of(context)!.settings,
+                    icon: const Icon(Icons.settings),
                   ),
                 ],
               ),
             ),
-          ),
+          ];
+        },
+        body: CustomScrollView(
+          slivers: [
+            Builder(
+              builder: (context) {
+                return SliverOverlapInjector(
+                  // This is the flip side of the SliverOverlapAbsorber
+                  // above.
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                );
+              },
+            ),
+            SliverToBoxAdapter(
+              child: SafeArea(
+                minimum: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      if (widget.type == LoginRegisterPageType.register) ...[
+                        MyTextFormField(
+                          controller: _invitationCodeController,
+                          labelText:
+                              AppLocalizations.of(context)!.invitationCode,
+                          onFieldSubmitted: _submit,
+                          keyboardType: TextInputType.text,
+                          enabled: !_submitting,
+                        ),
+                        const SizedBox(height: 16),
+                        MyTextFormField(
+                          controller: _emailController,
+                          labelText: AppLocalizations.of(context)!.email,
+                          onFieldSubmitted: _submit,
+                          autofillHints: const [AutofillHints.email],
+                          keyboardType: TextInputType.emailAddress,
+                          enabled: !_submitting,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                      MyTextFormField(
+                        controller: _userNameController,
+                        labelText: AppLocalizations.of(context)!.username,
+                        onFieldSubmitted: _submit,
+                        autofillHints: const [AutofillHints.username],
+                        keyboardType: TextInputType.text,
+                        enabled: !_submitting,
+                      ),
+                      const SizedBox(height: 16),
+                      MyTextFormField(
+                        controller: _passwordController,
+                        labelText: AppLocalizations.of(context)!.password,
+                        onFieldSubmitted: _submit,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          tooltip: _showPassword
+                              ? AppLocalizations.of(context)!.hidePassword
+                              : AppLocalizations.of(context)!.showPassword,
+                          onPressed: () => setState(() {
+                            _showPassword = !_showPassword;
+                          }),
+                        ),
+                        autofillHints: const [AutofillHints.password],
+                        obscureText: !_showPassword,
+                        enabled: !_submitting,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _submitting ? null : _submit,
+                        child: Text(
+                          widget.type == LoginRegisterPageType.login
+                              ? AppLocalizations.of(context)!.login
+                              : AppLocalizations.of(context)!.register,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: widget.type == LoginRegisterPageType.login
