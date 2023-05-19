@@ -18,6 +18,7 @@
 
 import 'package:args/args.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -43,14 +44,20 @@ void main(List<String> args) {
   final parsedArgs =
       (ArgParser()..addOption('serverUrl', abbr: 's')).parse(args);
 
+  String? serverUrl = parsedArgs['serverUrl'] as String?;
+
   final store = Store<AppState>(
     appReducer,
     initialState: const AppState(),
   );
 
+  if (kIsWeb && Uri.base.host == 'smartcommunity.xfqlittlefan.xyz') {
+    serverUrl = 'https://smartcommunity.xfqlittlefan.xyz';
+  }
+
   runApp(SmartCommunityApp(
     store: store,
-    serverUrl: parsedArgs['serverUrl'] as String?,
+    serverUrl: serverUrl,
   ));
 }
 
