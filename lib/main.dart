@@ -97,6 +97,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
         GoRoute(
           parentNavigatorKey: _globalNavigatorKey,
           path: '/',
+          // TODO: 使从每个页面启动时都能正常加载
           builder: (context, state) => LoadingPage(serverUrl: widget.serverUrl),
         ),
         GoRoute(

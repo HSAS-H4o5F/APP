@@ -2,11 +2,18 @@
  * This file is part of hsas_h4o5f_app.
  * Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
  *
- * hsas_h4o5f_app is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * hsas_h4o5f_app is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * hsas_h4o5f_app is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * hsas_h4o5f_app is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
 import 'package:flutter/material.dart';
@@ -41,11 +48,11 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverToBoxAdapter(
+    return NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) {
+        return [
+          SliverToBoxAdapter(
+            child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: SizedBox(
@@ -95,69 +102,70 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
                 ),
               ),
             ),
-            SliverPersistentHeader(
-              delegate: _SliverEducationFlowTitleDelegate(
-                child: PreferredSize(
-                  preferredSize: const Size.fromHeight(48),
-                  child: Container(
-                    color: Theme.of(context).colorScheme.background,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        if (_fetching) ...[
-                          const Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: Padding(
-                              padding: EdgeInsets.all(4),
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
-                        ],
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)!.learningResources,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                        ),
-                        Align(
-                          alignment: AlignmentDirectional.centerEnd,
+          ),
+          // TODO: 更改此处 UI 布局
+          SliverPersistentHeader(
+            delegate: _SliverEducationFlowTitleDelegate(
+              child: PreferredSize(
+                preferredSize: const Size.fromHeight(48),
+                child: Container(
+                  color: Theme.of(context).colorScheme.background,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (_fetching) ...[
+                        const Align(
+                          alignment: AlignmentDirectional.centerStart,
                           child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: IconButton(
-                              tooltip: AppLocalizations.of(context)!.refresh,
-                              icon: const Icon(Icons.refresh),
-                              onPressed: _fetchRssFeed,
-                            ),
+                            padding: EdgeInsets.all(4),
+                            child: CircularProgressIndicator(),
                           ),
                         ),
                       ],
-                    ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          AppLocalizations.of(context)!.learningResources,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: IconButton(
+                            tooltip: AppLocalizations.of(context)!.refresh,
+                            icon: const Icon(Icons.refresh),
+                            onPressed: _fetchRssFeed,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              pinned: true,
-              floating: true,
             ),
-          ];
+            pinned: true,
+            floating: true,
+          ),
+        ];
+      },
+      body: StoreConnector<AppState, List<RssItem>>(
+        converter: (store) => store.state.educationFeed?.items ?? [],
+        builder: (context, items) {
+          return ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return EducationFlowTile(
+                articleUrl: item.link,
+                title: item.title,
+                summary: parse(item.description).body?.text,
+              );
+            },
+          );
         },
-        body: StoreConnector<AppState, List<RssItem>>(
-          converter: (store) => store.state.educationFeed?.items ?? [],
-          builder: (context, items) {
-            return ListView.builder(
-              physics: const ClampingScrollPhysics(),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return EducationFlowTile(
-                  articleUrl: item.link,
-                  title: item.title,
-                  summary: parse(item.description).body?.text,
-                );
-              },
-            );
-          },
-        ),
       ),
     );
   }
