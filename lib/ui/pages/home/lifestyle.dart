@@ -56,6 +56,8 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
         ),
         SliverToBoxAdapter(
           child: SafeArea(
+            top: false,
+            bottom: false,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: SizedBox(
@@ -110,37 +112,41 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
         SliverPinnedHeader(
           child: Container(
             color: Theme.of(context).colorScheme.background,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (_fetching) ...[
-                  const Align(
-                    alignment: AlignmentDirectional.centerStart,
+            child: SafeArea(
+              top: false,
+              bottom: false,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (_fetching) ...[
+                    const Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ],
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      AppLocalizations.of(context)!.learningResources,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
                     child: Padding(
-                      padding: EdgeInsets.all(4),
-                      child: CircularProgressIndicator(),
+                      padding: const EdgeInsets.all(4),
+                      child: IconButton(
+                        tooltip: AppLocalizations.of(context)!.refresh,
+                        icon: const Icon(Icons.refresh),
+                        onPressed: _fetchRssFeed,
+                      ),
                     ),
                   ),
                 ],
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    AppLocalizations.of(context)!.learningResources,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: IconButton(
-                      tooltip: AppLocalizations.of(context)!.refresh,
-                      icon: const Icon(Icons.refresh),
-                      onPressed: _fetchRssFeed,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -148,7 +154,6 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
           converter: (store) => store.state.educationFeed?.items ?? [],
           builder: (context, items) {
             return SliverList.builder(
-              // physics: const ClampingScrollPhysics(),
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
