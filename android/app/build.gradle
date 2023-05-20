@@ -25,12 +25,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-def appId = 'cn.edu.hsas.h4o5f_app'
-
 android {
     compileSdk 33
     ndkVersion '25.2.9519653'
-    namespace appId
+    namespace 'cn.edu.hsas.h4o5f_app'
     buildToolsVersion = '33.0.2'
 
     compileOptions {
@@ -47,7 +45,7 @@ android {
     }
 
     defaultConfig {
-        applicationId appId
+        applicationId 'cn.edu.hsas.h4o5f_app'
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
