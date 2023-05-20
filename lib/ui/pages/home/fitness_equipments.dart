@@ -20,7 +20,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
 import 'package:intl/intl.dart';
 
 class FitnessEquipmentsPage extends StatefulWidget {
@@ -63,13 +62,7 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
             controller: _tabControllers.groupsController,
             isScrollable: true,
             tabs: _availableEquipmentGroups.mapIndexed((index, group) {
-              return DirectionalSafeArea(
-                start: index == 0,
-                top: false,
-                end: index == _availableEquipmentGroups.length - 1,
-                bottom: false,
-                child: Tab(text: group.name),
-              );
+              return Tab(text: group.name);
             }).toList(),
           ),
           Expanded(
@@ -86,14 +79,8 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                       controller: equipmentsController.equipmentsController,
                       isScrollable: true,
                       tabs: group.equipments.mapIndexed((index, equipment) {
-                        return DirectionalSafeArea(
-                          start: index == 0,
-                          top: false,
-                          end: index == group.equipments.length - 1,
-                          bottom: false,
-                          child: Tab(
-                            text: equipment.name,
-                          ),
+                        return Tab(
+                          text: equipment.name,
                         );
                       }).toList(),
                     ),
@@ -111,14 +98,8 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                 controller: datesController.datesController,
                                 isScrollable: true,
                                 tabs: equipment.dates.mapIndexed((index, date) {
-                                  return DirectionalSafeArea(
-                                    start: index == 0,
-                                    top: false,
-                                    end: index == equipment.dates.length - 1,
-                                    bottom: false,
-                                    child: Tab(
-                                      text: DateFormat.MEd().format(date.date),
-                                    ),
+                                  return Tab(
+                                    text: DateFormat.MEd().format(date.date),
                                   );
                                 }).toList(),
                               ),
@@ -131,23 +112,20 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                     });
 
                                     return SingleChildScrollView(
-                                      child: Table(
-                                        columnWidths: const {
-                                          0: IntrinsicColumnWidth(),
-                                          1: FlexColumnWidth(1),
-                                        },
-                                        defaultVerticalAlignment:
-                                            TableCellVerticalAlignment.middle,
-                                        children: date.fragments
-                                            .mapIndexed((index, fragment) {
-                                          return TableRow(
-                                            children: [
-                                              TableCell(
-                                                child: DirectionalSafeArea(
-                                                  top: false,
-                                                  end: false,
-                                                  bottom: index ==
-                                                      date.fragments.length - 1,
+                                      child: SafeArea(
+                                        top: false,
+                                        child: Table(
+                                          columnWidths: const {
+                                            0: IntrinsicColumnWidth(),
+                                            1: FlexColumnWidth(1),
+                                          },
+                                          defaultVerticalAlignment:
+                                              TableCellVerticalAlignment.middle,
+                                          children: date.fragments
+                                              .mapIndexed((index, fragment) {
+                                            return TableRow(
+                                              children: [
+                                                TableCell(
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.all(8),
@@ -156,13 +134,7 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              TableCell(
-                                                child: DirectionalSafeArea(
-                                                  start: false,
-                                                  top: false,
-                                                  bottom: index ==
-                                                      date.fragments.length - 1,
+                                                TableCell(
                                                   child: ListTile(
                                                     leading: fragment.selected
                                                         ? const Icon(
@@ -191,10 +163,10 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                                     selected: fragment.selected,
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        ),
                                       ),
                                     );
                                   }).toList(),
