@@ -61,7 +61,8 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
           TabBar(
             controller: _tabControllers.groupsController,
             isScrollable: true,
-            tabs: _availableEquipmentGroups.mapIndexed((index, group) {
+            padding: MediaQuery.of(context).padding.copyWith(top: 0, bottom: 0),
+            tabs: _availableEquipmentGroups.map((group) {
               return Tab(text: group.name);
             }).toList(),
           ),
@@ -78,7 +79,10 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                     TabBar(
                       controller: equipmentsController.equipmentsController,
                       isScrollable: true,
-                      tabs: group.equipments.mapIndexed((index, equipment) {
+                      padding: MediaQuery.of(context)
+                          .padding
+                          .copyWith(top: 0, bottom: 0),
+                      tabs: group.equipments.map((equipment) {
                         return Tab(
                           text: equipment.name,
                         );
@@ -97,7 +101,10 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                               TabBar(
                                 controller: datesController.datesController,
                                 isScrollable: true,
-                                tabs: equipment.dates.mapIndexed((index, date) {
+                                padding: MediaQuery.of(context)
+                                    .padding
+                                    .copyWith(top: 0, bottom: 0),
+                                tabs: equipment.dates.map((date) {
                                   return Tab(
                                     text: DateFormat.MEd().format(date.date),
                                   );
@@ -113,7 +120,6 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
 
                                     return SingleChildScrollView(
                                       child: SafeArea(
-                                        top: false,
                                         child: Table(
                                           columnWidths: const {
                                             0: IntrinsicColumnWidth(),
@@ -121,8 +127,8 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                           },
                                           defaultVerticalAlignment:
                                               TableCellVerticalAlignment.middle,
-                                          children: date.fragments
-                                              .mapIndexed((index, fragment) {
+                                          children:
+                                              date.fragments.map((fragment) {
                                             return TableRow(
                                               children: [
                                                 TableCell(

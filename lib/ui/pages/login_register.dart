@@ -65,73 +65,76 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
           ),
           SliverToBoxAdapter(
             child: SafeArea(
-              minimum: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: AutofillGroup(
-                  child: Column(
-                    children: [
-                      if (widget.type == LoginRegisterPageType.register) ...[
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: AutofillGroup(
+                    child: Column(
+                      children: [
+                        if (widget.type == LoginRegisterPageType.register) ...[
+                          MyTextFormField(
+                            controller: _invitationCodeController,
+                            labelText:
+                                AppLocalizations.of(context)!.invitationCode,
+                            onFieldSubmitted: _submit,
+                            autofillHints: const ['invitationCode'],
+                            keyboardType: TextInputType.text,
+                            enabled: !_submitting,
+                          ),
+                          const SizedBox(height: 16),
+                          MyTextFormField(
+                            controller: _emailController,
+                            labelText: AppLocalizations.of(context)!.email,
+                            onFieldSubmitted: _submit,
+                            autofillHints: const [AutofillHints.email],
+                            keyboardType: TextInputType.emailAddress,
+                            enabled: !_submitting,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                         MyTextFormField(
-                          controller: _invitationCodeController,
-                          labelText:
-                              AppLocalizations.of(context)!.invitationCode,
+                          controller: _userNameController,
+                          labelText: AppLocalizations.of(context)!.username,
                           onFieldSubmitted: _submit,
-                          autofillHints: const ['invitationCode'],
+                          autofillHints: const [AutofillHints.username],
                           keyboardType: TextInputType.text,
                           enabled: !_submitting,
                         ),
                         const SizedBox(height: 16),
                         MyTextFormField(
-                          controller: _emailController,
-                          labelText: AppLocalizations.of(context)!.email,
+                          controller: _passwordController,
+                          labelText: AppLocalizations.of(context)!.password,
                           onFieldSubmitted: _submit,
-                          autofillHints: const [AutofillHints.email],
-                          keyboardType: TextInputType.emailAddress,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _showPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            tooltip: _showPassword
+                                ? AppLocalizations.of(context)!.hidePassword
+                                : AppLocalizations.of(context)!.showPassword,
+                            onPressed: () => setState(() {
+                              _showPassword = !_showPassword;
+                            }),
+                          ),
+                          autofillHints: const [AutofillHints.password],
+                          obscureText: !_showPassword,
                           enabled: !_submitting,
                         ),
                         const SizedBox(height: 16),
-                      ],
-                      MyTextFormField(
-                        controller: _userNameController,
-                        labelText: AppLocalizations.of(context)!.username,
-                        onFieldSubmitted: _submit,
-                        autofillHints: const [AutofillHints.username],
-                        keyboardType: TextInputType.text,
-                        enabled: !_submitting,
-                      ),
-                      const SizedBox(height: 16),
-                      MyTextFormField(
-                        controller: _passwordController,
-                        labelText: AppLocalizations.of(context)!.password,
-                        onFieldSubmitted: _submit,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _showPassword
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                        ElevatedButton(
+                          onPressed: _submitting ? null : _submit,
+                          child: Text(
+                            widget.type == LoginRegisterPageType.login
+                                ? AppLocalizations.of(context)!.login
+                                : AppLocalizations.of(context)!.register,
                           ),
-                          tooltip: _showPassword
-                              ? AppLocalizations.of(context)!.hidePassword
-                              : AppLocalizations.of(context)!.showPassword,
-                          onPressed: () => setState(() {
-                            _showPassword = !_showPassword;
-                          }),
                         ),
-                        autofillHints: const [AutofillHints.password],
-                        obscureText: !_showPassword,
-                        enabled: !_submitting,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _submitting ? null : _submit,
-                        child: Text(
-                          widget.type == LoginRegisterPageType.login
-                              ? AppLocalizations.of(context)!.login
-                              : AppLocalizations.of(context)!.register,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

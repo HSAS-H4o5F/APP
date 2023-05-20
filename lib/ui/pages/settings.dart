@@ -49,7 +49,13 @@ class _SettingsPageState extends State<SettingsPage> {
               return SliverList.list(
                 children: [
                   ServerUrlListTile(prefs: prefs),
-                ].map((child) => SafeArea(child: child)).toList(),
+                ].mapWithFirstLast((first, last, child) {
+                  return SafeArea(
+                    top: false,
+                    bottom: last,
+                    child: child,
+                  );
+                }).toList(),
               );
             },
           ),

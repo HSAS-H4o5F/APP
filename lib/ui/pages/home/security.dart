@@ -20,6 +20,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
 
 class HomePageSecurity extends StatefulWidget {
   const HomePageSecurity({Key? key}) : super(key: key);
@@ -42,7 +43,9 @@ class _HomePageSecurityState extends State<HomePageSecurity> {
         ),
         SliverList.list(
           children: [
-            SafeArea(
+            DirectionalSafeArea(
+              start: false,
+              top: false,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Card(

@@ -49,4 +49,17 @@ extension MapIndexed<T> on Iterable<T> {
     var index = 0;
     return map((e) => f(index++, e));
   }
+
+  Iterable<E> mapWithFirstLast<E>(
+      E Function(
+        bool first,
+        bool last,
+        T value,
+      ) f) {
+    var index = -1;
+    return map((e) {
+      index += 1;
+      return f(index == 0, index == length - 1, e);
+    });
+  }
 }

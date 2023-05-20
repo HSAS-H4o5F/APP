@@ -26,6 +26,7 @@ import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/state/education_feed.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -112,7 +113,8 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
         SliverPinnedHeader(
           child: Container(
             color: Theme.of(context).colorScheme.background,
-            child: SafeArea(
+            child: DirectionalSafeArea(
+              start: false,
               top: false,
               bottom: false,
               child: Stack(
@@ -157,10 +159,15 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
-                return EducationFlowTile(
-                  articleUrl: item.link,
-                  title: item.title,
-                  summary: parse(item.description).body?.text,
+                return DirectionalSafeArea(
+                  start: false,
+                  top: false,
+                  bottom: index == items.length - 1,
+                  child: EducationFlowTile(
+                    articleUrl: item.link,
+                    title: item.title,
+                    summary: parse(item.description).body?.text,
+                  ),
                 );
               },
             );
@@ -322,24 +329,31 @@ class EducationFlowTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: imageUrl.ifNotNull((value) {
-        return AspectRatio(
-          aspectRatio: 1,
-          child: Image.network(
+    return MediaQuery.removePadding(
+      removeLeft: true,
+      removeTop: true,
+      removeRight: true,
+      removeBottom: true,
+      context: context,
+      child: ListTile(
+        leading: imageUrl.ifNotNull((value) {
+          return AspectRatio(
+            aspectRatio: 1,
+            child: Image.network(
+              value,
+            ),
+          );
+        }),
+        title: Text(title),
+        subtitle: summary.ifNotNull((value) {
+          return Text(
             value,
-          ),
-        );
-      }),
-      title: Text(title),
-      subtitle: summary.ifNotNull((value) {
-        return Text(
-          value,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        );
-      }),
-      onTap: () => push(context, articleUrl),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          );
+        }),
+        onTap: () => push(context, articleUrl),
+      ),
     );
   }
 
