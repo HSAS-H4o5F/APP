@@ -35,68 +35,76 @@ class _HomePageSecurityState extends State<HomePageSecurity> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      AppLocalizations.of(context)!.recentRecords,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(_records.first.name),
-                    subtitle: Text(
-                      '${_records.first.time}\n${_records.first.type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
-                    ),
-                  ),
-                  ExpansionPanelList(
-                    expansionCallback: (panelIndex, isExpanded) {
-                      setState(() {
-                        _moreRecordsExpanded = !isExpanded;
-                      });
-                    },
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar.large(
+          title: Text(AppLocalizations.of(context)!.security),
+        ),
+        SliverList.list(
+          children: [
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ExpansionPanel(
-                        headerBuilder: (context, isExpanded) {
-                          return ListTile(
-                            title: Text(AppLocalizations.of(context)!.more),
-                          );
-                        },
-                        body: Column(
-                          children: [
-                            for (var i = 1; i < _records.length; i++)
-                              ListTile(
-                                title: Text(_records[i].name),
-                                subtitle: Text(
-                                  '${_records[i].time}\n${_records[i].type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
-                                ),
-                              ),
-                          ],
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          AppLocalizations.of(context)!.recentRecords,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
-                        isExpanded: _moreRecordsExpanded,
-                        backgroundColor: Colors.transparent,
                       ),
+                      ListTile(
+                        title: Text(_records.first.name),
+                        subtitle: Text(
+                          '${_records.first.time}\n${_records.first.type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
+                        ),
+                      ),
+                      ExpansionPanelList(
+                        expansionCallback: (panelIndex, isExpanded) {
+                          setState(() {
+                            _moreRecordsExpanded = !isExpanded;
+                          });
+                        },
+                        children: [
+                          ExpansionPanel(
+                            headerBuilder: (context, isExpanded) {
+                              return ListTile(
+                                title: Text(AppLocalizations.of(context)!.more),
+                              );
+                            },
+                            body: Column(
+                              children: [
+                                for (var i = 1; i < _records.length; i++)
+                                  ListTile(
+                                    title: Text(_records[i].name),
+                                    subtitle: Text(
+                                      '${_records[i].time}\n${_records[i].type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            isExpanded: _moreRecordsExpanded,
+                            backgroundColor: Colors.transparent,
+                          ),
+                        ],
+                        elevation: 0,
+                      )
                     ],
-                    elevation: 0,
-                  )
-                ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        )
+            )
+          ],
+        ),
       ],
     );
   }
 }
 
+// TODO: 合并入服务器
 final names = [
   '张三',
   '李四',

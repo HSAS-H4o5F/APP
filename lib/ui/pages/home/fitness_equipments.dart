@@ -49,6 +49,7 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
     );
   }
 
+  // TODO: 提取组件
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,46 +128,48 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                           return TableRow(
                                             children: [
                                               TableCell(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  child: Text(
-                                                    '${fragment.startTime.format(context)}-${fragment.endTime.format(context)}',
+                                                child: SafeArea(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Text(
+                                                      '${fragment.startTime.format(context)}-${fragment.endTime.format(context)}',
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                               TableCell(
-                                                child: ListTile(
-                                                  leading: fragment.selected
-                                                      ? const Icon(
-                                                          Icons.check,
-                                                        )
-                                                      : null,
-                                                  title: Text(
-                                                    fragment.available
-                                                        ? AppLocalizations.of(
-                                                                context)!
-                                                            .available
-                                                        : AppLocalizations.of(
-                                                                context)!
-                                                            .unavailable,
+                                                child: SafeArea(
+                                                  child: ListTile(
+                                                    leading: fragment.selected
+                                                        ? const Icon(
+                                                            Icons.check,
+                                                          )
+                                                        : null,
+                                                    title: Text(
+                                                      fragment.available
+                                                          ? AppLocalizations.of(
+                                                                  context)!
+                                                              .available
+                                                          : AppLocalizations.of(
+                                                                  context)!
+                                                              .unavailable,
+                                                    ),
+                                                    subtitle: Text(
+                                                      '¥${fragment.price}',
+                                                    ),
+                                                    onTap: () {
+                                                      setState(() {
+                                                        fragment.selected =
+                                                            !fragment.selected;
+                                                      });
+                                                    },
+                                                    enabled: fragment.available,
+                                                    selected: fragment.selected,
                                                   ),
-                                                  subtitle: Text(
-                                                    '¥${fragment.price}',
-                                                  ),
-                                                  onTap: () {
-                                                    setState(() {
-                                                      fragment.selected =
-                                                          !fragment.selected;
-                                                    });
-                                                  },
-                                                  enabled: fragment.available,
-                                                  selected: fragment.selected,
                                                 ),
                                               ),
-                                            ].map((child) {
-                                              return SafeArea(child: child);
-                                            }).toList(),
+                                            ],
                                           );
                                         }).toList(),
                                       ),

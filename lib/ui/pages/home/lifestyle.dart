@@ -28,6 +28,7 @@ import 'package:hsas_h4o5f_app/state/education_feed.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePageLifestyle extends StatefulWidget {
@@ -48,131 +49,127 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
 
   @override
   Widget build(BuildContext context) {
-    return NestedScrollView(
-      headerSliverBuilder: (context, innerBoxIsScrolled) {
-        return [
-          SliverToBoxAdapter(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      LifeStyleCard(
-                        icon: Icons.medical_services,
-                        title: AppLocalizations.of(context)!.medicalCare,
-                        subhead: AppLocalizations.of(context)!
-                            .medicalCareCardSubhead,
-                        onTap: _onMedicalCareTap,
-                      ),
-                      LifeStyleCard(
-                        icon: Icons.pets,
-                        title: AppLocalizations.of(context)!.guideDogs,
-                        subhead:
-                            AppLocalizations.of(context)!.guideDogsCardSubhead,
-                        actions: [
-                          FilledButton(
-                            onPressed: _onGuideDogsHelpTap,
-                            child: Text(
-                                AppLocalizations.of(context)!.showHelpMessage),
-                          ),
-                        ],
-                        onTap: _onGuideDogsTap,
-                      ),
-                      LifeStyleCard(
-                        icon: Icons.people,
-                        title: AppLocalizations.of(context)!.mutualAid,
-                        subhead:
-                            AppLocalizations.of(context)!.mutualAidCardSubhead,
-                        onTap: _onMutualAidTap,
-                      ),
-                      LifeStyleCard(
-                        icon: Icons.fitness_center,
-                        title: AppLocalizations.of(context)!.fitnessEquipments,
-                        subhead: AppLocalizations.of(context)!
-                            .fitnessEquipmentsCardSubhead,
-                        onTap: _onFitnessEquipmentsTap,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // TODO: 更改此处 UI 布局
-          SliverPersistentHeader(
-            delegate: _SliverEducationFlowTitleDelegate(
-              child: PreferredSize(
-                preferredSize: const Size.fromHeight(48),
-                child: Container(
-                  color: Theme.of(context).colorScheme.background,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      if (_fetching) ...[
-                        const Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Padding(
-                            padding: EdgeInsets.all(4),
-                            child: CircularProgressIndicator(),
-                          ),
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar.large(
+          title: Text(AppLocalizations.of(context)!.lifestyle),
+        ),
+        SliverToBoxAdapter(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    LifeStyleCard(
+                      icon: Icons.medical_services,
+                      title: AppLocalizations.of(context)!.medicalCare,
+                      subhead:
+                          AppLocalizations.of(context)!.medicalCareCardSubhead,
+                      onTap: _onMedicalCareTap,
+                    ),
+                    LifeStyleCard(
+                      icon: Icons.pets,
+                      title: AppLocalizations.of(context)!.guideDogs,
+                      subhead:
+                          AppLocalizations.of(context)!.guideDogsCardSubhead,
+                      actions: [
+                        FilledButton(
+                          onPressed: _onGuideDogsHelpTap,
+                          child: Text(
+                              AppLocalizations.of(context)!.showHelpMessage),
                         ),
                       ],
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)!.learningResources,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      ),
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: IconButton(
-                            tooltip: AppLocalizations.of(context)!.refresh,
-                            icon: const Icon(Icons.refresh),
-                            onPressed: _fetchRssFeed,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      onTap: _onGuideDogsTap,
+                    ),
+                    LifeStyleCard(
+                      icon: Icons.people,
+                      title: AppLocalizations.of(context)!.mutualAid,
+                      subhead:
+                          AppLocalizations.of(context)!.mutualAidCardSubhead,
+                      onTap: _onMutualAidTap,
+                    ),
+                    LifeStyleCard(
+                      icon: Icons.fitness_center,
+                      title: AppLocalizations.of(context)!.fitnessEquipments,
+                      subhead: AppLocalizations.of(context)!
+                          .fitnessEquipmentsCardSubhead,
+                      onTap: _onFitnessEquipmentsTap,
+                    ),
+                  ],
                 ),
               ),
             ),
-            pinned: true,
-            floating: true,
           ),
-        ];
-      },
-      body: StoreConnector<AppState, List<RssItem>>(
-        converter: (store) => store.state.educationFeed?.items ?? [],
-        builder: (context, items) {
-          return ListView.builder(
-            physics: const ClampingScrollPhysics(),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return EducationFlowTile(
-                articleUrl: item.link,
-                title: item.title,
-                summary: parse(item.description).body?.text,
-              );
-            },
-          );
-        },
-      ),
+        ),
+        // TODO: 更改此处 UI 布局
+        SliverPinnedHeader(
+          child: Container(
+            color: Theme.of(context).colorScheme.background,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (_fetching) ...[
+                  const Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Padding(
+                      padding: EdgeInsets.all(4),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ],
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    AppLocalizations.of(context)!.learningResources,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: IconButton(
+                      tooltip: AppLocalizations.of(context)!.refresh,
+                      icon: const Icon(Icons.refresh),
+                      onPressed: _fetchRssFeed,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        StoreConnector<AppState, List<RssItem>>(
+          converter: (store) => store.state.educationFeed?.items ?? [],
+          builder: (context, items) {
+            return SliverList.builder(
+              // physics: const ClampingScrollPhysics(),
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return EducationFlowTile(
+                  articleUrl: item.link,
+                  title: item.title,
+                  summary: parse(item.description).body?.text,
+                );
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 
+  // TODO: 修复 `setState() called after dispose()`
   void _fetchRssFeed() async {
     if (_fetching) return;
 
+    if (!mounted) return;
     setState(() => _fetching = true);
 
     final store = StoreProvider.of<AppState>(context, listen: false);
@@ -184,6 +181,7 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
 
     store.dispatch(SetEducationFeedAction(await RssFeed.parse(response.body)));
 
+    if (!mounted) return;
     setState(() => _fetching = false);
   }
 
@@ -369,6 +367,6 @@ class _SliverEducationFlowTitleDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
+    return child != (oldDelegate as _SliverEducationFlowTitleDelegate).child;
   }
 }
