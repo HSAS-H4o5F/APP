@@ -20,6 +20,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
 import 'package:intl/intl.dart';
 
 class FitnessEquipmentsPage extends StatefulWidget {
@@ -61,9 +62,15 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
           TabBar(
             controller: _tabControllers.groupsController,
             isScrollable: true,
-            tabs: _availableEquipmentGroups
-                .map((group) => SafeArea(child: Tab(text: group.name)))
-                .toList(),
+            tabs: _availableEquipmentGroups.mapIndexed((index, group) {
+              return DirectionalSafeArea(
+                start: index == 0,
+                top: false,
+                end: index == _availableEquipmentGroups.length - 1,
+                bottom: false,
+                child: Tab(text: group.name),
+              );
+            }).toList(),
           ),
           Expanded(
             child: TabBarView(
@@ -78,8 +85,12 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                     TabBar(
                       controller: equipmentsController.equipmentsController,
                       isScrollable: true,
-                      tabs: group.equipments.map((equipment) {
-                        return SafeArea(
+                      tabs: group.equipments.mapIndexed((index, equipment) {
+                        return DirectionalSafeArea(
+                          start: index == 0,
+                          top: false,
+                          end: index == group.equipments.length - 1,
+                          bottom: false,
                           child: Tab(
                             text: equipment.name,
                           ),
@@ -99,8 +110,12 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                               TabBar(
                                 controller: datesController.datesController,
                                 isScrollable: true,
-                                tabs: equipment.dates.map((date) {
-                                  return SafeArea(
+                                tabs: equipment.dates.mapIndexed((index, date) {
+                                  return DirectionalSafeArea(
+                                    start: index == 0,
+                                    top: false,
+                                    end: index == equipment.dates.length - 1,
+                                    bottom: false,
                                     child: Tab(
                                       text: DateFormat.MEd().format(date.date),
                                     ),
@@ -123,12 +138,16 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                         },
                                         defaultVerticalAlignment:
                                             TableCellVerticalAlignment.middle,
-                                        children:
-                                            date.fragments.map((fragment) {
+                                        children: date.fragments
+                                            .mapIndexed((index, fragment) {
                                           return TableRow(
                                             children: [
                                               TableCell(
-                                                child: SafeArea(
+                                                child: DirectionalSafeArea(
+                                                  top: false,
+                                                  end: false,
+                                                  bottom: index ==
+                                                      date.fragments.length - 1,
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.all(8),
@@ -139,7 +158,11 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
                                                 ),
                                               ),
                                               TableCell(
-                                                child: SafeArea(
+                                                child: DirectionalSafeArea(
+                                                  start: false,
+                                                  top: false,
+                                                  bottom: index ==
+                                                      date.fragments.length - 1,
                                                   child: ListTile(
                                                     leading: fragment.selected
                                                         ? const Icon(
