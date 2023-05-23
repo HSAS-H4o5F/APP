@@ -177,7 +177,6 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
     );
   }
 
-  // TODO: 修复 `setState() called after dispose()`
   void _fetchRssFeed() async {
     if (_fetching) return;
 
