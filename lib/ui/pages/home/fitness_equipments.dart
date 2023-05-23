@@ -42,11 +42,17 @@ class _FitnessEquipmentsPageState extends State<FitnessEquipmentsPage>
 
   @override
   void initState() {
-    super.initState();
     _tabControllers = _GroupTabController(
       groups: _availableEquipmentGroups,
       vsync: this,
     );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabControllers.dispose();
+    super.dispose();
   }
 
   // TODO: 提取组件
@@ -216,6 +222,13 @@ class _GroupTabController {
       },
     );
   }
+
+  void dispose() {
+    groupsController.dispose();
+    for (var controller in equipmentControllers) {
+      controller.dispose();
+    }
+  }
 }
 
 class _EquipmentTabController {
@@ -240,6 +253,13 @@ class _EquipmentTabController {
       },
     );
   }
+
+  void dispose() {
+    equipmentsController.dispose();
+    for (var controller in dateControllers) {
+      controller.dispose();
+    }
+  }
 }
 
 class _DateTabController {
@@ -253,6 +273,10 @@ class _DateTabController {
       length: dates.length,
       vsync: vsync,
     );
+  }
+
+  void dispose() {
+    datesController.dispose();
   }
 }
 
