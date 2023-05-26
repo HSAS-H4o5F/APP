@@ -77,10 +77,10 @@ packages:
     dependency: transitive
     description:
       name: csslib
-      sha256: b36c7f7e24c0bdf1bf9a3da461c837d1de64b9f8beb190c9011d8c72a3dfd745
+      sha256: "831883fb353c8bdc1d71979e5b342c7d88acfbc643113c14ae51e2442ea0f20f"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.17.2"
+    version: "0.17.3"
   dbus:
     dependency: transitive
     description:
@@ -177,10 +177,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "80e37516b8d452d982fc32bd7bb22adbd20e422612ef2b3e1df8b8350cbf199b"
+      sha256: "00d1b67d6e9fa443331da229084dd3eb04407f5a2dff22940bd7bba6af5722c3"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.0.1"
+    version: "7.1.1"
   html:
     dependency: "direct main"
     description:
@@ -313,18 +313,18 @@ packages:
     dependency: transitive
     description:
       name: parse_server_sdk
-      sha256: "2291652f2dfeb71b474d55f092bd6e4a105b44fa60607dbf92db3691629d8662"
+      sha256: c5c1415fa988525f43b637ccf55863ddb734ca63bf37cce96d5ce33a0ebe6847
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.1.0"
+    version: "5.1.1"
   parse_server_sdk_flutter:
     dependency: "direct main"
     description:
       name: parse_server_sdk_flutter
-      sha256: "4bf959ce87a506569e86add9a97ecd9e04d487b4acff8364ea496799c1c4e3f7"
+      sha256: f9b2c0d60f029177149484ee0a09247402f777bbfcc0a47ab1d4e4e2bb01405c
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.0.0"
+    version: "5.0.1"
   path:
     dependency: transitive
     description:
@@ -361,10 +361,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_linux
-      sha256: "2ae08f2216225427e64ad224a24354221c2c7907e448e6e0e8b57b1eb9f10ad1"
+      sha256: ffbb8cc9ed2c9ec0e4b7a541e56fd79b138e8f47d2fb86815f15358a349b3b57
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.10"
+    version: "2.1.11"
   path_provider_platform_interface:
     dependency: transitive
     description:
@@ -646,10 +646,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_web
-      sha256: "81fe91b6c4f84f222d186a9d23c73157dc4c8e1c71489c4d08be1ad3b228f1aa"
+      sha256: "6bb1e5d7fe53daf02a8fee85352432a40b1f868a81880e99ec7440113d5cfcab"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.16"
+    version: "2.0.17"
   url_launcher_windows:
     dependency: transitive
     description:
@@ -715,5 +715,5 @@ packages:
     source: hosted
     version: "2.1.0"
 sdks:
-  dart: ">=3.0.0-417 <3.1.0"
+  dart: ">=3.0.0-417 <4.0.0"
   flutter: ">=3.10.0"
