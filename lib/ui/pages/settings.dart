@@ -18,11 +18,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/preference/extension.dart';
 import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -160,9 +162,18 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
             serverUrl,
           );
 
-          if (!mounted) return;
+          if (updated) {
+            try {
+              await (await ParseUser.currentUser() as ParseUser).logout();
+            } finally {
+              if (mounted) {
+                //TODO: 优化此处逻辑
+                context.go('/');
+              }
+            }
+          } else {
+            if (!mounted) return;
 
-          if (!updated) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(AppLocalizations.of(context)!.formatError),
