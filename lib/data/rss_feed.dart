@@ -16,6 +16,9 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 
@@ -64,8 +67,25 @@ class RssItem {
       title: element.findElements('title').first.innerText,
       description: element.findElements('description').first.innerText,
       link: element.findElements('link').first.innerText,
-      pubDate: DateFormat('E, d MMM yyyy hh:mm:ss Z', 'en_US')
-          .parse(element.findElements('pubDate').first.innerText),
+      pubDate: ((String date) {
+        try {
+          return HttpDate.parse(date);
+        } catch (e) {
+          log(
+            'Failed to parse date with HttpDate: $date, trying DateFormat.',
+            error: e,
+          );
+        }
+        try {
+          return DateFormat('E, d MMM yyyy hh:mm:ss Z', 'en_US').parse(date);
+        } catch (e) {
+          log(
+            'Failed to parse date with DateFormat: $date, using DateTime.now().',
+            error: e,
+          );
+        }
+        return DateTime.now();
+      })(element.findElements('pubDate').first.innerText),
     );
   }
 }
