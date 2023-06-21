@@ -163,7 +163,7 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
                   start: false,
                   top: false,
                   bottom: index == items.length - 1,
-                  child: EducationFlowTile(
+                  child: EducationFlowItem(
                     articleUrl: item.link,
                     title: item.title,
                     summary: parse(item.description).body?.text,
@@ -312,8 +312,8 @@ class LifeStyleCard extends StatelessWidget {
   }
 }
 
-class EducationFlowTile extends StatelessWidget {
-  const EducationFlowTile({
+class EducationFlowItem extends StatelessWidget {
+  const EducationFlowItem({
     Key? key,
     required this.articleUrl,
     required this.title,
@@ -351,40 +351,15 @@ class EducationFlowTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           );
         }),
-        onTap: () => push(context, articleUrl),
+        onTap: () => jump(context, articleUrl),
       ),
     );
   }
 
-  void push(BuildContext context, String url) {
+  void jump(BuildContext context, String url) {
     launchUrl(
       Uri.parse(url),
       mode: LaunchMode.externalApplication,
     );
-  }
-}
-
-class _SliverEducationFlowTitleDelegate extends SliverPersistentHeaderDelegate {
-  const _SliverEducationFlowTitleDelegate({
-    required this.child,
-  });
-
-  final PreferredSize child;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => child.preferredSize.height;
-
-  @override
-  double get minExtent => child.preferredSize.height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return child != (oldDelegate as _SliverEducationFlowTitleDelegate).child;
   }
 }
