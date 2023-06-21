@@ -19,7 +19,6 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 
 class RssFeed {
@@ -38,13 +37,12 @@ class RssFeed {
   static Future<RssFeed> parse(String xmlString) async {
     final document = XmlDocument.parse(xmlString);
     final channel = document.findAllElements('channel').first;
-    final items =
-        channel.findAllElements('item').map((e) => RssItem.parse(e)).toList();
     return RssFeed(
       title: channel.findElements('title').first.innerText,
       description: channel.findElements('description').first.innerText,
       link: channel.findElements('link').first.innerText,
-      items: items,
+      items:
+          channel.findAllElements('item').map((e) => RssItem.parse(e)).toList(),
     );
   }
 }
@@ -55,37 +53,43 @@ class RssItem {
     required this.description,
     required this.link,
     required this.pubDate,
+    this.author,
   });
 
   final String title;
   final String description;
   final String link;
   final DateTime pubDate;
+  final String? author;
 
   static RssItem parse(XmlElement element) {
     return RssItem(
       title: element.findElements('title').first.innerText,
       description: element.findElements('description').first.innerText,
       link: element.findElements('link').first.innerText,
-      pubDate: ((String date) {
+      pubDate: (String date) {
         try {
           return HttpDate.parse(date);
         } catch (e) {
           log(
-            'Failed to parse date with HttpDate: $date, trying DateFormat.',
+            'Failed to parse date with `HttpDate.parse()`: $date, trying `DateTime.parse()`.',
             error: e,
           );
         }
         try {
-          return DateFormat('E, d MMM yyyy hh:mm:ss Z', 'en_US').parse(date);
+          return DateTime.parse(date);
         } catch (e) {
           log(
-            'Failed to parse date with DateFormat: $date, using DateTime.now().',
+            'Failed to parse date with `DateTime.parse()`: $date, using `DateTime.now()`.',
             error: e,
           );
         }
         return DateTime.now();
-      })(element.findElements('pubDate').first.innerText),
+      }(element.findElements('pubDate').first.innerText),
+      author: (Iterable<XmlElement> elements) {
+        if (elements.isEmpty) return null;
+        return elements.first.innerText;
+      }(element.findElements('author')),
     );
   }
 }
