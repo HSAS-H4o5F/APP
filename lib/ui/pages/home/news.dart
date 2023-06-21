@@ -29,10 +29,12 @@ class HomePageNews extends StatefulWidget {
 class _HomePageNewsState extends State<HomePageNews> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Text(AppLocalizations.of(context)!.news),
-      ),
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar.large(
+          title: Text(AppLocalizations.of(context)!.news),
+        ),
+      ],
     );
   }
 }
