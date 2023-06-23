@@ -27,7 +27,6 @@ import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/state/education_feed.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
-import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -166,7 +165,7 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
                   child: EducationFlowItem(
                     articleUrl: item.link,
                     title: item.title,
-                    summary: parse(item.description).body?.text,
+                    summary: item.description,
                   ),
                 );
               },
