@@ -19,7 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hsas_h4o5f_app/data/rss_feed.dart';
+import 'package:hsas_h4o5f_app/data/feed.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/preference/extension.dart';
 import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
@@ -151,8 +151,8 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
             ),
           ),
         ),
-        StoreConnector<AppState, List<RssItem>>(
-          converter: (store) => store.state.educationFeed?.items ?? [],
+        StoreConnector<AppState, List<FeedItem>>(
+          converter: (store) => store.state.educationFeed?.items.toList() ?? [],
           builder: (context, items) {
             return SliverList.builder(
               itemCount: items.length,
@@ -165,7 +165,7 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
                   child: EducationFlowItem(
                     articleUrl: item.link,
                     title: item.title,
-                    summary: item.description,
+                    summary: item.summary,
                   ),
                 );
               },
@@ -187,9 +187,9 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
     final client = Client();
     final response = await client.get(Uri.parse(
       store.state.sharedPreferences!.getStringPreference(serverUrlPreference)!,
-    ).replace(path: '/feed/education'));
+    ).replace(path: '/feed', queryParameters: {'origin': 'zhihu'}));
 
-    store.dispatch(SetEducationFeedAction(await RssFeed.parse(response.body)));
+    store.dispatch(SetEducationFeedAction(Feed.fromJson(response.body)));
 
     if (!mounted) return;
     setState(() => _fetching = false);

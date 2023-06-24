@@ -16,7 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:hsas_h4o5f_app/data/rss_feed.dart';
+import 'package:hsas_h4o5f_app/data/feed.dart';
 import 'package:hsas_h4o5f_app/state/education_feed.dart';
 import 'package:hsas_h4o5f_app/state/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +28,7 @@ class AppState {
   });
 
   final SharedPreferences? sharedPreferences;
-  final RssFeed? educationFeed;
+  final Feed? educationFeed;
 }
 
 AppState appReducer(AppState state, dynamic action) {

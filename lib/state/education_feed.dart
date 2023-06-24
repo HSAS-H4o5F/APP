@@ -16,11 +16,11 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:hsas_h4o5f_app/data/rss_feed.dart';
+import 'package:hsas_h4o5f_app/data/feed.dart';
 import 'package:redux/redux.dart';
 
-RssFeed _setEducationFeed(
-  RssFeed? educationFeed,
+Feed _setEducationFeed(
+  Feed? educationFeed,
   SetEducationFeedAction action,
 ) {
   return action.educationFeed;
@@ -29,9 +29,9 @@ RssFeed _setEducationFeed(
 class SetEducationFeedAction {
   const SetEducationFeedAction(this.educationFeed);
 
-  final RssFeed educationFeed;
+  final Feed educationFeed;
 }
 
-final educationFeedReducer = combineReducers<RssFeed?>([
-  TypedReducer<RssFeed?, SetEducationFeedAction>(_setEducationFeed),
+final educationFeedReducer = combineReducers<Feed?>([
+  TypedReducer<Feed?, SetEducationFeedAction>(_setEducationFeed),
 ]);

@@ -19,8 +19,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
-
-import 'feed.dart';
+import 'package:hsas_h4o5f_app/data/feed.dart';
 
 // Generated using `dart run build_runner build`.
 part 'serializers.g.dart';
