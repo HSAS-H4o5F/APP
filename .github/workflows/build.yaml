@@ -95,6 +95,9 @@ jobs:
         run: |
           sed -i 's/android {/android {\ncompileOptions {\nsourceCompatibility JavaVersion.VERSION_19\ntargetCompatibility JavaVersion.VERSION_19\n}/g' ${{ env.PUB_CACHE }}/hosted/*/package_info_plus-*/android/build.gradle
 
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Build ${{ matrix.platform }} app
         run: ${{ matrix.command }} -v
 
