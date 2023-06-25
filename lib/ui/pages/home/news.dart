@@ -17,8 +17,13 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/state/app_state.dart';
+import 'package:hsas_h4o5f_app/state/feed.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/animated_linear_progress_indicator.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class HomePageNews extends StatefulWidget {
@@ -30,6 +35,7 @@ class HomePageNews extends StatefulWidget {
 
 class _HomePageNewsState extends State<HomePageNews> {
   bool _fetching = false;
+  final List<String> _unselectedOrigins = [];
 
   void showFilterDialog() {
     showStatefulAlertDialog(
@@ -37,7 +43,41 @@ class _HomePageNewsState extends State<HomePageNews> {
       builder: (context, setState) {
         return StatefulAlertDialogContent(
           title: Text(AppLocalizations.of(context)!.filter),
-          content: Wrap(),
+          content: StoreConnector<
+              AppState,
+              ({
+                Map<String, FeedOriginInfo> origins,
+                SharedPreferences? prefs,
+              })>(
+            converter: (store) => (
+              origins: store.state.feed.origins ?? {},
+              prefs: store.state.sharedPreferences,
+            ),
+            builder: (context, state) {
+              return Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: state.origins.entries.map((entry) {
+                  final key = entry.key;
+                  final origin = entry.value;
+
+                  return FilterChip(
+                    label: Text(origin.name),
+                    selected: !_unselectedOrigins.contains(key),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _unselectedOrigins.remove(key);
+                        } else {
+                          _unselectedOrigins.add(key);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              );
+            },
+          ),
           actions: [
             TextButton(
               onPressed: () => context.popDialog(),
@@ -77,12 +117,7 @@ class _HomePageNewsState extends State<HomePageNews> {
           ],
         ),
         SliverPinnedHeader(
-          child: AnimatedContainer(
-            height: _fetching ? 4 : 0,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOutCubic,
-            child: const LinearProgressIndicator(),
-          ),
+          child: AnimatedLinearProgressIndicator(visible: _fetching),
         ),
       ],
     );

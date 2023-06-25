@@ -66,23 +66,3 @@ abstract class FeedError implements Built<FeedError, FeedErrorBuilder> {
   FeedError._();
   factory FeedError([void Function(FeedErrorBuilder) updates]) = _$FeedError;
 }
-
-class AppFeed {
-  const AppFeed({
-    required this.feed,
-    required this.origins,
-  });
-
-  final Feed feed;
-  final Map<String, FeedOriginInfo> origins;
-}
-
-class FeedOriginInfo {
-  const FeedOriginInfo({
-    required this.name,
-    required this.url,
-  });
-
-  final String name;
-  final Uri url;
-}

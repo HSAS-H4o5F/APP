@@ -23,9 +23,11 @@ import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/animated_linear_progress_indicator.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -38,30 +40,34 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.large(
-            title: Text(AppLocalizations.of(context)!.settings),
-          ),
-          StoreConnector<AppState, SharedPreferences?>(
-            converter: (store) => store.state.sharedPreferences,
-            builder: (context, prefs) {
-              if (prefs == null) return const SizedBox();
-
-              return SliverList.list(
-                children: [
-                  ServerUrlListTile(prefs: prefs),
-                ].mapWithFirstLast((first, last, child) {
-                  return SafeArea(
-                    top: false,
-                    bottom: last,
-                    child: child,
-                  );
-                }).toList(),
-              );
-            },
-          ),
-        ],
+      body: StoreConnector<AppState, SharedPreferences?>(
+        converter: (store) => store.state.sharedPreferences,
+        builder: (context, prefs) {
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar.large(
+                title: Text(AppLocalizations.of(context)!.settings),
+              ),
+              SliverPinnedHeader(
+                child: AnimatedLinearProgressIndicator(
+                  visible: prefs == null,
+                ),
+              ),
+              if (prefs != null)
+                SliverList.list(
+                  children: [
+                    ServerUrlListTile(prefs: prefs),
+                  ].mapWithFirstLast((first, last, child) {
+                    return SafeArea(
+                      top: false,
+                      bottom: last,
+                      child: child,
+                    );
+                  }).toList(),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

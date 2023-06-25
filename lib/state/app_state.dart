@@ -26,12 +26,12 @@ class AppState {
   const AppState({
     this.sharedPreferences,
     this.educationFeed,
-    this.feed,
+    this.feed = const AppFeed(),
   });
 
   final SharedPreferences? sharedPreferences;
   final Feed? educationFeed;
-  final AppFeed? feed;
+  final AppFeed feed;
 }
 
 AppState appReducer(AppState state, dynamic action) {

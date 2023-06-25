@@ -184,17 +184,30 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
 
     final store = StoreProvider.of<AppState>(context, listen: false);
 
-    final client = Client();
-
     final serverUrl = store.state.sharedPreferences!
         .getStringPreference(serverUrlPreference)!;
-    final response = await client.get(Uri.parse(serverUrl).replace(
-      path: '/feed',
-      queryParameters: {'origin': 'zhihu'},
-    ));
+
+    final client = Client();
+
+    final Response response;
+
+    try {
+      response = await client.get(Uri.parse(serverUrl).replace(
+        path: '/feed',
+        queryParameters: {'origin': 'zhihu'},
+      ));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _fetching = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.fetchingError)),
+      );
+      return;
+    } finally {
+      client.close();
+    }
 
     store.dispatch(SetEducationFeedAction(Feed.fromJson(response.body)));
-
     if (!mounted) return;
     setState(() => _fetching = false);
   }

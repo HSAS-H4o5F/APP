@@ -16,14 +16,51 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:convert';
+
 import 'package:hsas_h4o5f_app/data/feed.dart';
 import 'package:redux/redux.dart';
 
+class AppFeed {
+  const AppFeed({
+    this.feed,
+    this.origins,
+  });
+
+  final Feed? feed;
+  final Map<String, FeedOriginInfo>? origins;
+
+  static Map<String, FeedOriginInfo> parseFeedOrigins(String json) {
+    final Map<String, dynamic> map = jsonDecode(json);
+    final Map<String, FeedOriginInfo> origins = {};
+    map.forEach((key, value) {
+      origins[key] = FeedOriginInfo(
+        name: value['name'],
+        url: Uri.parse(value['url']),
+      );
+    });
+    return origins;
+  }
+}
+
+class FeedOriginInfo {
+  const FeedOriginInfo({
+    required this.name,
+    required this.url,
+  });
+
+  final String name;
+  final Uri url;
+}
+
 AppFeed _setFeed(
-  AppFeed? feed,
+  AppFeed feed,
   SetFeedAction action,
 ) {
-  return action.feed;
+  return AppFeed(
+    feed: action.feed.feed ?? feed.feed,
+    origins: action.feed.origins ?? feed.origins,
+  );
 }
 
 class SetFeedAction {
@@ -32,6 +69,6 @@ class SetFeedAction {
   final AppFeed feed;
 }
 
-final feedReducer = combineReducers<AppFeed?>([
-  TypedReducer<AppFeed?, SetFeedAction>(_setFeed),
+final feedReducer = combineReducers<AppFeed>([
+  TypedReducer<AppFeed, SetFeedAction>(_setFeed),
 ]);

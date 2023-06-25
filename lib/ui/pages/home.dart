@@ -16,8 +16,8 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -26,6 +26,7 @@ import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
+import 'package:hsas_h4o5f_app/state/feed.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home/route.dart';
 import 'package:http/http.dart';
 
@@ -48,8 +49,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: 完善初始化逻辑
-    //_initFeed();
+    _initFeed();
     super.initState();
   }
 
@@ -59,11 +59,32 @@ class _HomePageState extends State<HomePage> {
         .getStringPreference(serverUrlPreference)!;
 
     final client = Client();
-    final response = await client.get(Uri.parse(serverUrl).replace(
-      path: '/feed/origins',
-    ));
 
-    (jsonDecode(response.body) as Map<String, dynamic>);
+    Response? response;
+    Object? error;
+    try {
+      response = await client.get(Uri.parse(serverUrl).replace(
+        path: '/feed/origins',
+      ));
+    } catch (e) {
+      error = e;
+    } finally {
+      client.close();
+    }
+
+    if (!mounted) return;
+
+    if (error != null || response?.statusCode != HttpStatus.ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.fetchingError),
+        ),
+      );
+      return;
+    }
+
+    final origins = AppFeed.parseFeedOrigins(response!.body);
+    store.dispatch(SetFeedAction(AppFeed(origins: origins)));
   }
 
   @override
