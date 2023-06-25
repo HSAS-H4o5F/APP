@@ -214,12 +214,12 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
       content: Text(AppLocalizations.of(context)!.helpMessageContent),
       actions: [
         TextButton(
-          onPressed: () => popDialog(context),
+          onPressed: () => context.popDialog(),
           child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
         ),
         TextButton(
           onPressed: () {
-            popDialog(context);
+            context.popDialog();
             _onGuideDogsTap();
           },
           child: Text(MaterialLocalizations.of(context).okButtonLabel),

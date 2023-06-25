@@ -109,10 +109,7 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
         );
 
         void submit(String value) {
-          popDialog(
-            context,
-            value != '' ? value : defaultServerUrl,
-          );
+          context.popDialog(value != '' ? value : defaultServerUrl);
         }
 
         bool validated = true;
@@ -140,7 +137,7 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => popDialog(context),
+                  onPressed: () => context.popDialog(),
                   child: Text(
                     MaterialLocalizations.of(context).cancelButtonLabel,
                   ),

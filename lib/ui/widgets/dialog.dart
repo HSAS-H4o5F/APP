@@ -77,6 +77,8 @@ Future<T?> showAlertDialog<T>({
   );
 }
 
-void popDialog<T extends Object?>(BuildContext context, [T? result]) {
-  Navigator.of(context, rootNavigator: true).pop(result);
+extension PopDialog on BuildContext {
+  void popDialog<T extends Object?>([T? result]) {
+    Navigator.of(this, rootNavigator: true).pop(result);
+  }
 }

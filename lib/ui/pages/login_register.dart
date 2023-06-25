@@ -217,7 +217,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
       content: Text(response.error!.message),
       actions: [
         TextButton(
-          onPressed: () => popDialog(context),
+          onPressed: () => context.popDialog(),
           child: Text(MaterialLocalizations.of(context).okButtonLabel),
         ),
       ],
