@@ -16,30 +16,22 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-extension SharedPreferencesExtension on SharedPreferences {
-  Future<bool> setStringPreference(
-    StringPreference preference,
-    String value,
-  ) async {
-    if (preference.beforeSetValue != null &&
-        !preference.beforeSetValue!(value)) {
-      return false;
-    }
-    final result = await setString(preference.key, value);
-    if (preference.onValueChanged != null && result) {
-      preference.onValueChanged!(value);
-    }
-    return result;
-  }
+abstract class Preference<T> {
+  const Preference({
+    required this.key,
+    this.beforeSetValue,
+    this.onValueChanged,
+  });
 
-  String? getStringPreference(StringPreference preference) {
-    return getString(preference.key);
-  }
+  final String key;
+  final bool Function(T value)? beforeSetValue;
+  final Function(T value)? onValueChanged;
+}
 
-  bool containsStringPreference(StringPreference preference) {
+extension ContainsPreferenceExtension on SharedPreferences {
+  bool containsPreference(Preference preference) {
     return containsKey(preference.key);
   }
 }

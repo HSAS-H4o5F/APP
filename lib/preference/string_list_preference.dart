@@ -19,31 +19,31 @@
 import 'package:hsas_h4o5f_app/preference/preference.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class StringPreference extends Preference<String> {
-  const StringPreference({
+class StringListPreference extends Preference<List<String>> {
+  const StringListPreference({
     required super.key,
     super.beforeSetValue,
     super.onValueChanged,
   });
 }
 
-extension StringPreferencesExtension on SharedPreferences {
-  Future<bool> setStringPreference(
-    StringPreference preference,
-    String value,
+extension StringListPreferencesExtension on SharedPreferences {
+  Future<bool> setStringListPreference(
+    StringListPreference preference,
+    List<String> value,
   ) async {
     if (preference.beforeSetValue != null &&
         !preference.beforeSetValue!(value)) {
       return false;
     }
-    final result = await setString(preference.key, value);
+    final result = await setStringList(preference.key, value);
     if (preference.onValueChanged != null && result) {
       preference.onValueChanged!(value);
     }
     return result;
   }
 
-  String? getStringPreference(StringPreference preference) {
-    return getString(preference.key);
+  List<String>? getStringListPreference(StringListPreference preference) {
+    return getStringList(preference.key);
   }
 }
