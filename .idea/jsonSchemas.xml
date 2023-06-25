@@ -3,6 +3,25 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="ARB">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="ARB" />
+              <option name="relativePathToSchema" value="https://github.com/google/arb-editor/raw/main/schemas/arb.json" />
+              <option name="schemaVersion" value="JSON 架构版本 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="path" value="**/*.arb" />
+                    <option name="mappingKind" value="Pattern" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="GitHub Workflow">
           <value>
             <SchemaInfo>
