@@ -164,7 +164,7 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
               await (await ParseUser.currentUser() as ParseUser).logout();
             } finally {
               if (mounted) {
-                //TODO: 优化此处逻辑
+                // TODO: 优化此处逻辑
                 context.go('/');
               }
             }
