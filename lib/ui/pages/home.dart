@@ -16,10 +16,18 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:convert';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/preference/extension.dart';
+import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
+import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home/route.dart';
+import 'package:http/http.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -37,6 +45,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _size = 0;
+
+  @override
+  void initState() {
+    // TODO: 完善初始化逻辑
+    //_initFeed();
+    super.initState();
+  }
+
+  void _initFeed() async {
+    final store = StoreProvider.of<AppState>(context, listen: false);
+    final serverUrl = store.state.sharedPreferences!
+        .getStringPreference(serverUrlPreference)!;
+
+    final client = Client();
+    final response = await client.get(Uri.parse(serverUrl).replace(
+      path: '/feed/origins',
+    ));
+
+    (jsonDecode(response.body) as Map<String, dynamic>);
+  }
 
   @override
   void didChangeDependencies() {

@@ -17,30 +17,21 @@
  */
 
 import 'package:hsas_h4o5f_app/data/feed.dart';
-import 'package:hsas_h4o5f_app/state/education_feed.dart';
-import 'package:hsas_h4o5f_app/state/feed.dart';
-import 'package:hsas_h4o5f_app/state/shared_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:redux/redux.dart';
 
-class AppState {
-  const AppState({
-    this.sharedPreferences,
-    this.educationFeed,
-    this.feed,
-  });
-
-  final SharedPreferences? sharedPreferences;
-  final Feed? educationFeed;
-  final AppFeed? feed;
+AppFeed _setFeed(
+  AppFeed? feed,
+  SetFeedAction action,
+) {
+  return action.feed;
 }
 
-AppState appReducer(AppState state, dynamic action) {
-  return AppState(
-    sharedPreferences: sharedPreferencesReducer(
-      state.sharedPreferences,
-      action,
-    ),
-    educationFeed: educationFeedReducer(state.educationFeed, action),
-    feed: feedReducer(state.feed, action),
-  );
+class SetFeedAction {
+  const SetFeedAction(this.feed);
+
+  final AppFeed feed;
 }
+
+final feedReducer = combineReducers<AppFeed?>([
+  TypedReducer<AppFeed?, SetFeedAction>(_setFeed),
+]);
