@@ -33,8 +33,10 @@ class AppState {
 
 AppState appReducer(AppState state, dynamic action) {
   return AppState(
-    sharedPreferences:
-        sharedPreferencesReducer(state.sharedPreferences, action),
+    sharedPreferences: sharedPreferencesReducer(
+      state.sharedPreferences,
+      action,
+    ),
     educationFeed: educationFeedReducer(state.educationFeed, action),
   );
 }

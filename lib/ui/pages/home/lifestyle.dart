@@ -44,7 +44,7 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
   @override
   void initState() {
     super.initState();
-    _fetchRssFeed();
+    _fetchFeed();
   }
 
   @override
@@ -142,7 +142,7 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
                       child: IconButton(
                         tooltip: AppLocalizations.of(context)!.refresh,
                         icon: const Icon(Icons.refresh),
-                        onPressed: _fetchRssFeed,
+                        onPressed: _fetchFeed,
                       ),
                     ),
                   ),
@@ -176,7 +176,7 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
     );
   }
 
-  void _fetchRssFeed() async {
+  void _fetchFeed() async {
     if (_fetching) return;
 
     if (!mounted) return;
@@ -185,9 +185,13 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
     final store = StoreProvider.of<AppState>(context, listen: false);
 
     final client = Client();
-    final response = await client.get(Uri.parse(
-      store.state.sharedPreferences!.getStringPreference(serverUrlPreference)!,
-    ).replace(path: '/feed', queryParameters: {'origin': 'zhihu'}));
+
+    final serverUrl = store.state.sharedPreferences!
+        .getStringPreference(serverUrlPreference)!;
+    final response = await client.get(Uri.parse(serverUrl).replace(
+      path: '/feed',
+      queryParameters: {'origin': 'zhihu'},
+    ));
 
     store.dispatch(SetEducationFeedAction(Feed.fromJson(response.body)));
 
