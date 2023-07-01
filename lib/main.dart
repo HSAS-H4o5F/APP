@@ -287,6 +287,6 @@ Future<Parse> initParse(String serverUrl) async {
   return await Parse().initialize(
     "smartCommunity",
     serverUri.toString(),
-    coreStore: await CoreStoreSembast.getInstance(),
+    coreStore: await CoreStoreSembastImp.getInstance(),
   );
 }
