@@ -20,7 +20,7 @@ dependencies:
   go_router: ^9.0.0
   http: ^0.13.5
   intl: any
-  parse_server_sdk_flutter: ^5.0.0
+  parse_server_sdk_flutter: 5.0.1
   redux: ^5.0.0
   shared_preferences: ^2.0.18
   sliver_tools: ^0.2.10
