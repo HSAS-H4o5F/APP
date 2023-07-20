@@ -52,8 +52,8 @@ void main(List<String> args) {
     initialState: const AppState(),
   );
 
-  if (kIsWeb && Uri.base.host == 'smartcommunity.xfqlittlefan.xyz') {
-    serverUrl = 'https://smartcommunity.xfqlittlefan.xyz';
+  if (kIsWeb) {
+    serverUrl = Uri.base.toString();
   }
 
   runApp(SmartCommunityApp(
