@@ -56,7 +56,7 @@ jobs:
       - name: Setup Flutter with cache
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          channel: master
           cache: true
 
       - if: matrix.os == 'ubuntu-latest'
