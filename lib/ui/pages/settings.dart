@@ -43,29 +43,52 @@ class _SettingsPageState extends State<SettingsPage> {
       body: StoreConnector<AppState, SharedPreferences?>(
         converter: (store) => store.state.sharedPreferences,
         builder: (context, prefs) {
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar.large(
-                title: Text(AppLocalizations.of(context)!.settings),
-              ),
-              SliverPinnedHeader(
-                child: AnimatedLinearProgressIndicator(
-                  visible: prefs == null,
+          return NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverOverlapAbsorber(
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: MultiSliver(
+                    children: [
+                      SliverAppBar.large(
+                        title: Text(AppLocalizations.of(context)!.settings),
+                      ),
+                      SliverToBoxAdapter(
+                        child: AnimatedLinearProgressIndicator(
+                          visible: prefs == null,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              if (prefs != null)
-                SliverList.list(
-                  children: [
-                    ServerUrlListTile(prefs: prefs),
-                  ].mapWithFirstLast((first, last, child) {
-                    return SafeArea(
-                      top: false,
-                      bottom: last,
-                      child: child,
+              ];
+            },
+            body: CustomScrollView(
+              slivers: [
+                Builder(
+                  builder: (context) {
+                    return SliverOverlapInjector(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context,
+                      ),
                     );
-                  }).toList(),
+                  },
                 ),
-            ],
+                if (prefs != null)
+                  SliverList.list(
+                    children: [
+                      ServerUrlListTile(prefs: prefs),
+                    ].mapWithFirstLast((first, last, child) {
+                      return SafeArea(
+                        top: false,
+                        bottom: last,
+                        child: child,
+                      );
+                    }).toList(),
+                  ),
+              ],
+            ),
           );
         },
       ),
