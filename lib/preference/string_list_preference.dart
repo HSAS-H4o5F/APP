@@ -32,9 +32,14 @@ extension StringListPreferencesExtension on SharedPreferences {
     StringListPreference preference,
     List<String> value,
   ) async {
-    if (preference.beforeSetValue != null &&
-        !preference.beforeSetValue!(value)) {
-      return false;
+    List<String> finalValue = value;
+    if (preference.beforeSetValue != null) {
+      final hookResult = preference.beforeSetValue!(value);
+      if (hookResult != null) {
+        finalValue = hookResult;
+      } else {
+        return false;
+      }
     }
     final result = await setStringList(preference.key, value);
     if (preference.onValueChanged != null && result) {

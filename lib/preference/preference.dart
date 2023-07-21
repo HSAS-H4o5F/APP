@@ -26,7 +26,7 @@ abstract class Preference<T> {
   });
 
   final String key;
-  final bool Function(T value)? beforeSetValue;
+  final T? Function(T value)? beforeSetValue;
   final Function(T value)? onValueChanged;
 }
 

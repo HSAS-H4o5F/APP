@@ -25,11 +25,15 @@ const serverUrlPreference = StringPreference(
   onValueChanged: initParse,
 );
 
-bool validateServerUrl(String value) {
+String? validateServerUrl(String value) {
   try {
-    Uri.parse(value);
-    return true;
+    final uri = Uri.parse(value);
+    return Uri(
+      scheme: uri.scheme,
+      host: uri.host,
+      port: uri.port,
+    ).toString();
   } catch (e) {
-    return false;
+    return null;
   }
 }

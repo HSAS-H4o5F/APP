@@ -136,7 +136,8 @@ class _ServerUrlListTileState extends State<ServerUrlListTile> {
                 autofocus: true,
                 onChanged: (value) {
                   setState(() {
-                    validated = validateServerUrl(controller.value.text);
+                    validated =
+                        validateServerUrl(controller.value.text) != null;
                   });
                 },
                 onSubmitted: (value) => submit(value),
