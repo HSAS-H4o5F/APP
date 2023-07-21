@@ -57,12 +57,103 @@
     </script>
     <!-- This script adds the flutter initialization JS code -->
     <script src="flutter.js" defer></script>
+
+    <style id="loading-style">
+        * {
+            transition: all 0.5s;
+        }
+
+        :root {
+            --foreground-color: #072d46;
+            color-scheme: light only;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        #loading {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            transition: visibility 0.5s, opacity 0.5s;
+        }
+
+        #loading.hidden {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        #logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 30px;
+        }
+
+        .logo-1 {
+            fill: var(--foreground-color);
+        }
+
+        .logo-2 {
+            fill: #1fb0a9;
+        }
+
+        #progress {
+            width: 50%;
+            height: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(8, 1, 13, 0.15);
+        }
+
+        #progress-bar {
+            width: 5%;
+            height: 100%;
+            background-color: var(--foreground-color);
+            border-radius: 10px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --foreground-color: #f7fef2;
+            }
+
+            #progress {
+                background-color: black;
+            }
+        }
+    </style>
+
+    <style>
+        :root {
+            --color-light: #f7fef2;
+            --color-dark: #08010d;
+        }
+
+        body {
+            background-color: var(--color-light);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: var(--color-dark);
+            }
+        }
+    </style>
 </head>
-<body style="overflow: hidden">
+<body>
 <script>
     window.addEventListener('load', function (ev) {
-        let loadingText = document.getElementById('loading-text');
-        loadingText.innerText = '载入中：加载入口点…';
+        let progressBar = document.getElementById('progress-bar');
 
         // Download main.dart.js
         _flutter.loader.loadEntrypoint({
@@ -70,21 +161,53 @@
                 serviceWorkerVersion: serviceWorkerVersion,
             },
             onEntrypointLoaded: async function (engineInitializer) {
-                loadingText.innerText = '载入中：初始化引擎…';
+                progressBar.style.width = '50%';
                 let appRunner = await engineInitializer.initializeEngine();
 
-                loadingText.innerText = '载入中：启动应用…';
+                progressBar.style.width = '95%';
                 await appRunner.runApp();
 
-                let loading = document.getElementById('loading');
-                loading.remove();
+                progressBar.style.width = '100%';
+                document.getElementById('loading').classList.add('hidden');
+                setTimeout(() => {
+                    document.getElementById('loading').remove();
+                    document.getElementById('loading-style').remove();
+                }, 500);
             }
         });
     });
 </script>
-<div id="loading"
-     style="width: 100%; height: 100%; position: absolute; display: flex; justify-content: center; align-items: center">
-    <span id="loading-text">载入中</span>
+<div id="loading">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="logo">
+        <polygon
+                class="logo-1"
+                points="122.33259 359.71968 112.39358 342.50462 104.36878 356.40381 87.92348 368.35201 94.20513 387.68449 114.53243 387.68449 120.81408 368.35201 118.37283 366.57839 122.33259 359.71968"
+        />
+        <polygon
+                class="logo-2"
+                points="161.09526 318.0009 137.62293 318.0009 125.88676 338.32947 137.62293 358.65803 161.09526 358.65803 172.83142 338.32947 161.09526 318.0009"
+        />
+        <polygon
+                class="logo-1"
+                points="347.5855 348.15184 331.54263 332.10876 331.54263 378.25802 319.87708 386.73358 327.3969 409.87725 351.73145 409.87725 359.25127 386.73358 347.5855 378.25802 347.5855 348.15184"
+        />
+        <path class="logo-2"
+              d="M361.61414,322.73231v-111.05563h-35.16268v42.19518l21.13426,.1097v54.72212l-19.72419,19.72398,19.72398,19.72419,19.72419-19.72398-5.69555-5.69555Zm-23.80814-80.50793v-18.60706h13.03948v18.60706h-13.03948Z"
+        />
+        <rect class="logo-1" x="299.67649" y="183.76636" width="16.40925" height="183.72498"/>
+        <polygon class="logo-1"
+                 points="282.68124 352.56825 282.68124 200.70713 223.78397 159.73856 223.78376 241.67485 223.78397 241.67464 223.78397 364.04825 241.65825 364.04825 241.65825 229.24185 266.85797 211.71346 266.85797 349.431 252.92348 359.55493 260.4433 382.69859 284.77786 382.69859 292.29768 359.55493 282.68124 352.56825"
+        />
+        <path class="logo-1"
+              d="M214.09104,380.74572l-4.51895-4.08479V217.17092h-49.8869v85.26939h29.04999v55.38534l-7.39626-6.68576-7.04237,12.19785,28.40905,25.6799-6.57522,4.77722,7.93948,24.43542h25.69293l7.93948-24.43542-20.78605-15.10184-2.82519,2.05269Zm-27.81413-101.16117h-15.60346v-19.1196h15.60346v19.1196Zm0-29.00922h-15.60346v-17.80094h15.60346v17.80094Z"
+        />
+        <polygon class="logo-1"
+                 points="398.78581 357.93135 398.78581 341.07984 398.78581 176.20698 256 93.76971 113.21419 176.20698 113.21419 332.73289 129.67105 304.22886 130.42925 304.22886 130.42925 186.14599 256 113.64772 381.57075 186.14599 381.57075 331.14084 381.57075 351.01927 381.57075 370.43875 379.64813 371.83558 386.95802 394.33347 410.61359 394.33347 417.92348 371.83558 398.78581 357.93135"
+        />
+    </svg>
+    <div id="progress">
+        <div id="progress-bar"></div>
+    </div>
 </div>
 </body>
 </html>
