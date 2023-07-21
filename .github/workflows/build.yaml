@@ -16,11 +16,12 @@ jobs:
         include:
           - platform: Android
             os: ubuntu-latest
-            command: flutter build apk --split-per-abi
+            command: |
+              flutter build apk --split-per-abi --obfuscate
             output: build/app/outputs/flutter-apk/
           - platform: Linux
             os: ubuntu-latest
-            command: flutter build linux
+            command: flutter build linux --obfuscate
             output: build/linux/x64/release/bundle/
           - platform: Web
             os: ubuntu-latest
@@ -28,7 +29,7 @@ jobs:
             output: build/web/
           - platform: Windows
             os: windows-latest
-            command: flutter build windows
+            command: flutter build windows --obfuscate
             output: build/windows/runner/Release/
 
     name: Build ${{ matrix.platform }} app
