@@ -36,27 +36,28 @@
 
     <meta charset="UTF-8">
     <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-    <meta name="description"
-          content="A smart community application developed by the H4o5F team from the High School Affiliated to SUSTech.">
+    <meta content="A smart community application developed by the H4o5F team from the High School Affiliated to SUSTech."
+          name="description">
+    <meta content="initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <!-- iOS meta tags & icons -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Smart Community">
-    <link rel="apple-touch-icon" href="favicon.ico">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="Smart Community" name="apple-mobile-web-app-title">
+    <link href="favicon.ico" rel="apple-touch-icon">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="favicon.ico"/>
+    <link href="favicon.ico" rel="icon" type="image/png"/>
 
     <title>HSAS Smart Community</title>
-    <link rel="manifest" href="manifest.json">
+    <link href="manifest.json" rel="manifest">
 
     <script>
         // The value below is injected by flutter build, do not touch.
         var serviceWorkerVersion = null;
     </script>
     <!-- This script adds the flutter initialization JS code -->
-    <script src="flutter.js" defer></script>
+    <script defer src="flutter.js"></script>
 
     <style id="loading-style">
         * {
@@ -65,6 +66,7 @@
 
         :root {
             --foreground-color: #072d46;
+            --progress-bar-height: 3vh;
             color-scheme: light only;
         }
 
@@ -86,17 +88,19 @@
             right: 0;
             bottom: 0;
             transition: visibility 0.5s, opacity 0.5s;
-        }
-
-        #loading.hidden {
             visibility: hidden;
             opacity: 0;
         }
 
+        #loading.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
         #logo {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 30px;
+            width: max(15vw, 15vh);
+            height: max(15vw, 15vh);
+            margin-bottom: 10vh;
         }
 
         .logo-1 {
@@ -108,18 +112,21 @@
         }
 
         #progress {
-            width: 50%;
-            height: 20px;
+            width: 50vw;
+            height: var(--progress-bar-height);
             background-color: white;
-            border-radius: 10px;
+            border-radius: calc(var(--progress-bar-height) / 2);
+            overflow: hidden;
             box-shadow: 0 0 25px rgba(8, 1, 13, 0.15);
         }
 
         #progress-bar {
-            width: 5%;
+            width: 100%;
             height: 100%;
             background-color: var(--foreground-color);
-            border-radius: 10px;
+            border-radius: calc(var(--progress-bar-height) / 2);
+            position: relative;
+            right: 95%;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -161,14 +168,14 @@
                 serviceWorkerVersion: serviceWorkerVersion,
             },
             onEntrypointLoaded: async function (engineInitializer) {
-                progressBar.style.width = '50%';
+                progressBar.style.right = '50%';
                 let appRunner = await engineInitializer.initializeEngine();
 
-                progressBar.style.width = '95%';
+                progressBar.style.right = '5%';
                 await appRunner.runApp();
 
-                progressBar.style.width = '100%';
-                document.getElementById('loading').classList.add('hidden');
+                progressBar.style.right = '0%';
+                document.getElementById('loading').classList.remove('visible');
                 setTimeout(() => {
                     document.getElementById('loading').remove();
                     document.getElementById('loading-style').remove();
@@ -177,8 +184,8 @@
         });
     });
 </script>
-<div id="loading">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="logo">
+<div class="visible" id="loading">
+    <svg id="logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
         <polygon
                 class="logo-1"
                 points="122.33259 359.71968 112.39358 342.50462 104.36878 356.40381 87.92348 368.35201 94.20513 387.68449 114.53243 387.68449 120.81408 368.35201 118.37283 366.57839 122.33259 359.71968"
@@ -194,7 +201,7 @@
         <path class="logo-2"
               d="M361.61414,322.73231v-111.05563h-35.16268v42.19518l21.13426,.1097v54.72212l-19.72419,19.72398,19.72398,19.72419,19.72419-19.72398-5.69555-5.69555Zm-23.80814-80.50793v-18.60706h13.03948v18.60706h-13.03948Z"
         />
-        <rect class="logo-1" x="299.67649" y="183.76636" width="16.40925" height="183.72498"/>
+        <rect class="logo-1" height="183.72498" width="16.40925" x="299.67649" y="183.76636"/>
         <polygon class="logo-1"
                  points="282.68124 352.56825 282.68124 200.70713 223.78397 159.73856 223.78376 241.67485 223.78397 241.67464 223.78397 364.04825 241.65825 364.04825 241.65825 229.24185 266.85797 211.71346 266.85797 349.431 252.92348 359.55493 260.4433 382.69859 284.77786 382.69859 292.29768 359.55493 282.68124 352.56825"
         />
