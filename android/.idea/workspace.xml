@@ -9,17 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa057d6f-0c38-4951-ac85-4eaa8a3616d4" name="Changes" comment="chore(Android): 降级 AGP">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/debug/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/debug/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/cn/edu/hsas/h4o5f_app/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/cn/edu/hsas/h4o5f_app/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-en-rUS/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-en-rUS/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-v27/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-v27/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/profile/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/profile/AndroidManifest.xml" afterDir="false" />
-    </list>
+    <list default="true" id="aa057d6f-0c38-4951-ac85-4eaa8a3616d4" name="Changes" comment="fix(Android): 使用了高版本特性" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -75,6 +65,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
+    "last_directory_selection": "E:/Projects/SmartCommunity/hsas_h4o5f_app/android/app/src/main/res/mipmap",
     "last_opened_file_path": "E:/Projects/SmartCommunity/hsas_h4o5f_app/.idea/copyright/SmartCommunity.xml",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.17",
@@ -179,13 +170,39 @@
       <option name="project" value="LOCAL" />
       <updated>1689915974614</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fix(Android): 引用了已删除的资源">
+      <option name="closed" value="true" />
+      <created>1689917413024</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1689917413024</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix(Android): 使用了高版本特性">
+      <option name="closed" value="true" />
+      <created>1689919058494</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1689919058494</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fix(Android): 使用了高版本特性">
+      <option name="closed" value="true" />
+      <created>1689919554660</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1689919554660</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <MESSAGE value="chore: 更新 SDK" />
     <MESSAGE value="chore(Android): 降级 AGP" />
-    <option name="LAST_COMMIT_MESSAGE" value="chore(Android): 降级 AGP" />
+    <MESSAGE value="fix(Android): 引用了已删除的资源" />
+    <MESSAGE value="fix(Android): 使用了高版本特性" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(Android): 使用了高版本特性" />
   </component>
 </project>
