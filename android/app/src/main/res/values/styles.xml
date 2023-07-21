@@ -24,7 +24,7 @@
     <style name="LaunchTheme" parent="DayNightBase">
         <!-- Show a splash screen on the activity. Automatically removed when
              the Flutter engine draws its first frame -->
-        <item name="android:windowBackground">@color/ic_launcher_background_color</item>
+        <item name="android:windowBackground">@color/ic_launcher_background</item>
     </style>
 
     <style name="BaseTheme" parent="DayNightBase">
