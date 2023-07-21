@@ -22,10 +22,10 @@ jobs:
             os: ubuntu-latest
             command: flutter build linux
             output: build/linux/x64/release/bundle/
-          - platform: macOS
-            os: macos-latest
-            command: flutter build macos
-            output: build/macos/Build/Products/Release/Smart Community.app/
+#          - platform: macOS
+#            os: macos-latest
+#            command: flutter build macos
+#            output: build/macos/Build/Products/Release/Smart Community.app/
           - platform: Web
             os: ubuntu-latest
             command: flutter build web
