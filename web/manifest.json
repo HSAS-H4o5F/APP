@@ -2,7 +2,7 @@
     "name": "HSAS Smart Community",
     "short_name": "Smart Community",
     "start_url": ".",
-    "display": "standalone",
+    "display": "fullscreen",
     "background_color": "#F7FEF2",
     "theme_color": "#F7FEF2",
     "description": "A smart community application developed by the H4o5F team from the High School Affiliated to SUSTech.",
