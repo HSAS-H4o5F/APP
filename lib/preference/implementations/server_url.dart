@@ -27,8 +27,8 @@ const serverUrlPreference = StringPreference(
 
 bool validateServerUrl(String value) {
   try {
-    final uri = Uri.parse(value);
-    return uri.hasEmptyPath;
+    Uri.parse(value);
+    return true;
   } catch (e) {
     return false;
   }
