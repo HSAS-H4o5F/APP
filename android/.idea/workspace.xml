@@ -9,7 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa057d6f-0c38-4951-ac85-4eaa8a3616d4" name="Changes" comment="fix(Android): 使用了高版本特性" />
+    <list default="true" id="aa057d6f-0c38-4951-ac85-4eaa8a3616d4" name="Changes" comment="feat(Android): 支持预测性返回手势" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -194,7 +194,23 @@
       <option name="project" value="LOCAL" />
       <updated>1689919554660</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="feat(Android): 添加单色图标">
+      <option name="closed" value="true" />
+      <created>1689920689923</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1689920689923</updated>
+    </task>
+    <task id="LOCAL-00007" summary="feat(Android): 支持预测性返回手势">
+      <option name="closed" value="true" />
+      <created>1689920908146</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1689920908146</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -203,6 +219,8 @@
     <MESSAGE value="chore(Android): 降级 AGP" />
     <MESSAGE value="fix(Android): 引用了已删除的资源" />
     <MESSAGE value="fix(Android): 使用了高版本特性" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(Android): 使用了高版本特性" />
+    <MESSAGE value="feat(Android): 添加单色图标" />
+    <MESSAGE value="feat(Android): 支持预测性返回手势" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(Android): 支持预测性返回手势" />
   </component>
 </project>
