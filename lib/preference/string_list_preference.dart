@@ -41,9 +41,9 @@ extension StringListPreferencesExtension on SharedPreferences {
         return false;
       }
     }
-    final result = await setStringList(preference.key, value);
+    final result = await setStringList(preference.key, finalValue);
     if (preference.onValueChanged != null && result) {
-      preference.onValueChanged!(value);
+      preference.onValueChanged!(finalValue);
     }
     return result;
   }
