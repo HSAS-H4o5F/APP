@@ -86,8 +86,10 @@ jobs:
           cd android/app
           echo ${{ secrets.KEY }} | base64 --decode > key.jks
 
-      - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Pre-build
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          dart run vector_graphics_compiler --input-dir assets/vectors
 
       - name: Build ${{ matrix.platform }} app
         run: ${{ matrix.command }} -v

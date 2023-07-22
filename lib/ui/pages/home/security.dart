@@ -100,7 +100,7 @@ class _HomePageSecurityState extends State<HomePageSecurity> {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ],

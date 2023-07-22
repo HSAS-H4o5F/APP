@@ -24,6 +24,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/imgs/logo.dart';
 import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/preference/preference.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
@@ -247,9 +248,12 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return const Scaffold(
+                      return Scaffold(
                         body: Center(
-                          child: CircularProgressIndicator(),
+                          child: LogoWithText(
+                            size: 512,
+                            fill: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                       );
                     case ConnectionState.done:
