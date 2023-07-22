@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
             NavigationRail(
               extended: _size == 2,
               destinations: HomePageRoute.routes.entries
-                  .map((entry) => entry.value.getDestinations(context).item1)
+                  .map((entry) => entry.value.getDestinations(context).$1)
                   .toList(),
               selectedIndex: HomePageRoute.routes.entries
                   .toList()
@@ -131,8 +131,7 @@ class _HomePageState extends State<HomePage> {
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: NavigationBar(
                   destinations: HomePageRoute.routes.entries
-                      .map(
-                          (entry) => entry.value.getDestinations(context).item2)
+                      .map((entry) => entry.value.getDestinations(context).$2)
                       .toList(),
                   selectedIndex: HomePageRoute.routes.entries
                       .toList()

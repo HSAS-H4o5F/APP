@@ -1,6 +1,6 @@
 name: hsas_h4o5f_app
 description: A smart community application developed by the H4o5F team from the High School Affiliated to SUSTech.
-version: 1.1.16+19
+version: 1.1.17+20
 
 environment:
   sdk: '>=3.0.0'
@@ -13,7 +13,6 @@ dependencies:
   dynamic_color: ^1.6.2
   flutter:
     sdk: flutter
-  flutter_html: ^3.0.0-alpha.6
   flutter_localizations:
     sdk: flutter
   flutter_redux: ^0.10.0
@@ -24,7 +23,6 @@ dependencies:
   redux: ^5.0.0
   shared_preferences: ^2.0.18
   sliver_tools: ^0.2.10
-  tuple: ^2.0.1
   url_launcher: ^6.1.10
 
 dev_dependencies:
