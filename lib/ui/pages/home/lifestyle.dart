@@ -281,16 +281,13 @@ class LifeStyleCard extends StatelessWidget {
               children: [
                 Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 8,
+                  spacing: 16,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Icon(icon, size: 48),
                     Text(
                       title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineLarge
-                          ?.copyWith(letterSpacing: 16),
+                      style: Theme.of(context).textTheme.headlineLarge,
                       textAlign: TextAlign.center,
                     ),
                   ],
