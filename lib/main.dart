@@ -182,9 +182,11 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(
-                      opacity: CurveTween(curve: Curves.easeInOut)
-                          .animate(animation),
-                      child: child,
+                      opacity: animation,
+                      child: FadeTransition(
+                        opacity: ReverseAnimation(secondaryAnimation),
+                        child: child,
+                      ),
                     );
                   },
                 );
