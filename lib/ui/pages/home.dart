@@ -18,6 +18,7 @@
 
 import 'dart:core';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -125,18 +126,26 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: _size == 0
-          ? NavigationBar(
-              destinations: HomePageRoute.routes.entries
-                  .map((entry) => entry.value.getDestinations(context).item2)
-                  .toList(),
-              selectedIndex: HomePageRoute.routes.entries
-                  .toList()
-                  .indexWhere((entry) => entry.key == widget.location),
-              onDestinationSelected: (index) => context.go(
-                HomePageRoute.routes.entries.toList()[index].key,
+          ? ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: NavigationBar(
+                  destinations: HomePageRoute.routes.entries
+                      .map(
+                          (entry) => entry.value.getDestinations(context).item2)
+                      .toList(),
+                  selectedIndex: HomePageRoute.routes.entries
+                      .toList()
+                      .indexWhere((entry) => entry.key == widget.location),
+                  onDestinationSelected: (index) => context.go(
+                    HomePageRoute.routes.entries.toList()[index].key,
+                  ),
+                  backgroundColor: Colors.transparent,
+                ),
               ),
             )
           : null,
+      extendBody: true,
     );
   }
 }
