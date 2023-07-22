@@ -31,11 +31,13 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(slivers: [
-        SliverBlurredLargeAppBar(
-          title: Text(AppLocalizations.of(context)!.about),
-        )
-      ]),
+      body: CustomScrollView(
+        slivers: [
+          SliverBlurredLargeAppBar(
+            title: Text(AppLocalizations.of(context)!.about),
+          )
+        ],
+      ),
     );
   }
 }
