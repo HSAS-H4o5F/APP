@@ -29,6 +29,7 @@ import 'package:hsas_h4o5f_app/preference/preference.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/state/shared_preferences.dart';
+import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home/fitness_equipments.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home/guide_dogs.dart';
@@ -225,11 +226,11 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
           return MaterialApp.router(
             onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
             theme: ThemeData(
-              colorScheme: light,
+              colorScheme: light ?? lightColorScheme,
               useMaterial3: true,
             ),
             darkTheme: ThemeData(
-              colorScheme: dark,
+              colorScheme: dark ?? darkColorScheme,
               useMaterial3: true,
             ),
             themeMode: ThemeMode.system,
