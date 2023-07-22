@@ -46,20 +46,14 @@ void main(List<String> args) {
   final parsedArgs =
       (ArgParser()..addOption('serverUrl', abbr: 's')).parse(args);
 
-  String? serverUrl = parsedArgs['serverUrl'] as String?;
-
   final store = Store<AppState>(
     appReducer,
     initialState: const AppState(),
   );
 
-  if (kIsWeb) {
-    serverUrl = Uri.base.toString();
-  }
-
   runApp(SmartCommunityApp(
     store: store,
-    serverUrl: serverUrl,
+    serverUrl: parsedArgs['serverUrl'] as String?,
   ));
 }
 
@@ -95,6 +89,13 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
       prefs.setStringPreference(
         serverUrlPreference,
         widget.serverUrl!,
+      );
+    }
+
+    if (!prefs.containsPreference(serverUrlPreference) && kIsWeb) {
+      prefs.setStringPreference(
+        serverUrlPreference,
+        Uri.base.toString(),
       );
     }
 
@@ -233,7 +234,6 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
               colorScheme: dark ?? darkColorScheme,
               useMaterial3: true,
             ),
-            themeMode: ThemeMode.system,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: router,
