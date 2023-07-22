@@ -136,7 +136,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
               return '/login';
             }
 
-            if (state.location == '/home') {
+            if (state.uri.path == '/home') {
               return HomePageRoute.routes.keys.first;
             }
 
@@ -168,7 +168,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
         ShellRoute(
           navigatorKey: _shellRouteNavigatorKey,
           builder: (context, state, child) => HomePage(
-            location: state.location,
+            location: state.uri.path,
             child: child,
           ),
           routes: HomePageRoute.routes.entries.map((entry) {
