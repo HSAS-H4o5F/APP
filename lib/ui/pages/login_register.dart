@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/text_form_field.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
@@ -51,7 +52,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar.large(
+          SliverBlurredLargeAppBar(
             title: Text(widget.type == LoginRegisterPageType.login
                 ? AppLocalizations.of(context)!.login
                 : AppLocalizations.of(context)!.register),

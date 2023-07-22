@@ -24,6 +24,7 @@ import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/animated_linear_progress_indicator.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
         builder: (context, prefs) {
           return CustomScrollView(
             slivers: [
-              SliverAppBar.large(
+              SliverBlurredLargeAppBar(
                 title: Text(AppLocalizations.of(context)!.settings),
               ),
               SliverPinnedHeader(

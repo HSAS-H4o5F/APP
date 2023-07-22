@@ -20,6 +20,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
 
 class HomePageSecurity extends StatefulWidget {
@@ -38,7 +39,7 @@ class _HomePageSecurityState extends State<HomePageSecurity> {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar.large(
+        SliverBlurredLargeAppBar(
           title: Text(AppLocalizations.of(context)!.security),
         ),
         SliverList.list(

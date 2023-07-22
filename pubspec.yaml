@@ -1,6 +1,6 @@
 name: hsas_h4o5f_app
 description: A smart community application developed by the H4o5F team from the High School Affiliated to SUSTech.
-version: 1.1.14+17
+version: 1.1.15+18
 
 environment:
   sdk: '>=3.0.0'

@@ -16,8 +16,6 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
@@ -27,6 +25,7 @@ import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/state/education_feed.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
 import 'package:http/http.dart';
@@ -53,22 +52,8 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverStack(
-          children: [
-            SliverAppBar.large(
-              flexibleSpace: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(),
-                ),
-              ),
-              backgroundColor: Colors.transparent,
-            ),
-            SliverAppBar.large(
-              title: Text(AppLocalizations.of(context)!.lifestyle),
-              backgroundColor: Colors.transparent,
-            ),
-          ],
+        SliverBlurredLargeAppBar(
+          title: Text(AppLocalizations.of(context)!.lifestyle),
         ),
         SliverToBoxAdapter(
           child: SafeArea(
