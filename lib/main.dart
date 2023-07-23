@@ -74,22 +74,22 @@ class SmartCommunityApp extends StatefulWidget {
   State<SmartCommunityApp> createState() => _SmartCommunityAppState();
 }
 
+// TODO: 提取组件
 class _SmartCommunityAppState extends State<SmartCommunityApp>
     with TickerProviderStateMixin {
   final _globalNavigatorKey = GlobalKey<NavigatorState>();
   final _shellRouteNavigatorKey = GlobalKey<NavigatorState>();
 
+  late final Future<void> _initFuture;
   late final AnimationController _progressIndicatorController;
   late final AnimationController _pageTransitionController;
+  late final AnimationStatusListener _pageTransitionStatusListener;
   late final GoRouter router;
 
-  Future<void> _init(BuildContext context) async {
+  bool _completed = false;
+
+  Future<void> _init() async {
     final prefs = await SharedPreferences.getInstance();
-
-    if (!mounted) return;
-
-    StoreProvider.of<AppState>(context)
-        .dispatch(SetSharedPreferencesAction(prefs));
 
     if (widget.serverUrl != null) {
       prefs.setStringPreference(
@@ -128,14 +128,24 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
     );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+    _pageTransitionStatusListener = (status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _completed = true;
+        });
+        _pageTransitionController
+            .removeStatusListener(_pageTransitionStatusListener);
+      }
+    };
+
     _progressIndicatorController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     )..animateTo(0.9);
     _pageTransitionController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
+      duration: const Duration(milliseconds: 1000),
+    )..addStatusListener(_pageTransitionStatusListener);
     router = GoRouter(
       navigatorKey: _globalNavigatorKey,
       routes: [
@@ -199,9 +209,11 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(
-                      opacity: animation,
+                      opacity:
+                          animation.drive(CurveTween(curve: Curves.easeInOut)),
                       child: FadeTransition(
-                        opacity: ReverseAnimation(secondaryAnimation),
+                        opacity: ReverseAnimation(secondaryAnimation)
+                            .drive(CurveTween(curve: Curves.easeInOut)),
                         child: child,
                       ),
                     );
@@ -234,6 +246,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
       initialLocation: '/',
     );
 
+    _initFuture = _init();
     super.initState();
   }
 
@@ -257,107 +270,132 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
             supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: router,
             builder: (context, child) {
-              return Stack(
-                children: [
-                  FutureBuilder(
-                    future: _init(context),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.none:
-                        case ConnectionState.waiting:
-                        case ConnectionState.active:
-                          return const SizedBox();
-                        case ConnectionState.done:
-                          if (snapshot.hasError) {
-                            return Scaffold(
-                              body: Center(
-                                child: SingleChildScrollView(
-                                  child: Text(
-                                    snapshot.error.toString(),
-                                    style: DefaultTextStyle.of(context)
-                                        .style
-                                        .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return child ?? const SizedBox();
-                          }
-                      }
-                    },
-                  ),
-                  FadeTransition(
-                    opacity: ReverseAnimation(_pageTransitionController),
-                    child: Scaffold(
-                      body: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return SizedBox(
-                            width: constraints.maxWidth,
-                            height: constraints.maxHeight,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Logo(
-                                  size: max(
-                                        constraints.maxWidth,
-                                        constraints.maxHeight,
-                                      ) *
-                                      0.15,
-                                  fill: Theme.of(context).colorScheme.primary,
-                                ),
-                                SizedBox(
-                                  height: constraints.maxHeight * 0.1,
-                                ),
-                                ClipPath.shape(
-                                  shape: const StadiumBorder(),
-                                  child: Container(
-                                    width: constraints.maxWidth * 0.5,
-                                    height: constraints.maxWidth * 0.02,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceVariant,
-                                    child: SlideTransition(
-                                      position: Tween(
-                                        begin: const Offset(-1, 0),
-                                        end: const Offset(0, 0),
-                                      ).animate(
-                                        CurvedAnimation(
-                                          parent: _progressIndicatorController,
-                                          curve: Curves.easeInOut,
-                                        ),
-                                      ),
-                                      child: ClipPath.shape(
-                                        shape: const StadiumBorder(),
-                                        child: Container(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
+              return StoreConnector<AppState, void>(
+                converter: (store) {},
+                onInitialBuild: (_) async {
+                  StoreProvider.of<AppState>(context).dispatch(
+                      SetSharedPreferencesAction(
+                          await SharedPreferences.getInstance()));
+                },
+                builder: (context, _) {
+                  return Stack(
+                    children: [
+                      FutureBuilder(
+                        future: _initFuture,
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.none:
+                            case ConnectionState.waiting:
+                            case ConnectionState.active:
+                              return const SizedBox();
+                            case ConnectionState.done:
+                              if (snapshot.hasError) {
+                                return Scaffold(
+                                  body: Center(
+                                    child: SingleChildScrollView(
+                                      child: Text(
+                                        snapshot.error.toString(),
+                                        style: DefaultTextStyle.of(context)
+                                            .style
+                                            .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
+                                );
+                              } else {
+                                return child ?? const SizedBox();
+                              }
+                          }
                         },
                       ),
-                    ),
-                  ),
-                ],
+                      Visibility(
+                        visible: !_completed,
+                        child: FadeTransition(
+                          opacity: ReverseAnimation(_pageTransitionController)
+                              .drive(CurveTween(curve: Curves.easeInOut)),
+                          child: Scaffold(
+                            body: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SizedBox(
+                                  width: constraints.maxWidth,
+                                  height: constraints.maxHeight,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Logo(
+                                        size: max(
+                                              constraints.maxWidth,
+                                              constraints.maxHeight,
+                                            ) *
+                                            0.15,
+                                        fill: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                      SizedBox(
+                                        height: constraints.maxHeight * 0.1,
+                                      ),
+                                      ClipPath.shape(
+                                        shape: const StadiumBorder(),
+                                        child: Container(
+                                          width: constraints.maxWidth * 0.5,
+                                          height: constraints.maxWidth * 0.02,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceVariant,
+                                          child: SlideTransition(
+                                            position: Tween(
+                                              begin: const Offset(-1, 0),
+                                              end: const Offset(0, 0),
+                                            ).animate(
+                                              CurvedAnimation(
+                                                parent:
+                                                    _progressIndicatorController,
+                                                curve: Curves.easeInOut,
+                                              ),
+                                            ),
+                                            child: ClipPath.shape(
+                                              shape: const StadiumBorder(),
+                                              child: Container(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               );
             },
           );
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _progressIndicatorController.dispose();
+    _pageTransitionController.dispose();
+    super.dispose();
   }
 }
 
