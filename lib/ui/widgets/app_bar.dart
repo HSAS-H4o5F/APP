@@ -51,7 +51,8 @@ class SliverBlurredLargeAppBar extends StatelessWidget {
           title: title,
           actions: actions,
           surfaceTintColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
+          backgroundColor:
+              Theme.of(context).colorScheme.background.withOpacity(0),
         ),
       ],
     );
