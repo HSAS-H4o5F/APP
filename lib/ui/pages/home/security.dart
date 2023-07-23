@@ -42,66 +42,64 @@ class _HomePageSecurityState extends State<HomePageSecurity> {
         SliverBlurredLargeAppBar(
           title: Text(AppLocalizations.of(context)!.security),
         ),
-        SliverList.list(
-          children: [
-            DirectionalSafeArea(
-              start: false,
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          AppLocalizations.of(context)!.recentRecords,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
+        SliverToBoxAdapter(
+          child: DirectionalSafeArea(
+            start: false,
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        AppLocalizations.of(context)!.recentRecords,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      ListTile(
-                        title: Text(_records.first.name),
-                        subtitle: Text(
-                          '${_records.first.time}\n${_records.first.type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
-                        ),
+                    ),
+                    ListTile(
+                      title: Text(_records.first.name),
+                      subtitle: Text(
+                        '${_records.first.time}\n${_records.first.type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
                       ),
-                      ExpansionPanelList(
-                        expansionCallback: (panelIndex, isExpanded) {
-                          setState(() {
-                            _moreRecordsExpanded = !isExpanded;
-                          });
-                        },
-                        children: [
-                          ExpansionPanel(
-                            headerBuilder: (context, isExpanded) {
-                              return ListTile(
-                                title: Text(AppLocalizations.of(context)!.more),
-                              );
-                            },
-                            body: Column(
-                              children: [
-                                for (var i = 1; i < _records.length; i++)
-                                  ListTile(
-                                    title: Text(_records[i].name),
-                                    subtitle: Text(
-                                      '${_records[i].time}\n${_records[i].type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
-                                    ),
+                    ),
+                    ExpansionPanelList(
+                      expansionCallback: (panelIndex, isExpanded) {
+                        setState(() {
+                          _moreRecordsExpanded = !isExpanded;
+                        });
+                      },
+                      children: [
+                        ExpansionPanel(
+                          headerBuilder: (context, isExpanded) {
+                            return ListTile(
+                              title: Text(AppLocalizations.of(context)!.more),
+                            );
+                          },
+                          body: Column(
+                            children: [
+                              for (var i = 1; i < _records.length; i++)
+                                ListTile(
+                                  title: Text(_records[i].name),
+                                  subtitle: Text(
+                                    '${_records[i].time}\n${_records[i].type == _RecordType.enter ? AppLocalizations.of(context)!.enter : AppLocalizations.of(context)!.exit}',
                                   ),
-                              ],
-                            ),
-                            isExpanded: _moreRecordsExpanded,
-                            backgroundColor: Colors.transparent,
+                                ),
+                            ],
                           ),
-                        ],
-                        elevation: 0,
-                      )
-                    ],
-                  ),
+                          isExpanded: _moreRecordsExpanded,
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ],
+                      elevation: 0,
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ],
     );
