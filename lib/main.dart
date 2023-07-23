@@ -135,6 +135,9 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
         });
         _pageTransitionController
             .removeStatusListener(_pageTransitionStatusListener);
+
+        _progressIndicatorController.dispose();
+        _pageTransitionController.dispose();
       }
     };
 
@@ -313,9 +316,8 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
                           }
                         },
                       ),
-                      Visibility(
-                        visible: !_completed,
-                        child: FadeTransition(
+                      if (!_completed)
+                        FadeTransition(
                           opacity: ReverseAnimation(_pageTransitionController)
                               .drive(CurveTween(curve: Curves.easeInOut)),
                           child: Scaffold(
@@ -379,7 +381,6 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
                             ),
                           ),
                         ),
-                      ),
                     ],
                   );
                 },
@@ -389,13 +390,6 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
         },
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _progressIndicatorController.dispose();
-    _pageTransitionController.dispose();
-    super.dispose();
   }
 }
 
