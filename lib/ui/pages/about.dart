@@ -35,7 +35,7 @@ class _AboutPageState extends State<AboutPage> {
         slivers: [
           SliverBlurredLargeAppBar(
             title: Text(AppLocalizations.of(context)!.about),
-          )
+          ),
         ],
       ),
     );
