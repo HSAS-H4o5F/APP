@@ -66,7 +66,7 @@
 
         :root {
             --foreground-color: #072d46;
-            --progress-bar-height: 3vh;
+            --progress-bar-height: 2vw;
             color-scheme: light only;
         }
 
@@ -126,7 +126,7 @@
             background-color: var(--foreground-color);
             border-radius: calc(var(--progress-bar-height) / 2);
             position: relative;
-            right: 95%;
+            right: 90%;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -171,10 +171,9 @@
                 progressBar.style.right = '50%';
                 let appRunner = await engineInitializer.initializeEngine();
 
-                progressBar.style.right = '5%';
+                progressBar.style.right = '10%';
                 await appRunner.runApp();
 
-                progressBar.style.right = '0%';
                 document.getElementById('loading').classList.remove('visible');
                 setTimeout(() => {
                     document.getElementById('loading').remove();

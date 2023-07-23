@@ -16,29 +16,26 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:vector_graphics/vector_graphics.dart';
+part of '../vectors.dart';
 
-class LogoWithText extends StatelessWidget {
+class Logo extends Vector {
+  const Logo({
+    super.key,
+    super.size,
+    super.fill,
+  }) : super(
+          assetName: 'assets/vectors/logo.svg.vec',
+          semanticsLabel: 'H4o5F',
+        );
+}
+
+class LogoWithText extends Vector {
   const LogoWithText({
-    Key? key,
-    this.size,
-    this.fill,
-  }) : super(key: key);
-
-  final double? size;
-  final Color? fill;
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture(
-      const AssetBytesLoader('assets/vectors/logo_with_text.svg.vec'),
-      width: size,
-      height: size,
-      colorFilter:
-          fill != null ? ColorFilter.mode(fill!, BlendMode.srcIn) : null,
-      semanticsLabel: 'HSAS H4o5F',
-    );
-  }
+    super.key,
+    super.size,
+    super.fill,
+  }) : super(
+          assetName: 'assets/vectors/logo_with_text.svg.vec',
+          semanticsLabel: 'H4o5F',
+        );
 }

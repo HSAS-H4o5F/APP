@@ -16,6 +16,8 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:math';
+
 import 'package:args/args.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
@@ -24,7 +26,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/imgs/logo.dart';
 import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/preference/preference.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
@@ -39,6 +40,7 @@ import 'package:hsas_h4o5f_app/ui/pages/home/mutual_aid.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home/route.dart';
 import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';
+import 'package:hsas_h4o5f_app/vectors.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -72,10 +74,12 @@ class SmartCommunityApp extends StatefulWidget {
   State<SmartCommunityApp> createState() => _SmartCommunityAppState();
 }
 
-class _SmartCommunityAppState extends State<SmartCommunityApp> {
+class _SmartCommunityAppState extends State<SmartCommunityApp>
+    with TickerProviderStateMixin {
   final _globalNavigatorKey = GlobalKey<NavigatorState>();
   final _shellRouteNavigatorKey = GlobalKey<NavigatorState>();
 
+  late final AnimationController _progressIndicatorController;
   late final GoRouter router;
 
   Future<void> _init(BuildContext context) async {
@@ -120,6 +124,10 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+    _progressIndicatorController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    )..animateTo(0.9);
     router = GoRouter(
       navigatorKey: _globalNavigatorKey,
       routes: [
@@ -249,11 +257,60 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       return Scaffold(
-                        body: Center(
-                          child: LogoWithText(
-                            size: 512,
-                            fill: Theme.of(context).colorScheme.onBackground,
-                          ),
+                        body: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth,
+                              height: constraints.maxHeight,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Logo(
+                                    size: max(
+                                          constraints.maxWidth,
+                                          constraints.maxHeight,
+                                        ) *
+                                        0.15,
+                                    fill: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  SizedBox(
+                                    height: constraints.maxHeight * 0.1,
+                                  ),
+                                  ClipPath.shape(
+                                    shape: const StadiumBorder(),
+                                    child: Container(
+                                      width: constraints.maxWidth * 0.5,
+                                      height: constraints.maxWidth * 0.02,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceVariant,
+                                      child: SlideTransition(
+                                        position: Tween(
+                                          begin: const Offset(-1, 0),
+                                          end: const Offset(0, 0),
+                                        ).animate(
+                                          CurvedAnimation(
+                                            parent:
+                                                _progressIndicatorController,
+                                            curve: Curves.easeInOut,
+                                          ),
+                                        ),
+                                        child: ClipPath.shape(
+                                          shape: const StadiumBorder(),
+                                          child: Container(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       );
                     case ConnectionState.done:
