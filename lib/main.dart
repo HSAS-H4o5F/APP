@@ -252,7 +252,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
                         body: Center(
                           child: LogoWithText(
                             size: 512,
-                            fill: Theme.of(context).colorScheme.primary,
+                            fill: Theme.of(context).colorScheme.onBackground,
                           ),
                         ),
                       );
