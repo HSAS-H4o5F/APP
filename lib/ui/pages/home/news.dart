@@ -16,16 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/state/app_state.dart';
-import 'package:hsas_h4o5f_app/state/feed.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/animated_linear_progress_indicator.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+part of '../home.dart';
 
 class HomePageNews extends StatefulWidget {
   const HomePageNews({Key? key}) : super(key: key);

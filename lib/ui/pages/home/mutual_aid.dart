@@ -16,8 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
+part of '../home.dart';
 
 class MutualAidPage extends StatefulWidget {
   const MutualAidPage({Key? key}) : super(key: key);

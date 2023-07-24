@@ -16,10 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+part of '../home.dart';
 
 class HomePageProfile extends StatefulWidget {
   const HomePageProfile({Key? key}) : super(key: key);
