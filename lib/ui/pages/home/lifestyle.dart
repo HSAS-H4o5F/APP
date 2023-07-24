@@ -16,21 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hsas_h4o5f_app/data/feed.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
-import 'package:hsas_h4o5f_app/state/app_state.dart';
-import 'package:hsas_h4o5f_app/state/education_feed.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
-import 'package:http/http.dart';
-import 'package:sliver_tools/sliver_tools.dart';
-import 'package:url_launcher/url_launcher.dart';
+part of '../home.dart';
 
 class HomePageLifestyle extends StatefulWidget {
   const HomePageLifestyle({Key? key}) : super(key: key);

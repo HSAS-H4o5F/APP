@@ -16,13 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/lifestyle.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/news.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/profile.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/security.dart';
+part of '../home.dart';
 
 class HomePageRoute {
   final String Function(BuildContext context) title;
