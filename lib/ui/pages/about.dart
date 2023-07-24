@@ -19,6 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
+import 'package:hsas_h4o5f_app/vectors.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -36,6 +37,15 @@ class _AboutPageState extends State<AboutPage> {
           SliverBlurredLargeAppBar(
             title: Text(AppLocalizations.of(context)!.about),
           ),
+          SliverToBoxAdapter(
+            child: Container(
+              width: double.infinity,
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: LogoWithText(),
+              ),
+            ),
+          )
         ],
       ),
     );
