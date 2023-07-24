@@ -28,31 +28,37 @@ class HomePageProfile extends StatefulWidget {
 class _HomePageProfileState extends State<HomePageProfile> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                await (await ParseUser.currentUser() as ParseUser).logout();
-              } finally {
-                if (mounted) {
-                  context.go('/');
+    return CustomScrollView(
+      slivers: [
+        SliverBlurredLargeAppBar(
+          title: Text(AppLocalizations.of(context)!.profile),
+        ),
+        SliverList.list(
+          children: [
+            ListTile(
+              title: Text(''),
+            ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.logout),
+              onTap: () async {
+                try {
+                  await (await ParseUser.currentUser() as ParseUser).logout();
+                } finally {
+                  if (mounted) {
+                    context.go('/');
+                  }
                 }
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.logout),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              context.push('/settings');
-            },
-            child: Text(AppLocalizations.of(context)!.settings),
-          )
-        ],
-      ),
+              },
+            ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.settings),
+              onTap: () {
+                context.push('/settings');
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
