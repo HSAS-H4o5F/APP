@@ -30,6 +30,8 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+part 'settings/server_url.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -57,7 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
               if (prefs != null)
                 SliverList.list(
                   children: [
-                    ServerUrlListTile(prefs: prefs),
+                    ServerUrlSetting(prefs: prefs),
                   ].mapWithFirstLast((first, last, child) {
                     return SafeArea(
                       top: false,
@@ -70,126 +72,6 @@ class _SettingsPageState extends State<SettingsPage> {
           );
         },
       ),
-    );
-  }
-}
-
-class ServerUrlListTile extends StatefulWidget {
-  const ServerUrlListTile({
-    Key? key,
-    required this.prefs,
-  }) : super(key: key);
-
-  final SharedPreferences prefs;
-
-  @override
-  State<ServerUrlListTile> createState() => _ServerUrlListTileState();
-}
-
-class _ServerUrlListTileState extends State<ServerUrlListTile> {
-  late final TextEditingController controller;
-
-  @override
-  void initState() {
-    controller = TextEditingController();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(AppLocalizations.of(context)!.serverUrl),
-      subtitle: Text(
-        widget.prefs.getStringPreference(serverUrlPreference)!,
-      ),
-      onTap: () async {
-        controller.value = TextEditingValue(
-          text: widget.prefs.getStringPreference(serverUrlPreference)!,
-        );
-
-        void submit(String value) {
-          context.popDialog(value != '' ? value : defaultServerUrl);
-        }
-
-        bool validated = true;
-
-        final serverUrl = await showStatefulAlertDialog<String>(
-          context: context,
-          builder: (context, setState) {
-            return StatefulAlertDialogContent(
-              title: Text(AppLocalizations.of(context)!.serverUrl),
-              content: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  errorText: validated
-                      ? null
-                      : AppLocalizations.of(context)!.formatError,
-                ),
-                keyboardType: TextInputType.url,
-                autofocus: true,
-                onChanged: (value) {
-                  setState(() {
-                    validated =
-                        validateServerUrl(controller.value.text) != null;
-                  });
-                },
-                onSubmitted: (value) => submit(value),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => context.popDialog(),
-                  child: Text(
-                    MaterialLocalizations.of(context).cancelButtonLabel,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => submit(controller.value.text),
-                  child: Text(
-                    MaterialLocalizations.of(context).okButtonLabel,
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-
-        if (serverUrl != null) {
-          final updated = await widget.prefs.setStringPreference(
-            serverUrlPreference,
-            serverUrl,
-          );
-
-          if (updated) {
-            try {
-              await (await ParseUser.currentUser() as ParseUser).logout();
-            } finally {
-              if (mounted) {
-                // TODO: 优化此处逻辑
-                context.go('/');
-              }
-            }
-          } else {
-            if (!mounted) return;
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppLocalizations.of(context)!.formatError),
-              ),
-            );
-
-            return;
-          }
-          setState(() {});
-        }
-      },
     );
   }
 }
