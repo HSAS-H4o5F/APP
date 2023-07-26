@@ -38,11 +38,15 @@ class _AboutPageState extends State<AboutPage> {
             title: Text(AppLocalizations.of(context)!.about),
           ),
           SliverToBoxAdapter(
-            child: Container(
-              width: double.infinity,
+            child: SizedBox(
+              height: 256,
               child: AspectRatio(
                 aspectRatio: 1,
-                child: LogoWithText(),
+                child: LogoWithText(
+                  fill: Theme.of(context).brightness == Brightness.dark
+                      ? Theme.of(context).colorScheme.onBackground
+                      : null,
+                ),
               ),
             ),
           )
