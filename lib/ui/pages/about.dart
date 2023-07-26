@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
 import 'package:hsas_h4o5f_app/vectors.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -29,6 +30,8 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
+  final _packageInfoFuture = PackageInfo.fromPlatform();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +52,28 @@ class _AboutPageState extends State<AboutPage> {
                 ),
               ),
             ),
-          )
+          ),
+          SliverList.list(
+            children: [
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.version),
+                subtitle: FutureBuilder(
+                  future: _packageInfoFuture,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                      case ConnectionState.active:
+                        return Text(AppLocalizations.of(context)!.loading);
+                      case ConnectionState.done:
+                        return Text((snapshot.data as PackageInfo).version);
+                      default:
+                        return Text(AppLocalizations.of(context)!.unknown);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
