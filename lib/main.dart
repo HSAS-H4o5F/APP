@@ -32,6 +32,7 @@ import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/state/app_state.dart';
 import 'package:hsas_h4o5f_app/state/shared_preferences.dart';
 import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
+import 'package:hsas_h4o5f_app/ui/pages/about.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home.dart';
 import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';
@@ -225,6 +226,11 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
           parentNavigatorKey: _globalNavigatorKey,
           path: '/settings',
           builder: (context, state) => const SettingsPage(),
+        ),
+        GoRoute(
+          parentNavigatorKey: _globalNavigatorKey,
+          path: '/about',
+          builder: (context, state) => const AboutPage(),
         ),
         GoRoute(
           parentNavigatorKey: _globalNavigatorKey,

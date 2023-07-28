@@ -56,6 +56,12 @@ class _HomePageProfileState extends State<HomePageProfile> {
                 context.push('/settings');
               },
             ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.about),
+              onTap: () {
+                context.push('/about');
+              },
+            ),
           ],
         ),
       ],
