@@ -105,10 +105,11 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
             builder: (context, child) {
               return StoreConnector<AppState, void>(
                 converter: (store) {},
-                onInitialBuild: (_) async {
+                onInit: (_) async {
                   StoreProvider.of<AppState>(context).dispatch(
-                      SetSharedPreferencesAction(
-                          await SharedPreferences.getInstance()));
+                    SetSharedPreferencesAction(
+                        await SharedPreferences.getInstance()),
+                  );
                 },
                 builder: (context, _) {
                   return Stack(
