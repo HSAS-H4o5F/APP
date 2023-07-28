@@ -41,6 +41,10 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+part 'main/future_screen.dart';
+part 'main/loading_screen.dart';
+part 'main/router.dart';
+
 void main(List<String> args) {
   final parsedArgs =
       (ArgParser()..addOption('serverUrl', abbr: 's')).parse(args);
@@ -70,189 +74,14 @@ class SmartCommunityApp extends StatefulWidget {
   State<SmartCommunityApp> createState() => _SmartCommunityAppState();
 }
 
-// TODO: 提取组件
-class _SmartCommunityAppState extends State<SmartCommunityApp>
-    with TickerProviderStateMixin {
+class _SmartCommunityAppState extends State<SmartCommunityApp> {
   final _globalNavigatorKey = GlobalKey<NavigatorState>();
   final _shellRouteNavigatorKey = GlobalKey<NavigatorState>();
 
   late final Future<void> _initFuture;
-  late final AnimationController _progressIndicatorController;
-  late final AnimationController _pageTransitionController;
-  late final AnimationStatusListener _pageTransitionStatusListener;
   late final GoRouter router;
 
   bool _completed = false;
-
-  Future<void> _init() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (widget.serverUrl != null) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        widget.serverUrl!,
-      );
-    }
-
-    if (!prefs.containsPreference(serverUrlPreference) && kIsWeb) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        Uri.base.toString(),
-      );
-    }
-
-    if (!prefs.containsPreference(serverUrlPreference)) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        defaultServerUrl,
-      );
-    }
-
-    await initParse(prefs.getStringPreference(serverUrlPreference)!);
-
-    _progressIndicatorController.forward();
-    _pageTransitionController.forward();
-  }
-
-  @override
-  void initState() {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-      ),
-    );
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-    _pageTransitionStatusListener = (status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {
-          _completed = true;
-        });
-        _pageTransitionController
-            .removeStatusListener(_pageTransitionStatusListener);
-
-        _progressIndicatorController.dispose();
-        _pageTransitionController.dispose();
-      }
-    };
-
-    _progressIndicatorController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    )..animateTo(0.9);
-    _pageTransitionController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..addStatusListener(_pageTransitionStatusListener);
-    router = GoRouter(
-      navigatorKey: _globalNavigatorKey,
-      routes: [
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/',
-          redirect: (context, state) => '/home',
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/home',
-          redirect: (context, state) async {
-            final currentUser = await ParseUser.currentUser();
-            if (currentUser == null) {
-              return '/login';
-            }
-
-            if (state.uri.path == '/home') {
-              return HomePageRoute.routes.keys.first;
-            }
-
-            return null;
-          },
-          routes: [
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':medical-care',
-              builder: (context, state) => const MedicalCarePage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':guide-dogs',
-              builder: (context, state) => const GuideDogsPage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':mutual-aid',
-              builder: (context, state) => const MutualAidPage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':fitness-equipments',
-              builder: (context, state) => const FitnessEquipmentsPage(),
-            ),
-          ],
-        ),
-        ShellRoute(
-          navigatorKey: _shellRouteNavigatorKey,
-          builder: (context, state, child) => HomePage(
-            location: state.uri.path,
-            child: child,
-          ),
-          routes: HomePageRoute.routes.entries.map((entry) {
-            return GoRoute(
-              parentNavigatorKey: _shellRouteNavigatorKey,
-              path: entry.key,
-              pageBuilder: (context, state) {
-                return CustomTransitionPage(
-                  key: state.pageKey,
-                  child: entry.value.builder(context, state),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(
-                      opacity:
-                          animation.drive(CurveTween(curve: Curves.easeInOut)),
-                      child: FadeTransition(
-                        opacity: ReverseAnimation(secondaryAnimation)
-                            .drive(CurveTween(curve: Curves.easeInOut)),
-                        child: child,
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          }).toList(),
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/settings',
-          builder: (context, state) => const SettingsPage(),
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/about',
-          builder: (context, state) => const AboutPage(),
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/login',
-          builder: (context, state) => const LoginRegisterPage(
-            type: LoginRegisterPageType.login,
-          ),
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/register',
-          builder: (context, state) => const LoginRegisterPage(
-            type: LoginRegisterPageType.register,
-          ),
-        ),
-      ],
-      initialLocation: '/',
-    );
-
-    _initFuture = _init();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -284,103 +113,18 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
                 builder: (context, _) {
                   return Stack(
                     children: [
-                      FutureBuilder(
+                      FutureScreen(
                         future: _initFuture,
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.none:
-                            case ConnectionState.waiting:
-                            case ConnectionState.active:
-                              return const SizedBox();
-                            case ConnectionState.done:
-                              if (snapshot.hasError) {
-                                return Scaffold(
-                                  body: Center(
-                                    child: SingleChildScrollView(
-                                      child: Text(
-                                        snapshot.error.toString(),
-                                        style: DefaultTextStyle.of(context)
-                                            .style
-                                            .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return child ?? const SizedBox();
-                              }
-                          }
-                        },
+                        child: child ?? const SizedBox(),
                       ),
                       if (!_completed)
-                        FadeTransition(
-                          opacity: ReverseAnimation(_pageTransitionController)
-                              .drive(CurveTween(curve: Curves.easeInOut)),
-                          child: Scaffold(
-                            body: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return SizedBox(
-                                  width: constraints.maxWidth,
-                                  height: constraints.maxHeight,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Logo(
-                                        size: max(
-                                              constraints.maxWidth,
-                                              constraints.maxHeight,
-                                            ) *
-                                            0.15,
-                                        fill: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                      SizedBox(
-                                        height: constraints.maxHeight * 0.1,
-                                      ),
-                                      ClipPath.shape(
-                                        shape: const StadiumBorder(),
-                                        child: Container(
-                                          width: constraints.maxWidth * 0.5,
-                                          height: constraints.maxWidth * 0.02,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surfaceVariant,
-                                          child: SlideTransition(
-                                            position: Tween(
-                                              begin: const Offset(-1, 0),
-                                              end: const Offset(0, 0),
-                                            ).animate(
-                                              CurvedAnimation(
-                                                parent:
-                                                    _progressIndicatorController,
-                                                curve: Curves.easeInOut,
-                                              ),
-                                            ),
-                                            child: ClipPath.shape(
-                                              shape: const StadiumBorder(),
-                                              child: Container(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                        LoadingScreen(
+                          future: _initFuture,
+                          onAnimationCompleted: () {
+                            setState(() {
+                              _completed = true;
+                            });
+                          },
                         ),
                     ],
                   );
@@ -391,6 +135,52 @@ class _SmartCommunityAppState extends State<SmartCommunityApp>
         },
       ),
     );
+  }
+
+  Future<void> _init() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (widget.serverUrl != null) {
+      prefs.setStringPreference(
+        serverUrlPreference,
+        widget.serverUrl!,
+      );
+    }
+
+    if (!prefs.containsPreference(serverUrlPreference) && kIsWeb) {
+      prefs.setStringPreference(
+        serverUrlPreference,
+        Uri.base.toString(),
+      );
+    }
+
+    if (!prefs.containsPreference(serverUrlPreference)) {
+      prefs.setStringPreference(
+        serverUrlPreference,
+        defaultServerUrl,
+      );
+    }
+
+    await initParse(prefs.getStringPreference(serverUrlPreference)!);
+  }
+
+  @override
+  void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    router = AppRouter(
+      navigatorKey: _globalNavigatorKey,
+      shellRouteNavigatorKey: _shellRouteNavigatorKey,
+    );
+
+    _initFuture = _init();
+    super.initState();
   }
 }
 
