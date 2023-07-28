@@ -105,6 +105,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
               return StoreConnector<AppState, void>(
                 converter: (store) {},
                 onInit: (_) async {
+                  // TODO: 优化初始化方式
                   StoreProvider.of<AppState>(context).dispatch(
                     SetSharedPreferencesAction(
                       await SharedPreferences.getInstance(),
