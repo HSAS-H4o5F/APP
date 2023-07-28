@@ -74,9 +74,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _initFeed() async {
-    final store = StoreProvider.of<AppState>(context, listen: false);
-    final serverUrl = store.state.sharedPreferences!
-        .getStringPreference(serverUrlPreference)!;
+    final state = GlobalState.of(context);
+    final serverUrl =
+        state.sharedPreferences!.getStringPreference(serverUrlPreference)!;
 
     final client = Client();
 
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     final origins = AppFeed.parseFeedOrigins(response!.body);
-    store.dispatch(SetFeedAction(AppFeed(origins: origins)));
+    state.update(state.copyWith(feed: AppFeed(origins: origins)));
   }
 
   @override

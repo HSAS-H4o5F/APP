@@ -169,10 +169,10 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
     if (!mounted) return;
     setState(() => _fetching = true);
 
-    final store = StoreProvider.of<AppState>(context, listen: false);
+    final state = GlobalState.of(context);
 
-    final serverUrl = store.state.sharedPreferences!
-        .getStringPreference(serverUrlPreference)!;
+    final serverUrl =
+        state.sharedPreferences!.getStringPreference(serverUrlPreference)!;
 
     final client = Client();
 
@@ -194,7 +194,9 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
       client.close();
     }
 
-    store.dispatch(SetEducationFeedAction(Feed.fromJson(response.body)));
+    state.update(state.copyWith(
+      educationFeed: Feed.fromJson(response.body),
+    ));
     if (!mounted) return;
     setState(() => _fetching = false);
   }
