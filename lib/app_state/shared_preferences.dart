@@ -16,8 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:redux/redux.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+part of '../app_state.dart';
 
 SharedPreferences _setSharedPreferences(
   SharedPreferences? sharedPreferences,

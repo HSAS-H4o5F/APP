@@ -16,11 +16,15 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:convert';
+
 import 'package:hsas_h4o5f_app/data/feed.dart';
-import 'package:hsas_h4o5f_app/state/education_feed.dart';
-import 'package:hsas_h4o5f_app/state/feed.dart';
-import 'package:hsas_h4o5f_app/state/shared_preferences.dart';
+import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+part 'app_state/education_feed.dart';
+part 'app_state/feed.dart';
+part 'app_state/shared_preferences.dart';
 
 class AppState {
   const AppState({

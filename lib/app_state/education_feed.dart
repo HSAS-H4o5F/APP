@@ -16,8 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:hsas_h4o5f_app/data/feed.dart';
-import 'package:redux/redux.dart';
+part of '../app_state.dart';
 
 Feed _setEducationFeed(
   Feed? educationFeed,

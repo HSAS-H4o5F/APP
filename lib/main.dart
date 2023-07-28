@@ -25,12 +25,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hsas_h4o5f_app/app_state.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
 import 'package:hsas_h4o5f_app/preference/preference.dart';
 import 'package:hsas_h4o5f_app/preference/string_preference.dart';
-import 'package:hsas_h4o5f_app/state/app_state.dart';
-import 'package:hsas_h4o5f_app/state/shared_preferences.dart';
 import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
 import 'package:hsas_h4o5f_app/ui/pages/about.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home.dart';
@@ -108,7 +107,8 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
                 onInit: (_) async {
                   StoreProvider.of<AppState>(context).dispatch(
                     SetSharedPreferencesAction(
-                        await SharedPreferences.getInstance()),
+                      await SharedPreferences.getInstance(),
+                    ),
                   );
                 },
                 builder: (context, _) {
