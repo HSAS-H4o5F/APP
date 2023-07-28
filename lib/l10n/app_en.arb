@@ -7,6 +7,8 @@
   "settings": "Settings",
   "about": "About",
   "version": "Version",
+  "openSourceLicenses": "Open source licenses",
+  "license": "GPL-3.0 and more",
   "loading": "Loading",
   "unknown": "Unknown",
   "error": "Error",

@@ -72,6 +72,11 @@ class _AboutPageState extends State<AboutPage> {
                   },
                 ),
               ),
+              // TODO: 增加更多信息
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.openSourceLicenses),
+                subtitle: Text(AppLocalizations.of(context)!.license),
+              ),
             ],
           ),
         ],

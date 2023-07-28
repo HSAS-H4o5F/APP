@@ -7,6 +7,8 @@
   "settings": "设置",
   "about": "关于",
   "version": "版本",
+  "openSourceLicenses": "开源许可",
+  "license": "GPL-3.0等",
   "loading": "加载中",
   "unknown": "未知",
   "error": "错误",
