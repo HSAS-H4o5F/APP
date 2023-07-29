@@ -34,10 +34,10 @@ class FutureScreen extends StatelessWidget {
       future: future,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
-          case ConnectionState.none:
           case ConnectionState.waiting:
           case ConnectionState.active:
             return const SizedBox();
+          case ConnectionState.none:
           case ConnectionState.done:
             if (snapshot.hasError) {
               return Scaffold(
