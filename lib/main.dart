@@ -71,7 +71,6 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
   late final GoRouter router;
 
   SharedPreferences? _sharedPreferences;
-  AppFeed? _appFeed;
 
   bool _completed = false;
 

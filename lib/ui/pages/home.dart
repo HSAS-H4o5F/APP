@@ -150,7 +150,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     final origins = AppFeed.parseFeedOrigins(response!.body);
-    _appFeed = AppFeed(origins: origins);
+    setState(() {
+      _appFeed = AppFeed(origins: origins);
+    });
   }
 
   void _initEducationFeed() async {
@@ -175,7 +177,9 @@ class _HomePageState extends State<HomePage> {
       client.close();
     }
 
-    _educationFeed = Feed.fromJson(response.body);
+    setState(() {
+      _educationFeed = Feed.fromJson(response.body);
+    });
   }
 
   @override
