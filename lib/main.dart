@@ -70,17 +70,15 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
   late final Future<void> _initFuture;
   late final GoRouter router;
 
+  SharedPreferences? _sharedPreferences;
+  AppFeed? _appFeed;
+
   bool _completed = false;
 
   @override
   Widget build(BuildContext context) {
-    return GlobalState(
-      // TODO: 合并入 _init()
-      init: (state) async {
-        state.update(state.copyWith(
-          sharedPreferences: await SharedPreferences.getInstance(),
-        ));
-      },
+    return SharedPreferencesState(
+      value: _sharedPreferences,
       child: DynamicColorBuilder(
         builder: (light, dark) {
           return MaterialApp.router(
@@ -121,8 +119,31 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     );
   }
 
-  Future<void> _init() async {
+  @override
+  void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    router = AppRouter(
+      navigatorKey: _globalNavigatorKey,
+      shellRouteNavigatorKey: _shellRouteNavigatorKey,
+    );
+
+    _initFuture = _initApp();
+    super.initState();
+  }
+
+  Future<void> _initApp() async {
     final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      _sharedPreferences = prefs;
+    });
 
     if (widget.serverUrl != null) {
       prefs.setStringPreference(
@@ -146,25 +167,6 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     }
 
     await initParse(prefs.getStringPreference(serverUrlPreference)!);
-  }
-
-  @override
-  void initState() {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-      ),
-    );
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-    router = AppRouter(
-      navigatorKey: _globalNavigatorKey,
-      shellRouteNavigatorKey: _shellRouteNavigatorKey,
-    );
-
-    _initFuture = _init();
-    super.initState();
   }
 }
 

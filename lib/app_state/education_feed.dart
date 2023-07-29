@@ -18,19 +18,21 @@
 
 part of '../app_state.dart';
 
-Feed _setEducationFeed(
-  Feed? educationFeed,
-  SetEducationFeedAction action,
-) {
-  return action.educationFeed;
+class EducationFeedState extends AppState<Feed?> {
+  const EducationFeedState({
+    super.key,
+    required super.value,
+    required super.child,
+  });
+
+  static AppStateBuilder<Feed?, EducationFeedState> builder(Feed? value) {
+    return AppStateBuilder(
+      builder: EducationFeedState.new,
+      value: value,
+    );
+  }
+
+  static Feed? of(BuildContext context) {
+    return AppState.of<Feed?, EducationFeedState>(context);
+  }
 }
-
-class SetEducationFeedAction {
-  const SetEducationFeedAction(this.educationFeed);
-
-  final Feed educationFeed;
-}
-
-final educationFeedReducer = combineReducers<Feed?>([
-  TypedReducer<Feed?, SetEducationFeedAction>(_setEducationFeed),
-]);

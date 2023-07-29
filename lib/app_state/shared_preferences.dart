@@ -18,21 +18,23 @@
 
 part of '../app_state.dart';
 
-SharedPreferences _setSharedPreferences(
-  SharedPreferences? sharedPreferences,
-  SetSharedPreferencesAction action,
-) {
-  return action.sharedPreferences;
+class SharedPreferencesState extends AppState<SharedPreferences?> {
+  const SharedPreferencesState({
+    super.key,
+    required super.value,
+    required super.child,
+  });
+
+  static AppStateBuilder<SharedPreferences?, SharedPreferencesState> builder(
+    SharedPreferences? value,
+  ) {
+    return AppStateBuilder(
+      builder: SharedPreferencesState.new,
+      value: value,
+    );
+  }
+
+  static SharedPreferences? of(BuildContext context) {
+    return AppState.of<SharedPreferences?, SharedPreferencesState>(context);
+  }
 }
-
-class SetSharedPreferencesAction {
-  const SetSharedPreferencesAction(this.sharedPreferences);
-
-  final SharedPreferences sharedPreferences;
-}
-
-final sharedPreferencesReducer = combineReducers<SharedPreferences?>([
-  TypedReducer<SharedPreferences?, SetSharedPreferencesAction>(
-    _setSharedPreferences,
-  ),
-]);

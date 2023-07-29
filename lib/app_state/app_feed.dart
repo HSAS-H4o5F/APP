@@ -18,6 +18,25 @@
 
 part of '../app_state.dart';
 
+class AppFeedState extends AppState<AppFeed?> {
+  const AppFeedState({
+    super.key,
+    required super.value,
+    required super.child,
+  });
+
+  static AppStateBuilder<AppFeed?, AppFeedState> builder(AppFeed? value) {
+    return AppStateBuilder(
+      builder: AppFeedState.new,
+      value: value,
+    );
+  }
+
+  static AppFeed? of(BuildContext context) {
+    return AppState.of<AppFeed?, AppFeedState>(context);
+  }
+}
+
 class AppFeed {
   const AppFeed({
     this.feed,
@@ -49,23 +68,3 @@ class FeedOriginInfo {
   final String name;
   final Uri url;
 }
-
-AppFeed _setFeed(
-  AppFeed feed,
-  SetFeedAction action,
-) {
-  return AppFeed(
-    feed: action.feed.feed ?? feed.feed,
-    origins: action.feed.origins ?? feed.origins,
-  );
-}
-
-class SetFeedAction {
-  const SetFeedAction(this.feed);
-
-  final AppFeed feed;
-}
-
-final feedReducer = combineReducers<AppFeed>([
-  TypedReducer<AppFeed, SetFeedAction>(_setFeed),
-]);

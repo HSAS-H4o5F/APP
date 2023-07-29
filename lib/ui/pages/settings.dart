@@ -39,7 +39,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late SharedPreferences? sharedPreferences;
+  SharedPreferences? _sharedPreferences;
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +51,13 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           SliverPinnedHeader(
             child: AnimatedLinearProgressIndicator(
-              visible: sharedPreferences == null,
+              visible: _sharedPreferences == null,
             ),
           ),
-          if (sharedPreferences != null)
+          if (_sharedPreferences != null)
             SliverList.list(
               children: [
-                ServerUrlSetting(prefs: sharedPreferences!),
+                ServerUrlSetting(prefs: _sharedPreferences!),
               ].mapWithFirstLast((first, last, child) {
                 return SafeArea(
                   top: false,
@@ -73,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void didChangeDependencies() {
-    sharedPreferences = GlobalState.of(context).sharedPreferences;
+    _sharedPreferences = SharedPreferencesState.of(context);
     super.didChangeDependencies();
   }
 }

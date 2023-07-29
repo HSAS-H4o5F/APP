@@ -20,105 +20,75 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/data/feed.dart';
-import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+part 'app_state/app_feed.dart';
 part 'app_state/education_feed.dart';
-part 'app_state/feed.dart';
 part 'app_state/shared_preferences.dart';
 
-class AppState {
+abstract class AppState<T> extends InheritedWidget {
   const AppState({
-    required this.update,
-    this.sharedPreferences,
-    this.educationFeed,
-    this.feed = const AppFeed(),
-  });
-
-  final void Function(AppState newValue) update;
-
-  final SharedPreferences? sharedPreferences;
-  final Feed? educationFeed;
-  final AppFeed feed;
-
-  AppState copyWith({
-    SharedPreferences? sharedPreferences,
-    Feed? educationFeed,
-    AppFeed? feed,
-  }) {
-    return AppState(
-      update: update,
-      sharedPreferences: sharedPreferences ?? this.sharedPreferences,
-      educationFeed: educationFeed ?? this.educationFeed,
-      feed: feed ?? this.feed,
-    );
-  }
-}
-
-class GlobalState extends StatefulWidget {
-  const GlobalState({
     super.key,
-    this.init,
-    required this.child,
-  });
-
-  final void Function(AppState state)? init;
-  final Widget child;
-
-  static AppState of(BuildContext context) => _GlobalStateHolder.of(context);
-
-  @override
-  State<GlobalState> createState() => _GlobalStateState();
-}
-
-class _GlobalStateState extends State<GlobalState> {
-  late AppState state;
-
-  @override
-  Widget build(BuildContext context) {
-    return _GlobalStateHolder(
-      state: state,
-      child: widget.child,
-    );
-  }
-
-  @override
-  void initState() {
-    state = AppState(
-      update: (newValue) => setState(() => state = newValue),
-    );
-    widget.init?.call(state);
-
-    super.initState();
-  }
-}
-
-class _GlobalStateHolder extends InheritedWidget {
-  const _GlobalStateHolder({
-    required this.state,
+    required this.value,
     required super.child,
   });
 
-  final AppState state;
+  final T value;
 
-  static AppState of(BuildContext context) {
-    final holder =
-        context.dependOnInheritedWidgetOfExactType<_GlobalStateHolder>();
+  static T of<T, S extends AppState<T>>(BuildContext context) {
+    final state = context.dependOnInheritedWidgetOfExactType<S>();
 
-    if (holder == null) throw GlobalStateNotFoundError();
+    if (state == null) throw AppStateNotFoundError();
 
-    return holder.state;
+    return state.value;
   }
 
   @override
-  bool updateShouldNotify(_GlobalStateHolder oldWidget) {
-    return oldWidget.state.sharedPreferences != state.sharedPreferences ||
-        oldWidget.state.educationFeed != state.educationFeed ||
-        oldWidget.state.feed != state.feed;
+  bool updateShouldNotify(AppState oldWidget) => value != oldWidget.value;
+}
+
+class AppStateNotFoundError extends Error {
+  @override
+  String toString() => 'Error: AppState not found.';
+}
+
+class AppStateBuilder<T, S extends AppState<T>> {
+  const AppStateBuilder({
+    required this.builder,
+    required this.value,
+  });
+
+  final S Function({
+    Key? key,
+    required T value,
+    required Widget child,
+  }) builder;
+  final T value;
+
+  S build(Widget child) {
+    return builder(
+      value: value,
+      child: child,
+    );
   }
 }
 
-class GlobalStateNotFoundError extends Error {
+class AppStateProvider extends StatelessWidget {
+  const AppStateProvider({
+    super.key,
+    required this.builders,
+    required this.child,
+  });
+
+  final List<AppStateBuilder> builders;
+  final Widget child;
+
   @override
-  String toString() => 'Error: GlobalStateProvider not found.';
+  Widget build(BuildContext context) {
+    Widget tree = child;
+    for (final builder in builders) {
+      tree = builder.build(tree);
+    }
+    return tree;
+  }
 }
