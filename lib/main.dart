@@ -23,7 +23,6 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/app_state.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
@@ -37,7 +36,6 @@ import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';
 import 'package:hsas_h4o5f_app/vectors.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'main/future_screen.dart';
@@ -48,13 +46,7 @@ void main(List<String> args) {
   final parsedArgs =
       (ArgParser()..addOption('serverUrl', abbr: 's')).parse(args);
 
-  final store = Store<AppState>(
-    appReducer,
-    initialState: const AppState(),
-  );
-
   runApp(SmartCommunityApp(
-    store: store,
     serverUrl: parsedArgs['serverUrl'] as String?,
   ));
 }
@@ -62,11 +54,9 @@ void main(List<String> args) {
 class SmartCommunityApp extends StatefulWidget {
   const SmartCommunityApp({
     super.key,
-    required this.store,
     required this.serverUrl,
   });
 
-  final Store<AppState> store;
   final String? serverUrl;
 
   @override
@@ -80,12 +70,15 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
   late final Future<void> _initFuture;
   late final GoRouter router;
 
+  SharedPreferences? _sharedPreferences;
+  AppFeed? _appFeed;
+
   bool _completed = false;
 
   @override
   Widget build(BuildContext context) {
-    return StoreProvider(
-      store: widget.store,
+    return SharedPreferencesState(
+      value: _sharedPreferences,
       child: DynamicColorBuilder(
         builder: (light, dark) {
           return MaterialApp.router(
@@ -102,35 +95,22 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
             supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: router,
             builder: (context, child) {
-              return StoreConnector<AppState, void>(
-                converter: (store) {},
-                onInit: (_) async {
-                  // TODO: 优化初始化方式
-                  StoreProvider.of<AppState>(context).dispatch(
-                    SetSharedPreferencesAction(
-                      await SharedPreferences.getInstance(),
+              return Stack(
+                children: [
+                  FutureScreen(
+                    future: _initFuture,
+                    child: child ?? const SizedBox(),
+                  ),
+                  if (!_completed)
+                    LoadingScreen(
+                      future: _initFuture,
+                      onAnimationCompleted: () {
+                        setState(() {
+                          _completed = true;
+                        });
+                      },
                     ),
-                  );
-                },
-                builder: (context, _) {
-                  return Stack(
-                    children: [
-                      FutureScreen(
-                        future: _initFuture,
-                        child: child ?? const SizedBox(),
-                      ),
-                      if (!_completed)
-                        LoadingScreen(
-                          future: _initFuture,
-                          onAnimationCompleted: () {
-                            setState(() {
-                              _completed = true;
-                            });
-                          },
-                        ),
-                    ],
-                  );
-                },
+                ],
               );
             },
           );
@@ -139,8 +119,31 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     );
   }
 
-  Future<void> _init() async {
+  @override
+  void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    router = AppRouter(
+      navigatorKey: _globalNavigatorKey,
+      shellRouteNavigatorKey: _shellRouteNavigatorKey,
+    );
+
+    _initFuture = _initApp();
+    super.initState();
+  }
+
+  Future<void> _initApp() async {
     final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      _sharedPreferences = prefs;
+    });
 
     if (widget.serverUrl != null) {
       prefs.setStringPreference(
@@ -164,25 +167,6 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     }
 
     await initParse(prefs.getStringPreference(serverUrlPreference)!);
-  }
-
-  @override
-  void initState() {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-      ),
-    );
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-    router = AppRouter(
-      navigatorKey: _globalNavigatorKey,
-      shellRouteNavigatorKey: _shellRouteNavigatorKey,
-    );
-
-    _initFuture = _init();
-    super.initState();
   }
 }
 

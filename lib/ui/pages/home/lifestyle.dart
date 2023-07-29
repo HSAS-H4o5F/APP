@@ -26,14 +26,6 @@ class HomePageLifestyle extends StatefulWidget {
 }
 
 class _HomePageLifestyleState extends State<HomePageLifestyle> {
-  bool _fetching = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchFeed();
-  }
-
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -106,15 +98,6 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (_fetching) ...[
-                    const Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Padding(
-                        padding: EdgeInsets.all(4),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ],
                   Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -122,81 +105,31 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: IconButton(
-                        tooltip: AppLocalizations.of(context)!.refresh,
-                        icon: const Icon(Icons.refresh),
-                        onPressed: _fetchFeed,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
           ),
         ),
-        StoreConnector<AppState, List<FeedItem>>(
-          converter: (store) => store.state.educationFeed?.items.toList() ?? [],
-          builder: (context, items) {
-            return SliverList.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return DirectionalSafeArea(
-                  start: false,
-                  top: false,
-                  bottom: index == items.length - 1,
-                  child: EducationFlowItem(
-                    articleUrl: item.link,
-                    title: item.title,
-                    summary: item.summary,
-                  ),
-                );
-              },
-            );
-          },
-        ),
+        ((List<FeedItem> items) {
+          return SliverList.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return DirectionalSafeArea(
+                start: false,
+                top: false,
+                bottom: index == items.length - 1,
+                child: EducationFlowItem(
+                  articleUrl: item.link,
+                  title: item.title,
+                  summary: item.summary,
+                ),
+              );
+            },
+          );
+        })(EducationFeedState.of(context)?.items.toList() ?? []),
       ],
     );
-  }
-
-  void _fetchFeed() async {
-    if (_fetching) return;
-
-    if (!mounted) return;
-    setState(() => _fetching = true);
-
-    final store = StoreProvider.of<AppState>(context, listen: false);
-
-    final serverUrl = store.state.sharedPreferences!
-        .getStringPreference(serverUrlPreference)!;
-
-    final client = Client();
-
-    final Response response;
-
-    try {
-      response = await client.get(Uri.parse(serverUrl).replace(
-        path: '/feed',
-        queryParameters: {'origin': 'zhihu'},
-      ));
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _fetching = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.fetchingError)),
-      );
-      return;
-    } finally {
-      client.close();
-    }
-
-    store.dispatch(SetEducationFeedAction(Feed.fromJson(response.body)));
-    if (!mounted) return;
-    setState(() => _fetching = false);
   }
 
   void _onMedicalCareTap() {

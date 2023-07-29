@@ -17,7 +17,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/app_state.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
@@ -40,38 +39,41 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  SharedPreferences? _sharedPreferences;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StoreConnector<AppState, SharedPreferences?>(
-        converter: (store) => store.state.sharedPreferences,
-        builder: (context, prefs) {
-          return CustomScrollView(
-            slivers: [
-              SliverBlurredLargeAppBar(
-                title: Text(AppLocalizations.of(context)!.settings),
-              ),
-              SliverPinnedHeader(
-                child: AnimatedLinearProgressIndicator(
-                  visible: prefs == null,
-                ),
-              ),
-              if (prefs != null)
-                SliverList.list(
-                  children: [
-                    ServerUrlSetting(prefs: prefs),
-                  ].mapWithFirstLast((first, last, child) {
-                    return SafeArea(
-                      top: false,
-                      bottom: last,
-                      child: child,
-                    );
-                  }).toList(),
-                ),
-            ],
-          );
-        },
+      body: CustomScrollView(
+        slivers: [
+          SliverBlurredLargeAppBar(
+            title: Text(AppLocalizations.of(context)!.settings),
+          ),
+          SliverPinnedHeader(
+            child: AnimatedLinearProgressIndicator(
+              visible: _sharedPreferences == null,
+            ),
+          ),
+          if (_sharedPreferences != null)
+            SliverList.list(
+              children: [
+                ServerUrlSetting(prefs: _sharedPreferences!),
+              ].mapWithFirstLast((first, last, child) {
+                return SafeArea(
+                  top: false,
+                  bottom: last,
+                  child: child,
+                );
+              }).toList(),
+            ),
+        ],
       ),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    _sharedPreferences = SharedPreferencesState.of(context);
+    super.didChangeDependencies();
   }
 }

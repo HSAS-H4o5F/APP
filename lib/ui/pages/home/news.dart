@@ -29,27 +29,16 @@ class _HomePageNewsState extends State<HomePageNews> {
   bool _fetching = false;
   final List<String> _unselectedOrigins = [];
 
-  void showFilterDialog() {
+  void showFilterDialog(AppFeed? appFeed) {
     showStatefulAlertDialog(
       context: context,
       builder: (context, setState) {
         return StatefulAlertDialogContent(
           title: Text(AppLocalizations.of(context)!.filter),
-          content: StoreConnector<
-              AppState,
-              ({
-                Map<String, FeedOriginInfo> origins,
-                SharedPreferences? prefs,
-              })>(
-            converter: (store) => (
-              origins: store.state.feed.origins ?? {},
-              prefs: store.state.sharedPreferences,
-            ),
-            builder: (context, state) {
-              return Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: state.origins.entries.map((entry) {
+          content: Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: appFeed?.origins?.entries.map((entry) {
                   final key = entry.key;
                   final origin = entry.value;
 
@@ -66,9 +55,8 @@ class _HomePageNewsState extends State<HomePageNews> {
                       });
                     },
                   );
-                }).toList(),
-              );
-            },
+                }).toList() ??
+                [],
           ),
           actions: [
             TextButton(
@@ -102,7 +90,7 @@ class _HomePageNewsState extends State<HomePageNews> {
               icon: const Icon(Icons.refresh),
             ),
             IconButton(
-              onPressed: showFilterDialog,
+              onPressed: () => showFilterDialog(AppFeedState.of(context)),
               tooltip: AppLocalizations.of(context)!.filter,
               icon: const Icon(Icons.filter_list),
             ),

@@ -18,33 +18,77 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/data/feed.dart';
-import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+part 'app_state/app_feed.dart';
 part 'app_state/education_feed.dart';
-part 'app_state/feed.dart';
 part 'app_state/shared_preferences.dart';
 
-class AppState {
+abstract class AppState<T> extends InheritedWidget {
   const AppState({
-    this.sharedPreferences,
-    this.educationFeed,
-    this.feed = const AppFeed(),
+    super.key,
+    required this.value,
+    required super.child,
   });
 
-  final SharedPreferences? sharedPreferences;
-  final Feed? educationFeed;
-  final AppFeed feed;
+  final T value;
+
+  static T of<T, S extends AppState<T>>(BuildContext context) {
+    final state = context.dependOnInheritedWidgetOfExactType<S>();
+
+    if (state == null) throw AppStateNotFoundError();
+
+    return state.value;
+  }
+
+  @override
+  bool updateShouldNotify(AppState oldWidget) => value != oldWidget.value;
 }
 
-AppState appReducer(AppState state, dynamic action) {
-  return AppState(
-    sharedPreferences: sharedPreferencesReducer(
-      state.sharedPreferences,
-      action,
-    ),
-    educationFeed: educationFeedReducer(state.educationFeed, action),
-    feed: feedReducer(state.feed, action),
-  );
+class AppStateNotFoundError extends Error {
+  @override
+  String toString() => 'Error: AppState not found.';
+}
+
+class AppStateBuilder<T, S extends AppState<T>> {
+  const AppStateBuilder({
+    required this.builder,
+    required this.value,
+  });
+
+  final S Function({
+    Key? key,
+    required T value,
+    required Widget child,
+  }) builder;
+  final T value;
+
+  S build(Widget child) {
+    return builder(
+      value: value,
+      child: child,
+    );
+  }
+}
+
+class AppStateProvider extends StatelessWidget {
+  const AppStateProvider({
+    super.key,
+    required this.builders,
+    required this.child,
+  });
+
+  final List<AppStateBuilder> builders;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tree = child;
+    for (final builder in builders) {
+      tree = builder.build(tree);
+    }
+    return tree;
+  }
 }
