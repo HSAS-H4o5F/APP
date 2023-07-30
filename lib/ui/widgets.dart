@@ -16,4 +16,15 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../widgets.dart';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+
+part 'widgets/animated_linear_progress_indicator.dart';
+part 'widgets/app_bar.dart';
+part 'widgets/dialog.dart';
+part 'widgets/information_flow.dart';
+part 'widgets/safe_area.dart';
+part 'widgets/text_form_field.dart';
