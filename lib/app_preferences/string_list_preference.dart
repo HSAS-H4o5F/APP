@@ -16,4 +16,28 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../widgets.dart';
+part of '../app_preferences.dart';
+
+abstract class StringListPreference extends Preference<List<String>> {
+  StringListPreference({
+    required super.key,
+    required super.value,
+    super.title,
+    super.beforeSetValue,
+    super.onValueChanged,
+  }) : super(
+          (sharedPreferences, key, value) {
+            return sharedPreferences.setStringList(key, value);
+          },
+        );
+}
+
+class StringListPreferenceImpl extends StringListPreference {
+  StringListPreferenceImpl({
+    required super.key,
+    required super.value,
+    super.title,
+    super.beforeSetValue,
+    super.onValueChanged,
+  });
+}

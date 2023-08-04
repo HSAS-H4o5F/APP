@@ -16,7 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
+part of '../widgets.dart';
 
 class DirectionalSafeArea extends StatelessWidget {
   const DirectionalSafeArea({

@@ -18,18 +18,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hsas_h4o5f_app/app_state.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/animated_linear_progress_indicator.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/app_bar.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
+import 'package:hsas_h4o5f_app/ui/widgets.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliver_tools/sliver_tools.dart';
-
-part 'settings/server_url.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -39,8 +31,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  SharedPreferences? _sharedPreferences;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,23 +39,20 @@ class _SettingsPageState extends State<SettingsPage> {
           SliverBlurredLargeAppBar(
             title: Text(AppLocalizations.of(context)!.settings),
           ),
-          SliverPinnedHeader(
-            child: AnimatedLinearProgressIndicator(
-              visible: _sharedPreferences == null,
-            ),
+          SliverList.list(
+            children: [
+              PreferencesProvider.of(context)
+                  .preferences
+                  .serverUrl!
+                  .listTile(context),
+            ].mapWithFirstLast((first, last, child) {
+              return SafeArea(
+                top: false,
+                bottom: last,
+                child: child,
+              );
+            }).toList(),
           ),
-          if (_sharedPreferences != null)
-            SliverList.list(
-              children: [
-                ServerUrlSetting(prefs: _sharedPreferences!),
-              ].mapWithFirstLast((first, last, child) {
-                return SafeArea(
-                  top: false,
-                  bottom: last,
-                  child: child,
-                );
-              }).toList(),
-            ),
         ],
       ),
     );
@@ -73,7 +60,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void didChangeDependencies() {
-    _sharedPreferences = SharedPreferencesState.of(context);
     super.didChangeDependencies();
   }
 }

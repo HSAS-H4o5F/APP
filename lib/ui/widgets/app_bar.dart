@@ -16,10 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+part of '../widgets.dart';
 
 class SliverBlurredLargeAppBar extends StatelessWidget {
   const SliverBlurredLargeAppBar({

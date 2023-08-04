@@ -16,24 +16,16 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hsas_h4o5f_app/app_preferences.dart';
+import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/main.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
+import 'package:hsas_h4o5f_app/ui/widgets.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-const serverUrlPreference = StringPreference(
-  key: 'serverUrl',
-  beforeSetValue: validateServerUrl,
-  onValueChanged: initParse,
-);
+part 'implementations/server_url.dart';
 
-String? validateServerUrl(String value) {
-  try {
-    final uri = Uri.parse(value);
-    return Uri(
-      scheme: uri.scheme,
-      host: uri.host,
-      port: uri.port,
-    ).toString();
-  } catch (e) {
-    return null;
-  }
-}
+part 'implementations/subscribed_feed.dart';

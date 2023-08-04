@@ -24,19 +24,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hsas_h4o5f_app/app_state.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
-import 'package:hsas_h4o5f_app/preference/preference.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
 import 'package:hsas_h4o5f_app/ui/pages/about.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home.dart';
 import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';
+import 'package:hsas_h4o5f_app/ui/widgets.dart';
 import 'package:hsas_h4o5f_app/vectors.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'app_preferences/implementations.dart';
 
 part 'main/future_screen.dart';
 part 'main/loading_screen.dart';
@@ -70,51 +69,51 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
   late final Future<void> _initFuture;
   late final GoRouter router;
 
-  SharedPreferences? _sharedPreferences;
+  late final SharedPreferences _sharedPreferences;
 
   bool _completed = false;
 
   @override
   Widget build(BuildContext context) {
-    return SharedPreferencesState(
-      value: _sharedPreferences,
-      child: DynamicColorBuilder(
-        builder: (light, dark) {
-          return MaterialApp.router(
-            onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-            theme: ThemeData(
-              colorScheme: light ?? lightColorScheme,
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              colorScheme: dark ?? darkColorScheme,
-              useMaterial3: true,
-            ),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            routerConfig: router,
-            builder: (context, child) {
-              return Stack(
-                children: [
-                  FutureScreen(
-                    future: _initFuture,
+    return DynamicColorBuilder(
+      builder: (light, dark) {
+        return MaterialApp.router(
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+          theme: ThemeData(
+            colorScheme: light ?? lightColorScheme,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: dark ?? darkColorScheme,
+            useMaterial3: true,
+          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+          builder: (context, child) {
+            return Stack(
+              children: [
+                FutureScreen(
+                  future: _initFuture,
+                  child: PreferencesProvider(
+                    sharedPreferences: _sharedPreferences,
                     child: child ?? const SizedBox(),
                   ),
-                  if (!_completed)
-                    LoadingScreen(
-                      future: _initFuture,
-                      onAnimationCompleted: () {
-                        setState(() {
-                          _completed = true;
-                        });
-                      },
-                    ),
-                ],
-              );
-            },
-          );
-        },
-      ),
+                ),
+                if (!_completed)
+                  LoadingScreen(
+                    future: _initFuture,
+                    onAnimationCompleted: () {
+                      setState(() {
+                        _completed = true;
+                      });
+                    },
+                  ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -138,34 +137,26 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
   }
 
   Future<void> _initApp() async {
-    final prefs = await SharedPreferences.getInstance();
+    _sharedPreferences = await SharedPreferences.getInstance();
 
-    setState(() {
-      _sharedPreferences = prefs;
-    });
+    if (!mounted) return;
 
-    if (widget.serverUrl != null) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        widget.serverUrl!,
-      );
+    final serverUrl = widget.serverUrl;
+    if (serverUrl != null) {
+      ServerUrlPreference(context, serverUrl).update(_sharedPreferences);
     }
 
-    if (!prefs.containsPreference(serverUrlPreference) && kIsWeb) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        Uri.base.toString(),
-      );
+    if (!ServerUrlPreference.check(_sharedPreferences) && kIsWeb) {
+      ServerUrlPreference(context, Uri.base.toString()).update(_sharedPreferences);
     }
 
-    if (!prefs.containsPreference(serverUrlPreference)) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        defaultServerUrl,
-      );
+    if (!ServerUrlPreference.check(_sharedPreferences)) {
+      ServerUrlPreference(context, defaultServerUrl).update(_sharedPreferences);
     }
 
-    await initParse(prefs.getStringPreference(serverUrlPreference)!);
+    await initParse(ServerUrlPreference.from(context, _sharedPreferences).value);
+
+    SubscribedFeedPreference([]).update(_sharedPreferences);
   }
 }
 
