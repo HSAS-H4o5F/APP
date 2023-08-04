@@ -155,6 +155,8 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     }
 
     await initParse(ServerUrlPreference.from(context, _sharedPreferences).value);
+
+    SubscribedFeedPreference([]).update(_sharedPreferences);
   }
 }
 

@@ -60,9 +60,9 @@ class _PreferencesProviderState extends State<PreferencesProvider> {
   }
 
   @override
-  void initState() {
+  void didChangeDependencies() {
     _preferences = AppPreferences.from(context, widget.sharedPreferences);
-    super.initState();
+    super.didChangeDependencies();
   }
 }
 
