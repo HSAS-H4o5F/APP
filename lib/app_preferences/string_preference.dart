@@ -16,24 +16,28 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:hsas_h4o5f_app/main.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
+part of '../app_preferences.dart';
 
-const serverUrlPreference = StringPreference(
-  key: 'serverUrl',
-  beforeSetValue: validateServerUrl,
-  onValueChanged: initParse,
-);
+abstract class StringPreference extends Preference<String> {
+  StringPreference({
+    required super.key,
+    required super.value,
+    super.title,
+    super.beforeSetValue,
+    super.onValueChanged,
+  }) : super(
+          (sharedPreferences, key, value) {
+            return sharedPreferences.setString(key, value);
+          },
+        );
+}
 
-String? validateServerUrl(String value) {
-  try {
-    final uri = Uri.parse(value);
-    return Uri(
-      scheme: uri.scheme,
-      host: uri.host,
-      port: uri.port,
-    ).toString();
-  } catch (e) {
-    return null;
-  }
+class StringPreferenceImpl extends StringPreference {
+  StringPreferenceImpl({
+    required super.key,
+    required super.value,
+    super.title,
+    super.beforeSetValue,
+    super.onValueChanged,
+  });
 }

@@ -26,8 +26,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/app_state.dart';
 import 'package:hsas_h4o5f_app/data/feed.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
 import 'package:hsas_h4o5f_app/ui/widgets.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -36,13 +34,21 @@ import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'home/fitness_equipments.dart';
+
 part 'home/guide_dogs.dart';
+
 part 'home/lifestyle.dart';
+
 part 'home/medical_care.dart';
+
 part 'home/mutual_aid.dart';
+
 part 'home/news.dart';
+
 part 'home/profile.dart';
+
 part 'home/route.dart';
+
 part 'home/security.dart';
 
 class HomePage extends StatefulWidget {
@@ -118,8 +124,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _initFeed() async {
-    final serverUrl = SharedPreferencesState.of(context)!
-        .getStringPreference(serverUrlPreference)!;
+    final serverUrl =
+        PreferencesProvider.of(context).preferences.serverUrl!.value;
 
     final client = Client();
 
@@ -153,8 +159,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _initEducationFeed() async {
-    final serverUrl = SharedPreferencesState.of(context)!
-        .getStringPreference(serverUrlPreference)!;
+    final serverUrl =
+        PreferencesProvider.of(context).preferences.serverUrl!.value;
 
     final client = Client();
 

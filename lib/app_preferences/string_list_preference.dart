@@ -16,22 +16,28 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:shared_preferences/shared_preferences.dart';
+part of '../app_preferences.dart';
 
-abstract class Preference<T> {
-  const Preference({
-    required this.key,
-    this.beforeSetValue,
-    this.onValueChanged,
-  });
-
-  final String key;
-  final T? Function(T value)? beforeSetValue;
-  final Function(T value)? onValueChanged;
+abstract class StringListPreference extends Preference<List<String>> {
+  StringListPreference({
+    required super.key,
+    required super.value,
+    super.title,
+    super.beforeSetValue,
+    super.onValueChanged,
+  }) : super(
+          (sharedPreferences, key, value) {
+            return sharedPreferences.setStringList(key, value);
+          },
+        );
 }
 
-extension ContainsPreferenceExtension on SharedPreferences {
-  bool containsPreference(Preference preference) {
-    return containsKey(preference.key);
-  }
+class StringListPreferenceImpl extends StringListPreference {
+  StringListPreferenceImpl({
+    required super.key,
+    required super.value,
+    super.title,
+    super.beforeSetValue,
+    super.onValueChanged,
+  });
 }
