@@ -52,13 +52,11 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
               if (snapshot.hasError) {
                 return const SizedBox();
               }
-              return AspectRatio(
-                aspectRatio: 1,
-                child: ClipPath.shape(
-                  shape: const CircleBorder(),
+              return ClipPath.shape(
+                shape: const CircleBorder(),
+                child: AspectRatio(
+                  aspectRatio: 1,
                   child: OverflowBox(
-                    maxWidth: MediaQuery.of(context).size.width,
-                    maxHeight: MediaQuery.of(context).size.height,
                     alignment: Alignment.center,
                     child: FittedBox(
                       fit: BoxFit.cover,
