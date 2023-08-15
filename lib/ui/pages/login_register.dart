@@ -62,11 +62,10 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
               ),
             ],
           ),
-          SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+          SliverSafeArea(
+            sliver: SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(
                 child: Column(
                   children: [
                     Form(
@@ -140,9 +139,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const Divider(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 48),
                     Wrap(
                       alignment: WrapAlignment.center,
                       spacing: 4,
