@@ -27,6 +27,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
 import 'package:hsas_h4o5f_app/ui/pages/about.dart';
+import 'package:hsas_h4o5f_app/ui/pages/face_recogntion.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home.dart';
 import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';
@@ -44,6 +45,8 @@ part 'main/router.dart';
 void main(List<String> args) {
   final parsedArgs =
       (ArgParser()..addOption('serverUrl', abbr: 's')).parse(args);
+
+  WidgetsFlutterBinding.ensureInitialized();
 
   runApp(SmartCommunityApp(
     serverUrl: parsedArgs['serverUrl'] as String?,
@@ -95,7 +98,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
               children: [
                 FutureScreen(
                   future: _initFuture,
-                  child: PreferencesProvider(
+                  builder: () => PreferencesProvider(
                     sharedPreferences: _sharedPreferences,
                     child: child ?? const SizedBox(),
                   ),
@@ -147,14 +150,16 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     }
 
     if (!ServerUrlPreference.check(_sharedPreferences) && kIsWeb) {
-      ServerUrlPreference(context, Uri.base.toString()).update(_sharedPreferences);
+      ServerUrlPreference(context, Uri.base.toString())
+          .update(_sharedPreferences);
     }
 
     if (!ServerUrlPreference.check(_sharedPreferences)) {
       ServerUrlPreference(context, defaultServerUrl).update(_sharedPreferences);
     }
 
-    await initParse(ServerUrlPreference.from(context, _sharedPreferences).value);
+    await initParse(
+        ServerUrlPreference.from(context, _sharedPreferences).value);
 
     SubscribedFeedPreference([]).update(_sharedPreferences);
   }

@@ -153,6 +153,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.3.2+1"
+  camera_windows:
+    dependency: "direct main"
+    description:
+      name: camera_windows
+      sha256: "845cd1594707758c32515a4bfd5639b409d538609dfc8f322bc970f0808eaab0"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.1+7"
   characters:
     dependency: transitive
     description:

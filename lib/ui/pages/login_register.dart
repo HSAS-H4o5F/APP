@@ -67,74 +67,98 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
               top: false,
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
-                  child: AutofillGroup(
-                    child: Column(
-                      children: [
-                        if (widget.type == LoginRegisterPageType.register) ...[
-                          AppTextFormField(
-                            controller: _invitationCodeController,
-                            labelText:
-                                AppLocalizations.of(context)!.invitationCode,
-                            onFieldSubmitted: _submit,
-                            autofillHints: const ['invitationCode'],
-                            keyboardType: TextInputType.text,
-                            enabled: !_submitting,
-                          ),
-                          const SizedBox(height: 16),
-                          AppTextFormField(
-                            controller: _emailController,
-                            labelText: AppLocalizations.of(context)!.email,
-                            onFieldSubmitted: _submit,
-                            autofillHints: const [AutofillHints.email],
-                            keyboardType: TextInputType.emailAddress,
-                            enabled: !_submitting,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        AppTextFormField(
-                          controller: _userNameController,
-                          labelText: AppLocalizations.of(context)!.username,
-                          onFieldSubmitted: _submit,
-                          autofillHints: const [AutofillHints.username],
-                          keyboardType: TextInputType.text,
-                          enabled: !_submitting,
-                        ),
-                        const SizedBox(height: 16),
-                        AppTextFormField(
-                          controller: _passwordController,
-                          labelText: AppLocalizations.of(context)!.password,
-                          onFieldSubmitted: _submit,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _showPassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                child: Column(
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: AutofillGroup(
+                        child: Column(
+                          children: [
+                            if (widget.type ==
+                                LoginRegisterPageType.register) ...[
+                              AppTextFormField(
+                                controller: _invitationCodeController,
+                                labelText: AppLocalizations.of(context)!
+                                    .invitationCode,
+                                onFieldSubmitted: _submit,
+                                autofillHints: const ['invitationCode'],
+                                keyboardType: TextInputType.text,
+                                enabled: !_submitting,
+                              ),
+                              const SizedBox(height: 16),
+                              AppTextFormField(
+                                controller: _emailController,
+                                labelText: AppLocalizations.of(context)!.email,
+                                onFieldSubmitted: _submit,
+                                autofillHints: const [AutofillHints.email],
+                                keyboardType: TextInputType.emailAddress,
+                                enabled: !_submitting,
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                            AppTextFormField(
+                              controller: _userNameController,
+                              labelText: AppLocalizations.of(context)!.username,
+                              onFieldSubmitted: _submit,
+                              autofillHints: const [AutofillHints.username],
+                              keyboardType: TextInputType.text,
+                              enabled: !_submitting,
                             ),
-                            tooltip: _showPassword
-                                ? AppLocalizations.of(context)!.hidePassword
-                                : AppLocalizations.of(context)!.showPassword,
-                            onPressed: () => setState(() {
-                              _showPassword = !_showPassword;
-                            }),
-                          ),
-                          autofillHints: const [AutofillHints.password],
-                          obscureText: !_showPassword,
-                          enabled: !_submitting,
+                            const SizedBox(height: 16),
+                            AppTextFormField(
+                              controller: _passwordController,
+                              labelText: AppLocalizations.of(context)!.password,
+                              onFieldSubmitted: _submit,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _showPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                tooltip: _showPassword
+                                    ? AppLocalizations.of(context)!.hidePassword
+                                    : AppLocalizations.of(context)!
+                                        .showPassword,
+                                onPressed: () => setState(() {
+                                  _showPassword = !_showPassword;
+                                }),
+                              ),
+                              autofillHints: const [AutofillHints.password],
+                              obscureText: !_showPassword,
+                              enabled: !_submitting,
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: _submitting ? null : _submit,
+                              child: Text(
+                                widget.type == LoginRegisterPageType.login
+                                    ? AppLocalizations.of(context)!.login
+                                    : AppLocalizations.of(context)!.register,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _submitting ? null : _submit,
-                          child: Text(
-                            widget.type == LoginRegisterPageType.login
-                                ? AppLocalizations.of(context)!.login
-                                : AppLocalizations.of(context)!.register,
-                          ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        ActionChip(
+                          avatar: const Icon(Icons.face),
+                          label: Text(
+                              AppLocalizations.of(context)!.useFaceRecognition),
+                          onPressed: () {
+                            context.push('/face-recognition');
+                          },
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),

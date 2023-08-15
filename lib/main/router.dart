@@ -123,6 +123,11 @@ class AppRouter extends GoRouter {
                 type: LoginRegisterPageType.register,
               ),
             ),
+            GoRoute(
+              parentNavigatorKey: navigatorKey,
+              path: '/face-recognition',
+              builder: (context, state) => const FaceRecognitionPage(),
+            ),
           ],
         );
 
