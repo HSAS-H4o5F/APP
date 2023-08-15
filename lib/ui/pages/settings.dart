@@ -32,45 +32,44 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverOverlapAbsorber(
-              handle:
-              NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: SliverBlurredLargeAppBar(
-                title: Text(AppLocalizations.of(context)!.settings),
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverBlurredLargeAppBar(
+                  title: Text(AppLocalizations.of(context)!.settings),
+                ),
               ),
-            ),
-          ];
-        },
-        body: CustomScrollView(
-          slivers: [
-            Builder(
-              builder: (context) {
-                return SliverOverlapInjector(
-                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                    context,
-                  ),
-                );
-              },
-            ),
-            SliverList.list(
-              children: [
-                PreferencesProvider.of(context)
-                    .preferences
-                    .serverUrl!
-                    .listTile(context),
-              ].mapWithFirstLast((first, last, child) {
-                return SafeArea(
-                  top: false,
-                  bottom: last,
-                  child: child,
-                );
-              }).toList(),
-            ),
-          ],
-        )
-      ),
+            ];
+          },
+          body: CustomScrollView(
+            slivers: [
+              Builder(
+                builder: (context) {
+                  return SliverOverlapInjector(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                      context,
+                    ),
+                  );
+                },
+              ),
+              SliverList.list(
+                children: [
+                  PreferencesProvider.of(context)
+                      .preferences
+                      .serverUrl!
+                      .listTile(context),
+                ].mapWithFirstLast((first, last, child) {
+                  return SafeArea(
+                    top: false,
+                    bottom: last,
+                    child: child,
+                  );
+                }).toList(),
+              ),
+            ],
+          )),
     );
   }
 
