@@ -16,24 +16,24 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../home.dart';
+part of '../../home.dart';
 
-class MedicalCarePage extends StatefulWidget {
-  const MedicalCarePage({Key? key}) : super(key: key);
+class GuideDogsPage extends StatefulWidget {
+  const GuideDogsPage({Key? key}) : super(key: key);
 
   @override
-  State<MedicalCarePage> createState() => _MedicalCarePageState();
+  State<GuideDogsPage> createState() => _GuideDogsPagePageState();
 }
 
-class _MedicalCarePageState extends State<MedicalCarePage> {
+class _GuideDogsPagePageState extends State<GuideDogsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.medicalCare),
+        title: Text(AppLocalizations.of(context)!.guideDogs),
       ),
       body: Center(
-        child: Text(AppLocalizations.of(context)!.medicalCare),
+        child: Text(AppLocalizations.of(context)!.guideDogs),
       ),
     );
   }
