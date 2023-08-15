@@ -16,7 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../home.dart';
+part of '../../home.dart';
 
 class FitnessEquipmentsPage extends StatefulWidget {
   const FitnessEquipmentsPage({Key? key}) : super(key: key);
