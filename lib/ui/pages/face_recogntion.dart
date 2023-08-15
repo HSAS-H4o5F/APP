@@ -19,6 +19,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/ui/widgets.dart';
 
 class FaceRecognitionPage extends StatefulWidget {
   const FaceRecognitionPage({Key? key}) : super(key: key);
@@ -50,24 +51,15 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
               );
             case ConnectionState.done:
               if (snapshot.hasError) {
+                // TODO: 处理错误
                 return const SizedBox();
               }
-              return ClipPath.shape(
-                shape: const CircleBorder(),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: OverflowBox(
-                    alignment: Alignment.center,
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        width: _controller.value.previewSize?.width ?? 0,
-                        height: _controller.value.previewSize?.height ?? 0,
-                        child: CameraPreview(_controller),
-                      ),
-                    ),
-                  ),
+              // TODO: 增加文字提示
+              return Center(
+                child: FractionallySizedBox(
+                  widthFactor: 0.75,
+                  heightFactor: 0.75,
+                  child: CircleCameraPreview(_controller),
                 ),
               );
           }
@@ -83,9 +75,24 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
   }
 
   Future<void> _initCamera() async {
-    _cameras = await availableCameras();
+    _cameras = (await availableCameras())
+      ..sort((a, b) {
+        if (a.lensDirection == b.lensDirection) {
+          return 0;
+        } else if (a.lensDirection == CameraLensDirection.front) {
+          return 1;
+        } else if (b.lensDirection == CameraLensDirection.front) {
+          return -1;
+        } else if (a.lensDirection == CameraLensDirection.external) {
+          return 1;
+        } else if (b.lensDirection == CameraLensDirection.external) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
     _controller = CameraController(
-      _cameras[0],
+      _cameras.first,
       ResolutionPreset.low,
       enableAudio: false,
     );
