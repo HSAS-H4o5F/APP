@@ -16,7 +16,6 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/app_preferences.dart';
@@ -27,5 +26,4 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'implementations/server_url.dart';
-
 part 'implementations/subscribed_feed.dart';
