@@ -1,0 +1,53 @@
+<!--
+  ~ This file is part of hsas_h4o5f_app.
+  ~ Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+  ~
+  ~ hsas_h4o5f_app is free software: you can redistribute it and/or modify it
+  ~ under the terms of the GNU General Public License as published by the Free
+  ~ Software Foundation, either version 3 of the License, or (at your option) any
+  ~ later version.
+  ~
+  ~ hsas_h4o5f_app is distributed in the hope that it will be useful, but WITHOUT
+  ~ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  ~ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+  ~ details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with
+  ~ hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+  <group android:scaleX="0.54"
+      android:scaleY="0.54"
+      android:translateX="117.76"
+      android:translateY="117.76">
+    <path
+        android:pathData="M122.33,359.72l-9.94,-17.22l-8.02,13.9l-16.45,11.95l6.28,19.33l20.33,0l6.28,-19.33l-2.44,-1.77l3.96,-6.86z"
+        android:fillColor="#072d46"/>
+    <path
+        android:pathData="M161.1,318l-23.47,0l-11.74,20.33l11.74,20.33l23.47,0l11.74,-20.33l-11.74,-20.33z"
+        android:fillColor="#1fb0a9"/>
+    <path
+        android:pathData="M347.59,348.15l-16.04,-16.04l0,46.15l-11.67,8.48l7.52,23.14l24.33,0l7.52,-23.14l-11.67,-8.48l0,-30.11z"
+        android:fillColor="#072d46"/>
+    <path
+        android:pathData="M361.61,322.73v-111.06h-35.16v42.2l21.13,0.11v54.72l-19.72,19.72 19.72,19.72 19.72,-19.72 -5.7,-5.7ZM337.81,242.22v-18.61h13.04v18.61h-13.04Z"
+        android:fillColor="#1fb0a9"/>
+    <path
+        android:pathData="M299.68,183.77h16.41v183.72h-16.41z"
+        android:fillColor="#072d46"/>
+    <path
+        android:pathData="M282.68,352.57l0,-151.86l-58.9,-40.97l-0,81.94l0,-0l0,122.37l17.87,0l0,-134.81l25.2,-17.53l0,137.72l-13.93,10.12l7.52,23.14l24.33,0l7.52,-23.14l-9.62,-6.99z"
+        android:fillColor="#072d46"/>
+    <path
+        android:pathData="M214.09,380.75l-4.52,-4.08L209.57,217.17h-49.89v85.27h29.05v55.39l-7.4,-6.69 -7.04,12.2 28.41,25.68 -6.58,4.78 7.94,24.44h25.69l7.94,-24.44 -20.79,-15.1 -2.83,2.05ZM186.28,279.58h-15.6v-19.12h15.6v19.12ZM186.28,250.58h-15.6v-17.8h15.6v17.8Z"
+        android:fillColor="#072d46"/>
+    <path
+        android:pathData="M398.79,357.93l0,-16.85l0,-164.87l-142.79,-82.44l-142.79,82.44l0,156.53l16.46,-28.5l0.76,0l0,-118.08l125.57,-72.5l125.57,72.5l0,144.99l0,19.88l0,19.42l-1.92,1.4l7.31,22.5l23.66,0l7.31,-22.5l-19.14,-13.9z"
+        android:fillColor="#072d46"/>
+  </group>
+</vector>

@@ -16,15 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/state/app_state.dart';
-import 'package:hsas_h4o5f_app/state/feed.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/animated_linear_progress_indicator.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+part of '../home.dart';
 
 class HomePageNews extends StatefulWidget {
   const HomePageNews({Key? key}) : super(key: key);
@@ -37,27 +29,16 @@ class _HomePageNewsState extends State<HomePageNews> {
   bool _fetching = false;
   final List<String> _unselectedOrigins = [];
 
-  void showFilterDialog() {
+  void showFilterDialog(AppFeed? appFeed) {
     showStatefulAlertDialog(
       context: context,
       builder: (context, setState) {
         return StatefulAlertDialogContent(
           title: Text(AppLocalizations.of(context)!.filter),
-          content: StoreConnector<
-              AppState,
-              ({
-                Map<String, FeedOriginInfo> origins,
-                SharedPreferences? prefs,
-              })>(
-            converter: (store) => (
-              origins: store.state.feed.origins ?? {},
-              prefs: store.state.sharedPreferences,
-            ),
-            builder: (context, state) {
-              return Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: state.origins.entries.map((entry) {
+          content: Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: appFeed?.origins?.entries.map((entry) {
                   final key = entry.key;
                   final origin = entry.value;
 
@@ -74,9 +55,8 @@ class _HomePageNewsState extends State<HomePageNews> {
                       });
                     },
                   );
-                }).toList(),
-              );
-            },
+                }).toList() ??
+                [],
           ),
           actions: [
             TextButton(
@@ -97,7 +77,7 @@ class _HomePageNewsState extends State<HomePageNews> {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar.large(
+        SliverBlurredLargeAppBar(
           title: Text(AppLocalizations.of(context)!.news),
           actions: [
             IconButton(
@@ -110,7 +90,7 @@ class _HomePageNewsState extends State<HomePageNews> {
               icon: const Icon(Icons.refresh),
             ),
             IconButton(
-              onPressed: showFilterDialog,
+              onPressed: () => showFilterDialog(AppFeedState.of(context)),
               tooltip: AppLocalizations.of(context)!.filter,
               icon: const Icon(Icons.filter_list),
             ),

@@ -16,11 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:math';
-
-import 'package:flutter/material.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:intl/intl.dart';
+part of '../home.dart';
 
 class FitnessEquipmentsPage extends StatefulWidget {
   const FitnessEquipmentsPage({Key? key}) : super(key: key);

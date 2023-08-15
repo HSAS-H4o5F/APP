@@ -40,6 +40,22 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="Web App Manifest">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="Web App Manifest" />
+              <option name="relativePathToSchema" value="https://json.schemastore.org/web-manifest-combined.json" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="web/manifest.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
       </map>
     </state>
   </component>

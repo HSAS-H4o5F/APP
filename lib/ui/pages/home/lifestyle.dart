@@ -16,20 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hsas_h4o5f_app/data/feed.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
-import 'package:hsas_h4o5f_app/state/app_state.dart';
-import 'package:hsas_h4o5f_app/state/education_feed.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/dialog.dart';
-import 'package:hsas_h4o5f_app/ui/widgets/safe_area.dart';
-import 'package:http/http.dart';
-import 'package:sliver_tools/sliver_tools.dart';
-import 'package:url_launcher/url_launcher.dart';
+part of '../home.dart';
 
 class HomePageLifestyle extends StatefulWidget {
   const HomePageLifestyle({Key? key}) : super(key: key);
@@ -39,19 +26,11 @@ class HomePageLifestyle extends StatefulWidget {
 }
 
 class _HomePageLifestyleState extends State<HomePageLifestyle> {
-  bool _fetching = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchFeed();
-  }
-
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar.large(
+        SliverBlurredLargeAppBar(
           title: Text(AppLocalizations.of(context)!.lifestyle),
         ),
         SliverToBoxAdapter(
@@ -119,15 +98,6 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (_fetching) ...[
-                    const Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Padding(
-                        padding: EdgeInsets.all(4),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ],
                   Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -135,81 +105,31 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: IconButton(
-                        tooltip: AppLocalizations.of(context)!.refresh,
-                        icon: const Icon(Icons.refresh),
-                        onPressed: _fetchFeed,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
           ),
         ),
-        StoreConnector<AppState, List<FeedItem>>(
-          converter: (store) => store.state.educationFeed?.items.toList() ?? [],
-          builder: (context, items) {
-            return SliverList.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return DirectionalSafeArea(
-                  start: false,
-                  top: false,
-                  bottom: index == items.length - 1,
-                  child: EducationFlowItem(
-                    articleUrl: item.link,
-                    title: item.title,
-                    summary: item.summary,
-                  ),
-                );
-              },
-            );
-          },
-        ),
+        ((List<FeedItem> items) {
+          return SliverList.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return DirectionalSafeArea(
+                start: false,
+                top: false,
+                bottom: index == items.length - 1,
+                child: EducationFlowItem(
+                  articleUrl: item.link,
+                  title: item.title,
+                  summary: item.summary,
+                ),
+              );
+            },
+          );
+        })(EducationFeedState.of(context)?.items.toList() ?? []),
       ],
     );
-  }
-
-  void _fetchFeed() async {
-    if (_fetching) return;
-
-    if (!mounted) return;
-    setState(() => _fetching = true);
-
-    final store = StoreProvider.of<AppState>(context, listen: false);
-
-    final serverUrl = store.state.sharedPreferences!
-        .getStringPreference(serverUrlPreference)!;
-
-    final client = Client();
-
-    final Response response;
-
-    try {
-      response = await client.get(Uri.parse(serverUrl).replace(
-        path: '/feed',
-        queryParameters: {'origin': 'zhihu'},
-      ));
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _fetching = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.fetchingError)),
-      );
-      return;
-    } finally {
-      client.close();
-    }
-
-    store.dispatch(SetEducationFeedAction(Feed.fromJson(response.body)));
-    if (!mounted) return;
-    setState(() => _fetching = false);
   }
 
   void _onMedicalCareTap() {
@@ -280,16 +200,13 @@ class LifeStyleCard extends StatelessWidget {
               children: [
                 Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 8,
+                  spacing: 16,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Icon(icon, size: 48),
                     Text(
                       title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineLarge
-                          ?.copyWith(letterSpacing: 16),
+                      style: Theme.of(context).textTheme.headlineLarge,
                       textAlign: TextAlign.center,
                     ),
                   ],

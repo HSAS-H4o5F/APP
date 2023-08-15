@@ -15,3 +15,5 @@
  * You should have received a copy of the GNU General Public License along with
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
+
+part of '../widgets.dart';

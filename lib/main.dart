@@ -16,60 +16,46 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:math';
+
 import 'package:args/args.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
-import 'package:hsas_h4o5f_app/preference/preference.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
-import 'package:hsas_h4o5f_app/state/app_state.dart';
-import 'package:hsas_h4o5f_app/state/shared_preferences.dart';
+import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
+import 'package:hsas_h4o5f_app/ui/pages/about.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/fitness_equipments.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/guide_dogs.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/medical_care.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/mutual_aid.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/route.dart';
 import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';
+import 'package:hsas_h4o5f_app/ui/widgets.dart';
+import 'package:hsas_h4o5f_app/vectors.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'app_preferences/implementations.dart';
+
+part 'main/future_screen.dart';
+part 'main/loading_screen.dart';
+part 'main/router.dart';
 
 void main(List<String> args) {
   final parsedArgs =
       (ArgParser()..addOption('serverUrl', abbr: 's')).parse(args);
 
-  String? serverUrl = parsedArgs['serverUrl'] as String?;
-
-  final store = Store<AppState>(
-    appReducer,
-    initialState: const AppState(),
-  );
-
-  if (kIsWeb) {
-    serverUrl = Uri.base.toString();
-  }
-
   runApp(SmartCommunityApp(
-    store: store,
-    serverUrl: serverUrl,
+    serverUrl: parsedArgs['serverUrl'] as String?,
   ));
 }
 
 class SmartCommunityApp extends StatefulWidget {
   const SmartCommunityApp({
     super.key,
-    required this.store,
     required this.serverUrl,
   });
 
-  final Store<AppState> store;
   final String? serverUrl;
 
   @override
@@ -80,31 +66,55 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
   final _globalNavigatorKey = GlobalKey<NavigatorState>();
   final _shellRouteNavigatorKey = GlobalKey<NavigatorState>();
 
+  late final Future<void> _initFuture;
   late final GoRouter router;
 
-  Future<void> _init(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
+  late final SharedPreferences _sharedPreferences;
 
-    if (!mounted) return;
+  bool _completed = false;
 
-    StoreProvider.of<AppState>(context)
-        .dispatch(SetSharedPreferencesAction(prefs));
-
-    if (widget.serverUrl != null) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        widget.serverUrl!,
-      );
-    }
-
-    if (!prefs.containsPreference(serverUrlPreference)) {
-      prefs.setStringPreference(
-        serverUrlPreference,
-        defaultServerUrl,
-      );
-    }
-
-    await initParse(prefs.getStringPreference(serverUrlPreference)!);
+  @override
+  Widget build(BuildContext context) {
+    return DynamicColorBuilder(
+      builder: (light, dark) {
+        return MaterialApp.router(
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+          theme: ThemeData(
+            colorScheme: light ?? lightColorScheme,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: dark ?? darkColorScheme,
+            useMaterial3: true,
+          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+          builder: (context, child) {
+            return Stack(
+              children: [
+                FutureScreen(
+                  future: _initFuture,
+                  child: PreferencesProvider(
+                    sharedPreferences: _sharedPreferences,
+                    child: child ?? const SizedBox(),
+                  ),
+                ),
+                if (!_completed)
+                  LoadingScreen(
+                    future: _initFuture,
+                    onAnimationCompleted: () {
+                      setState(() {
+                        _completed = true;
+                      });
+                    },
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -117,167 +127,36 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    router = GoRouter(
+    router = AppRouter(
       navigatorKey: _globalNavigatorKey,
-      routes: [
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/',
-          redirect: (context, state) => '/home',
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/home',
-          redirect: (context, state) async {
-            final currentUser = await ParseUser.currentUser();
-            if (currentUser == null) {
-              return '/login';
-            }
-
-            if (state.location == '/home') {
-              return HomePageRoute.routes.keys.first;
-            }
-
-            return null;
-          },
-          routes: [
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':medical-care',
-              builder: (context, state) => const MedicalCarePage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':guide-dogs',
-              builder: (context, state) => const GuideDogsPage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':mutual-aid',
-              builder: (context, state) => const MutualAidPage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: _globalNavigatorKey,
-              path: ':fitness-equipments',
-              builder: (context, state) => const FitnessEquipmentsPage(),
-            ),
-          ],
-        ),
-        ShellRoute(
-          navigatorKey: _shellRouteNavigatorKey,
-          builder: (context, state, child) => HomePage(
-            location: state.location,
-            child: child,
-          ),
-          routes: HomePageRoute.routes.entries.map((entry) {
-            return GoRoute(
-              parentNavigatorKey: _shellRouteNavigatorKey,
-              path: entry.key,
-              pageBuilder: (context, state) {
-                return CustomTransitionPage(
-                  key: state.pageKey,
-                  child: entry.value.builder(context, state),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(
-                      opacity: CurveTween(curve: Curves.easeInOut)
-                          .animate(animation),
-                      child: child,
-                    );
-                  },
-                );
-              },
-            );
-          }).toList(),
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/settings',
-          builder: (context, state) => const SettingsPage(),
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/login',
-          builder: (context, state) => const LoginRegisterPage(
-            type: LoginRegisterPageType.login,
-          ),
-        ),
-        GoRoute(
-          parentNavigatorKey: _globalNavigatorKey,
-          path: '/register',
-          builder: (context, state) => const LoginRegisterPage(
-            type: LoginRegisterPageType.register,
-          ),
-        ),
-      ],
-      initialLocation: '/',
+      shellRouteNavigatorKey: _shellRouteNavigatorKey,
     );
 
+    _initFuture = _initApp();
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return StoreProvider(
-      store: widget.store,
-      child: DynamicColorBuilder(
-        builder: (light, dark) {
-          return MaterialApp.router(
-            onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-            theme: ThemeData(
-              colorScheme: light,
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              colorScheme: dark,
-              useMaterial3: true,
-            ),
-            themeMode: ThemeMode.system,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            routerConfig: router,
-            builder: (context, child) {
-              return FutureBuilder(
-                future: _init(context),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                    case ConnectionState.active:
-                      return const Scaffold(
-                        body: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    case ConnectionState.done:
-                      if (snapshot.hasError) {
-                        return Scaffold(
-                          body: Center(
-                            child: SingleChildScrollView(
-                              child: Text(
-                                snapshot.error.toString(),
-                                style: DefaultTextStyle.of(context)
-                                    .style
-                                    .copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.error,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return child ?? const SizedBox();
-                      }
-                  }
-                },
-              );
-            },
-          );
-        },
-      ),
-    );
+  Future<void> _initApp() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+
+    if (!mounted) return;
+
+    final serverUrl = widget.serverUrl;
+    if (serverUrl != null) {
+      ServerUrlPreference(context, serverUrl).update(_sharedPreferences);
+    }
+
+    if (!ServerUrlPreference.check(_sharedPreferences) && kIsWeb) {
+      ServerUrlPreference(context, Uri.base.toString()).update(_sharedPreferences);
+    }
+
+    if (!ServerUrlPreference.check(_sharedPreferences)) {
+      ServerUrlPreference(context, defaultServerUrl).update(_sharedPreferences);
+    }
+
+    await initParse(ServerUrlPreference.from(context, _sharedPreferences).value);
+
+    SubscribedFeedPreference([]).update(_sharedPreferences);
   }
 }
 

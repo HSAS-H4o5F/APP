@@ -18,17 +18,38 @@
 
 import 'dart:core';
 import 'dart:io';
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hsas_h4o5f_app/app_state.dart';
+import 'package:hsas_h4o5f_app/data/feed.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/preference/implementations/server_url.dart';
-import 'package:hsas_h4o5f_app/preference/string_preference.dart';
-import 'package:hsas_h4o5f_app/state/app_state.dart';
-import 'package:hsas_h4o5f_app/state/feed.dart';
-import 'package:hsas_h4o5f_app/ui/pages/home/route.dart';
+import 'package:hsas_h4o5f_app/ui/widgets.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+part 'home/fitness_equipments.dart';
+
+part 'home/guide_dogs.dart';
+
+part 'home/lifestyle.dart';
+
+part 'home/medical_care.dart';
+
+part 'home/mutual_aid.dart';
+
+part 'home/news.dart';
+
+part 'home/profile.dart';
+
+part 'home/route.dart';
+
+part 'home/security.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -45,18 +66,66 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  AppFeed? _appFeed;
+  Feed? _educationFeed;
+
   int _size = 0;
 
   @override
-  void initState() {
-    _initFeed();
-    super.initState();
+  Widget build(BuildContext context) {
+    return AppStateProvider(
+      builders: [
+        AppFeedState.builder(_appFeed),
+        EducationFeedState.builder(_educationFeed),
+      ],
+      child: Scaffold(
+        body: Row(
+          children: [
+            if (_size > 0) ...[
+              NavigationRail(
+                extended: _size == 2,
+                destinations: HomePageRoute.routes.entries
+                    .map((entry) => entry.value.getDestinations(context).$1)
+                    .toList(),
+                selectedIndex: HomePageRoute.routes.entries
+                    .toList()
+                    .indexWhere((entry) => entry.key == widget.location),
+                onDestinationSelected: (index) => context.go(
+                  HomePageRoute.routes.entries.toList()[index].key,
+                ),
+                labelType: _size == 1 ? NavigationRailLabelType.all : null,
+              ),
+            ],
+            Expanded(child: widget.child),
+          ],
+        ),
+        bottomNavigationBar: _size == 0
+            ? ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: NavigationBar(
+                    destinations: HomePageRoute.routes.entries
+                        .map((entry) => entry.value.getDestinations(context).$2)
+                        .toList(),
+                    selectedIndex: HomePageRoute.routes.entries
+                        .toList()
+                        .indexWhere((entry) => entry.key == widget.location),
+                    onDestinationSelected: (index) => context.go(
+                      HomePageRoute.routes.entries.toList()[index].key,
+                    ),
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
+              )
+            : null,
+        extendBody: true,
+      ),
+    );
   }
 
   void _initFeed() async {
-    final store = StoreProvider.of<AppState>(context, listen: false);
-    final serverUrl = store.state.sharedPreferences!
-        .getStringPreference(serverUrlPreference)!;
+    final serverUrl =
+        PreferencesProvider.of(context).preferences.serverUrl!.value;
 
     final client = Client();
 
@@ -84,12 +153,42 @@ class _HomePageState extends State<HomePage> {
     }
 
     final origins = AppFeed.parseFeedOrigins(response!.body);
-    store.dispatch(SetFeedAction(AppFeed(origins: origins)));
+    setState(() {
+      _appFeed = AppFeed(origins: origins);
+    });
+  }
+
+  void _initEducationFeed() async {
+    final serverUrl =
+        PreferencesProvider.of(context).preferences.serverUrl!.value;
+
+    final client = Client();
+
+    final Response response;
+
+    try {
+      response = await client.get(Uri.parse(serverUrl).replace(
+        path: '/feed',
+        queryParameters: {'origin': 'zhihu'},
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.fetchingError)),
+      );
+      return;
+    } finally {
+      client.close();
+    }
+
+    setState(() {
+      _educationFeed = Feed.fromJson(response.body);
+    });
   }
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
+    _initFeed();
+    _initEducationFeed();
 
     final width = MediaQuery.of(context).size.width;
     if (width > mediumWidthBreakpoint) {
@@ -99,44 +198,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       _size = 0;
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          if (_size > 0) ...[
-            NavigationRail(
-              extended: _size == 2,
-              destinations: HomePageRoute.routes.entries
-                  .map((entry) => entry.value.getDestinations(context).item1)
-                  .toList(),
-              selectedIndex: HomePageRoute.routes.entries
-                  .toList()
-                  .indexWhere((entry) => entry.key == widget.location),
-              onDestinationSelected: (index) => context.go(
-                HomePageRoute.routes.entries.toList()[index].key,
-              ),
-              labelType: _size == 1 ? NavigationRailLabelType.all : null,
-            ),
-          ],
-          Expanded(child: widget.child),
-        ],
-      ),
-      bottomNavigationBar: _size == 0
-          ? NavigationBar(
-              destinations: HomePageRoute.routes.entries
-                  .map((entry) => entry.value.getDestinations(context).item2)
-                  .toList(),
-              selectedIndex: HomePageRoute.routes.entries
-                  .toList()
-                  .indexWhere((entry) => entry.key == widget.location),
-              onDestinationSelected: (index) => context.go(
-                HomePageRoute.routes.entries.toList()[index].key,
-              ),
-            )
-          : null,
-    );
+    super.didChangeDependencies();
   }
 }
