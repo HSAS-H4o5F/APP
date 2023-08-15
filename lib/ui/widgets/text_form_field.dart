@@ -49,8 +49,8 @@ part of '../widgets.dart';
 ///
 /// If [enabled] is false, the field is greyed out and the user
 /// cannot interact with it.
-class MyTextFormField extends StatelessWidget {
-  const MyTextFormField({
+class AppTextFormField extends StatelessWidget {
+  const AppTextFormField({
     Key? key,
     required this.controller,
     required this.labelText,

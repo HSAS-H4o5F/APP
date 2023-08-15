@@ -73,7 +73,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                     child: Column(
                       children: [
                         if (widget.type == LoginRegisterPageType.register) ...[
-                          MyTextFormField(
+                          AppTextFormField(
                             controller: _invitationCodeController,
                             labelText:
                                 AppLocalizations.of(context)!.invitationCode,
@@ -83,7 +83,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                             enabled: !_submitting,
                           ),
                           const SizedBox(height: 16),
-                          MyTextFormField(
+                          AppTextFormField(
                             controller: _emailController,
                             labelText: AppLocalizations.of(context)!.email,
                             onFieldSubmitted: _submit,
@@ -93,7 +93,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        MyTextFormField(
+                        AppTextFormField(
                           controller: _userNameController,
                           labelText: AppLocalizations.of(context)!.username,
                           onFieldSubmitted: _submit,
@@ -102,7 +102,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                           enabled: !_submitting,
                         ),
                         const SizedBox(height: 16),
-                        MyTextFormField(
+                        AppTextFormField(
                           controller: _passwordController,
                           labelText: AppLocalizations.of(context)!.password,
                           onFieldSubmitted: _submit,
