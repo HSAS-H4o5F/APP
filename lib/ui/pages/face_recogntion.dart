@@ -55,11 +55,15 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
                 return const SizedBox();
               }
               // TODO: 增加文字提示
-              return Center(
-                child: FractionallySizedBox(
-                  widthFactor: 0.5,
-                  heightFactor: 0.5,
-                  child: CircleCameraPreview(_controller),
+              return Align(
+                alignment: const Alignment(0, -0.75),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.75,
+                    heightFactor: 0.75,
+                    child: CircleCameraPreview(_controller),
+                  ),
                 ),
               );
           }
