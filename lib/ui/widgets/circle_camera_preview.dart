@@ -35,7 +35,6 @@ class CircleCameraPreview extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final size = constraints.biggest.shortestSide;
-            print('${size}');
             return OverflowBox(
               maxWidth: double.infinity,
               maxHeight: double.infinity,

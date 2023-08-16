@@ -80,13 +80,13 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
         if (a.lensDirection == b.lensDirection) {
           return 0;
         } else if (a.lensDirection == CameraLensDirection.front) {
-          return 1;
+          return -1;
         } else if (b.lensDirection == CameraLensDirection.front) {
-          return -1;
-        } else if (a.lensDirection == CameraLensDirection.external) {
           return 1;
-        } else if (b.lensDirection == CameraLensDirection.external) {
+        } else if (a.lensDirection == CameraLensDirection.external) {
           return -1;
+        } else if (b.lensDirection == CameraLensDirection.external) {
+          return 1;
         } else {
           return 0;
         }
