@@ -57,8 +57,8 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
               // TODO: 增加文字提示
               return Center(
                 child: FractionallySizedBox(
-                  widthFactor: 0.75,
-                  heightFactor: 0.75,
+                  widthFactor: 0.5,
+                  heightFactor: 0.5,
                   child: CircleCameraPreview(_controller),
                 ),
               );

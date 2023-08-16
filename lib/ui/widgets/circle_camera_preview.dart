@@ -32,17 +32,28 @@ class CircleCameraPreview extends StatelessWidget {
       shape: const CircleBorder(),
       child: AspectRatio(
         aspectRatio: 1,
-        child: OverflowBox(
-          alignment: Alignment.center,
-          child: FittedBox(
-            fit: BoxFit.cover,
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: _controller.value.previewSize?.width ?? 0,
-              height: _controller.value.previewSize?.height ?? 0,
-              child: CameraPreview(_controller),
-            ),
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final size = constraints.biggest.shortestSide;
+            print('${size}');
+            return OverflowBox(
+              maxWidth: double.infinity,
+              maxHeight: double.infinity,
+              alignment: Alignment.center,
+              child: FittedBox(
+                fit: BoxFit.none,
+                child: SizedBox(
+                  width: _controller.value.aspectRatio > 1
+                      ? size * _controller.value.aspectRatio
+                      : size,
+                  height: _controller.value.aspectRatio < 1
+                      ? size * _controller.value.aspectRatio
+                      : size,
+                  child: CameraPreview(_controller),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
