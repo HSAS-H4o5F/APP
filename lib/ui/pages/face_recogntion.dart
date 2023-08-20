@@ -20,6 +20,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class FaceRecognitionPage extends StatefulWidget {
   const FaceRecognitionPage({Key? key}) : super(key: key);
@@ -54,6 +55,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
                 // TODO: 处理错误
                 return const SizedBox();
               }
+              // TODO: 优化相机授权
               // TODO: 增加文字提示
               return Align(
                 alignment: const Alignment(0, -0.75),
@@ -95,11 +97,39 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
           return 0;
         }
       });
+
     _controller = CameraController(
       _cameras.first,
       ResolutionPreset.low,
       enableAudio: false,
     );
+
+    if (!mounted) {
+      return;
+    }
+
+    final client = io(
+      PreferencesProvider.of(context).preferences.serverUrl!.value,
+      OptionBuilder().setPath('/face').setExtraHeaders({
+        'api-version': '1',
+        'accept-language': Localizations.localeOf(context).languageCode,
+      }).build(),
+    );
+
+    _controller.startImageStream((image) {
+      switch (image.format.group) {
+        case ImageFormatGroup.yuv420:
+          break;
+        case ImageFormatGroup.bgra8888:
+          break;
+        case ImageFormatGroup.jpeg:
+          break;
+        case ImageFormatGroup.nv21:
+          break;
+        case ImageFormatGroup.unknown:
+          break;
+      }
+    });
     await _controller.initialize();
   }
 
