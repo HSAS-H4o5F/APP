@@ -72,6 +72,7 @@ class SliverBlurredLargeAppBar extends StatelessWidget {
         SliverAppBar.large(
           automaticallyImplyLeading: false,
           flexibleSpace: ClipRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(),
