@@ -113,8 +113,9 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
       OptionBuilder().setPath('/face').setExtraHeaders({
         'api-version': '1',
         'accept-language': Localizations.localeOf(context).languageCode,
-      }).build(),
+      }).setTransports(['websocket']).build(),
     );
+
     client.on('success', (data) {
       _controller.startImageStream((image) {
         switch (image.format.group) {
