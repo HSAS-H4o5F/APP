@@ -14,22 +14,34 @@
 #  You should have received a copy of the GNU General Public License along with
 #  hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
 
+import logging
 import os
 import sys
 
 import yaml
 
-if len(sys.argv) > 1:
+logging.info("Running pre-build script.")
 
+if len(sys.argv) > 1:
+    logging.info("Opening pubspec.yaml for reading.")
     file = open(os.path.abspath("pubspec.yaml"), "r")
+
+    logging.info("Loading pubspec data.")
     data = yaml.safe_load(file)
     file.close()
 
+    logging.info("Replacing version with {}.".format(sys.argv[1]))
     data['version'] = data['version'].replace("+", "-{}+".format(sys.argv[1]))
 
+    logging.info("Opening pubspec.yaml for writing.")
     file = open(os.path.abspath("pubspec.yaml"), "w")
+
+    logging.info("Dumping pubspec data.")
     yaml.dump(data, file, default_flow_style=False)
     file.close()
 
+logging.info("Running build_runner.")
 os.system("dart run build_runner build --delete-conflicting-outputs")
+
+logging.info("Running vector_graphics_compiler.")
 os.system("dart run vector_graphics_compiler --input-dir assets/vectors")
