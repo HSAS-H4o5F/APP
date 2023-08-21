@@ -104,6 +104,8 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
       enableAudio: false,
     );
 
+    await _controller.initialize();
+
     if (!mounted) {
       return;
     }
@@ -135,8 +137,6 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
     });
 
     client.emit("request", "detection");
-
-    await _controller.initialize();
   }
 
   @override
