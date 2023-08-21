@@ -55,11 +55,11 @@ jobs:
           channel: stable
           cache: true
 
-      - if: matrix.os == 'ubuntu-latest'
-        name: Upgrade Ubuntu packages
-        run: |
-          sudo apt update
-          sudo apt upgrade -y
+#      - if: matrix.os == 'ubuntu-latest'
+#        name: Upgrade Ubuntu packages
+#        run: |
+#          sudo apt update
+#          sudo apt upgrade -y
 
       - if: matrix.platform == 'Linux'
         name: Install Linux dependencies
@@ -88,6 +88,8 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
       - name: Pre-build
         run: |
