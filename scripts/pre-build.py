@@ -20,6 +20,7 @@ import sys
 
 import yaml
 
+logging.basicConfig(level=logging.DEBUG)
 logging.info("Running pre-build script.")
 
 if len(sys.argv) > 1:
