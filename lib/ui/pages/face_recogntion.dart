@@ -115,21 +115,26 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
         'accept-language': Localizations.localeOf(context).languageCode,
       }).build(),
     );
-
-    _controller.startImageStream((image) {
-      switch (image.format.group) {
-        case ImageFormatGroup.yuv420:
-          break;
-        case ImageFormatGroup.bgra8888:
-          break;
-        case ImageFormatGroup.jpeg:
-          break;
-        case ImageFormatGroup.nv21:
-          break;
-        case ImageFormatGroup.unknown:
-          break;
-      }
+    client.on('success', (data) {
+      _controller.startImageStream((image) {
+        switch (image.format.group) {
+          case ImageFormatGroup.yuv420:
+            client.emit("detection", image.planes[0].bytes);
+            break;
+          case ImageFormatGroup.bgra8888:
+            break;
+          case ImageFormatGroup.jpeg:
+            break;
+          case ImageFormatGroup.nv21:
+            break;
+          case ImageFormatGroup.unknown:
+            break;
+        }
+      });
     });
+
+    client.emit("request", "detection");
+
     await _controller.initialize();
   }
 
