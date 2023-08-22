@@ -93,7 +93,6 @@ class _HomePageState extends State<HomePage> {
         ),
         bottomNavigationBar: _size == 0
             ? ClipRect(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: NavigationBar(
