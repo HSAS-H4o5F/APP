@@ -133,10 +133,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
             _socket.emit(
               "detection",
               (BytesBuilder()
-                    ..addByte(image.width)
-                    ..add('\n'.codeUnits)
-                    ..addByte(image.height)
-                    ..add('\n'.codeUnits)
+                    ..add('${image.width}\n${image.height}\n'.codeUnits)
                     ..add(image.planes[0].bytes))
                   .toBytes(),
             );
