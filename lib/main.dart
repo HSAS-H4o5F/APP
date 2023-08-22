@@ -32,7 +32,7 @@ import 'package:hsas_h4o5f_app/ui/pages/home.dart';
 import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';
 import 'package:hsas_h4o5f_app/ui/widgets.dart';
-import 'package:hsas_h4o5f_app/vectors.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/logo.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -16,26 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../vectors.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 
-class Logo extends Vector {
-  const Logo({
-    super.key,
-    super.size,
-    super.fill,
-  }) : super(
-          assetName: 'assets/vectors/logo.svg.vec',
-          semanticsLabel: 'H4o5F',
-        );
-}
-
-class LogoWithText extends Vector {
-  const LogoWithText({
-    super.key,
-    super.size,
-    super.fill,
-  }) : super(
-          assetName: 'assets/vectors/logo_with_text.svg.vec',
-          semanticsLabel: 'H4o5F',
-        );
-}
+part 'utils/camera_utils.dart';

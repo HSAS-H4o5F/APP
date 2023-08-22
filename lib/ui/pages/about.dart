@@ -19,7 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets.dart';
-import 'package:hsas_h4o5f_app/vectors.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/logo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutPage extends StatefulWidget {

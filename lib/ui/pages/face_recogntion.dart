@@ -33,6 +33,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
   late final Future<void> _initFuture;
   late final List<CameraDescription> _cameras;
   late final CameraController _controller;
+  late final Socket _socket;
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +77,11 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
 
   @override
   void initState() {
-    _initFuture = _initCamera();
+    _initFuture = _init();
     super.initState();
   }
 
-  Future<void> _initCamera() async {
+  Future<void> _init() async {
     _cameras = (await availableCameras())
       ..sort((a, b) {
         if (a.lensDirection == b.lensDirection) {
@@ -110,7 +111,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
       return;
     }
 
-    final client = io(
+    _socket = io(
       PreferencesProvider.of(context).preferences.serverUrl!.value,
       OptionBuilder().setPath('/face').setExtraHeaders({
         'api-version': '1',
@@ -118,11 +119,11 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
       }).setTransports(['websocket']).build(),
     );
 
-    client.on('success', (data) {
+    _socket.on('success', (data) {
       _controller.startImageStream((image) {
         switch (image.format.group) {
           case ImageFormatGroup.yuv420:
-            client.emit("detection", image.planes[0].bytes);
+            _socket.emit("detection", image.planes[0].bytes);
             break;
           case ImageFormatGroup.bgra8888:
             break;
@@ -136,12 +137,17 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
       });
     });
 
-    client.emit("request", "detection");
+    _socket.emit("request", {
+      'operation': 'detect',
+      'width': _controller.value.previewSize!.width,
+      'height': _controller.value.previewSize!.height,
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _socket.dispose();
     super.dispose();
   }
 }
