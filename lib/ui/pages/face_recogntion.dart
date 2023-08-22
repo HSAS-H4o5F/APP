@@ -16,6 +16,8 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
@@ -113,17 +115,31 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
 
     _socket = io(
       PreferencesProvider.of(context).preferences.serverUrl!.value,
-      OptionBuilder().setPath('/face').setExtraHeaders({
-        'api-version': '1',
-        'accept-language': Localizations.localeOf(context).languageCode,
-      }).setTransports(['websocket']).build(),
-    );
+      OptionBuilder()
+          .setPath('/face')
+          .setExtraHeaders({
+            'api-version': '1',
+            'accept-language': Localizations.localeOf(context).languageCode,
+          })
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build(),
+    )..connect();
 
     _socket.on('success', (data) {
       _controller.startImageStream((image) {
         switch (image.format.group) {
           case ImageFormatGroup.yuv420:
-            _socket.emit("detection", image.planes[0].bytes);
+            _socket.emit(
+              "detection",
+              (BytesBuilder()
+                    ..addByte(image.width)
+                    ..add('\n'.codeUnits)
+                    ..addByte(image.height)
+                    ..add('\n'.codeUnits)
+                    ..add(image.planes[0].bytes))
+                  .toBytes(),
+            );
             break;
           case ImageFormatGroup.bgra8888:
             break;
@@ -139,8 +155,6 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
 
     _socket.emit("request", {
       'operation': 'detection',
-      'width': _controller.value.previewSize!.width,
-      'height': _controller.value.previewSize!.height,
     });
   }
 
