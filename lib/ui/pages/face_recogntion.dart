@@ -138,7 +138,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
     });
 
     _socket.emit("request", {
-      'operation': 'detect',
+      'operation': 'detection',
       'width': _controller.value.previewSize!.width,
       'height': _controller.value.previewSize!.height,
     });
