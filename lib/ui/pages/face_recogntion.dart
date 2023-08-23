@@ -16,6 +16,8 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
@@ -131,7 +133,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
             _socket.emit('detection', {
               'width': image.width,
               'height': image.height,
-              'bytes': image.planes[0].bytes,
+              'bytes': image.planes[0].bytes.toList(),
             });
             break;
           case ImageFormatGroup.bgra8888:
