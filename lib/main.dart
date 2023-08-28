@@ -95,7 +95,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
               children: [
                 FutureScreen(
                   future: _initFuture,
-                  child: PreferencesProvider(
+                  builder: () => PreferencesProvider(
                     sharedPreferences: _sharedPreferences,
                     child: child ?? const SizedBox(),
                   ),

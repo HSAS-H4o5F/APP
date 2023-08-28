@@ -22,11 +22,11 @@ class FutureScreen extends StatelessWidget {
   const FutureScreen({
     super.key,
     required this.future,
-    required this.child,
+    required this.builder,
   });
 
   final Future<void> future;
-  final Widget child;
+  final Widget Function() builder;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class FutureScreen extends StatelessWidget {
                 ),
               );
             } else {
-              return child;
+              return builder();
             }
         }
       },
