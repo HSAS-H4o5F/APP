@@ -16,7 +16,6 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
