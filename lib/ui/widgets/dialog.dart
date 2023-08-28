@@ -33,7 +33,7 @@ Future<T?> showStatefulAlertDialog<T>({
           final content = builder(context, setState);
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-            child: AlertDialog(
+            child: AlertDialog.adaptive(
               title: content.title,
               content: content.content,
               actions: content.actions,
