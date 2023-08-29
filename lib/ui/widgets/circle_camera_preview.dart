@@ -29,45 +29,40 @@ class CircleCameraPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _controller.value.isInitialized
-        ? NativeDeviceOrientationReader(
-            builder: (BuildContext context) {
-              return ValueListenableBuilder(
-                valueListenable: _controller,
-                builder: (context, value, _) {
-                  final aspectRatio = value.isPortrait
-                      ? 1 / value.aspectRatio
-                      : value.aspectRatio;
+        ? ValueListenableBuilder(
+            valueListenable: _controller,
+            builder: (context, value, _) {
+              final aspectRatio =
+                  value.isPortrait ? 1 / value.aspectRatio : value.aspectRatio;
 
-                  return ClipPath.shape(
-                    shape: const CircleBorder(),
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final widgetSize = constraints.biggest.shortestSide;
+              return ClipPath.shape(
+                shape: const CircleBorder(),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final widgetSize = constraints.biggest.shortestSide;
 
-                          return OverflowBox(
-                            maxWidth: double.infinity,
-                            maxHeight: double.infinity,
-                            alignment: Alignment.center,
-                            child: FittedBox(
-                              fit: BoxFit.none,
-                              child: SizedBox(
-                                width: aspectRatio > 1
-                                    ? widgetSize * aspectRatio
-                                    : widgetSize,
-                                height: aspectRatio < 1
-                                    ? widgetSize / aspectRatio
-                                    : widgetSize,
-                                child: CameraPreview(_controller),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
+                      return OverflowBox(
+                        maxWidth: double.infinity,
+                        maxHeight: double.infinity,
+                        alignment: Alignment.center,
+                        child: FittedBox(
+                          fit: BoxFit.none,
+                          child: SizedBox(
+                            width: aspectRatio > 1
+                                ? widgetSize * aspectRatio
+                                : widgetSize,
+                            height: aspectRatio < 1
+                                ? widgetSize / aspectRatio
+                                : widgetSize,
+                            child: CameraPreview(_controller),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               );
             },
           )

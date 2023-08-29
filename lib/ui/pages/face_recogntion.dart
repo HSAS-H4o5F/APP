@@ -22,6 +22,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets.dart';
+import 'package:hsas_h4o5f_app/utils.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class FaceRecognitionPage extends StatefulWidget {
@@ -126,25 +127,70 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
           .build(),
     )..connect();
 
-    _socket.on('success', (data) {
-      _controller.startImageStream((image) {
+    _socket.on('success', (_) {
+      bool lock = false;
+
+      _socket.on('detection', (data) {
+        lock = false;
+        print(data);
+      });
+
+      _controller.startImageStream((image) async {
+        if (lock) return;
+        lock = true;
+
+        int width = image.width;
+        int height = image.height;
+        List<int> bytes;
+
         switch (image.format.group) {
           case ImageFormatGroup.yuv420:
-            _socket.emit('detection', {
-              'width': image.width,
-              'height': image.height,
-              'bytes': image.planes[0].bytes.toList(),
-            });
+            bytes = image.planes[0].bytes.toList();
             break;
           case ImageFormatGroup.bgra8888:
+            bytes = image.planes[0].bytes.toList();
             break;
-          case ImageFormatGroup.jpeg:
-            break;
-          case ImageFormatGroup.nv21:
-            break;
-          case ImageFormatGroup.unknown:
-            break;
+          default:
+            return;
         }
+
+        if (Platform.isAndroid) {
+          final rotation = await getScreenRotation() -
+              _controller.description.sensorOrientation;
+          if (rotation != 0) {
+            if (rotation.abs() == 180) {
+              bytes = bytes.reversed.toList();
+            } else {
+              if (rotation == 90 || rotation == -270) {
+                final temp = bytes;
+                bytes = List<int>.filled(bytes.length, 0);
+                for (int i = 0; i < height; i++) {
+                  for (int j = 0; j < width; j++) {
+                    bytes[i * width + j] = temp[j * height + height - i - 1];
+                  }
+                }
+              } else if (rotation == -90 || rotation == 270) {
+                final temp = bytes;
+                bytes = List<int>.filled(bytes.length, 0);
+                for (int i = 0; i < height; i++) {
+                  for (int j = 0; j < width; j++) {
+                    bytes[i * width + j] = temp[(width - j - 1) * height + i];
+                  }
+                }
+              }
+
+              final temp = width;
+              width = height;
+              height = temp;
+            }
+          }
+        }
+
+        _socket.emit('detection', {
+          'width': width,
+          'height': height,
+          'bytes': bytes,
+        });
       });
     });
 
