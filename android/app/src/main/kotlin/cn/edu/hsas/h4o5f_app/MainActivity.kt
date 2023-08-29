@@ -18,8 +18,39 @@
 
 package cn.edu.hsas.h4o5f_app
 
+import android.os.Build
+import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private val orientationChannel = flutterEngine?.dartExecutor?.let {
+        MethodChannel(
+            it.binaryMessenger,
+            "hsas_h4o5f_app/screen_rotation"
+        )
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // TODO
+        orientationChannel?.setMethodCallHandler { call, result ->
+            if (call.method == "get") {
+                result.success(Build.VERSION.SDK_INT.let {
+                    when {
+                        (it >= Build.VERSION_CODES.R) -> {
+                            @Suppress("NewApi")
+                            display?.rotation
+                        }
+                        else -> {
+                            @Suppress("DEPRECATION")
+                            windowManager.defaultDisplay.rotation
+                        }
+                    }
+                })
+            } else {
+                result.notImplemented()
+            }
+        }
+    }
 }
