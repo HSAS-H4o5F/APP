@@ -24,16 +24,17 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val orientationChannel = flutterEngine?.dartExecutor?.let {
-        MethodChannel(
-            it.binaryMessenger,
-            "hsas_h4o5f_app/screen_rotation"
-        )
-    }
+    private lateinit var orientationChannel: MethodChannel?;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // TODO
+
+        orientationChannel = flutterEngine?.dartExecutor?.let {
+            MethodChannel(
+                it.binaryMessenger,
+                "hsas_h4o5f_app/screen_rotation"
+            )
+        }
         orientationChannel?.setMethodCallHandler { call, result ->
             if (call.method == "get") {
                 result.success(Build.VERSION.SDK_INT.let {
