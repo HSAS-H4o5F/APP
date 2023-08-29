@@ -155,34 +155,32 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
         }
 
         if (Platform.isAndroid) {
-          final rotation = await getScreenRotation() -
-              _controller.description.sensorOrientation;
-          if (rotation != 0) {
-            if (rotation.abs() == 180) {
-              bytes = bytes.reversed.toList();
-            } else {
-              if (rotation == 90 || rotation == -270) {
-                final temp = bytes;
-                bytes = List<int>.filled(bytes.length, 0);
-                for (int i = 0; i < height; i++) {
-                  for (int j = 0; j < width; j++) {
-                    bytes[i * width + j] = temp[j * height + height - i - 1];
-                  }
-                }
-              } else if (rotation == -90 || rotation == 270) {
-                final temp = bytes;
-                bytes = List<int>.filled(bytes.length, 0);
-                for (int i = 0; i < height; i++) {
-                  for (int j = 0; j < width; j++) {
-                    bytes[i * width + j] = temp[(width - j - 1) * height + i];
-                  }
+          final rotation = (await getScreenRotation() -
+                  360 +
+                  _controller.description.sensorOrientation) %
+              360;
+
+          if (rotation == 180) {
+            bytes = bytes.reversed.toList();
+          } else if (rotation != 0) {
+            List<int> temp = [];
+            if (rotation == 90) {
+              for (int i = 0; i < width; i++) {
+                for (int j = height - 1; j >= 0; j--) {
+                  temp.add(bytes[j * width + i]);
                 }
               }
-
-              final temp = width;
-              width = height;
-              height = temp;
+            } else if (rotation == 270) {
+              for (int i = width - 1; i >= 0; i--) {
+                for (int j = 0; j < height; j++) {
+                  temp.add(bytes[j * width + i]);
+                }
+              }
             }
+
+            width = image.height;
+            height = image.width;
+            bytes = temp;
           }
         }
 
