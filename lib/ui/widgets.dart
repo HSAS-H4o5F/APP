@@ -20,11 +20,9 @@ import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hsas_h4o5f_app/app_preferences.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/utils.dart';
-import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -35,5 +33,4 @@ part 'widgets/dialog.dart';
 part 'widgets/information_flow.dart';
 part 'widgets/preferences.dart';
 part 'widgets/safe_area.dart';
-part 'widgets/screen_orientation.dart';
 part 'widgets/text_form_field.dart';
