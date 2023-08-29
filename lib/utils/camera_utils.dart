@@ -18,13 +18,13 @@
 
 part of '../utils.dart';
 
-extension CameraControllerUtils on CameraController {
-  get isPortrait => [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown
-      ].contains(value.isRecordingVideo
-          ? value.recordingOrientation!
-          : (value.previewPauseOrientation ??
-              value.lockedCaptureOrientation ??
-              value.deviceOrientation));
+extension CameraControllerUtils on CameraValue {
+  bool get isPortrait =>
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown].contains(
+        isRecordingVideo
+            ? recordingOrientation!
+            : (previewPauseOrientation ??
+                lockedCaptureOrientation ??
+                deviceOrientation),
+      );
 }
