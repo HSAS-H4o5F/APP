@@ -19,4 +19,5 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 
-part 'utils/camera_utils.dart';
+part 'utils/camera.dart';
+part 'utils/screen_rotation.dart';
