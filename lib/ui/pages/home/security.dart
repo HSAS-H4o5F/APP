@@ -63,7 +63,7 @@ class _HomePageSecurityState extends State<HomePageSecurity> {
                     ExpansionPanelList(
                       expansionCallback: (panelIndex, isExpanded) {
                         setState(() {
-                          _moreRecordsExpanded = !isExpanded;
+                          _moreRecordsExpanded = isExpanded;
                         });
                       },
                       children: [
@@ -119,7 +119,14 @@ List<_Record> _generateRecords(int count) {
   DateTime time = DateTime.now();
   for (var i = 0; i < count; i++) {
     final name = names[random.nextInt(names.length)];
-    time = time.subtract(Duration(hours: random.nextInt(60)));
+    time = time.subtract(Duration(
+      days: random.nextInt(3),
+      hours: random.nextInt(36),
+      minutes: random.nextInt(80),
+      seconds: random.nextInt(80),
+      milliseconds: random.nextInt(80),
+      microseconds: random.nextInt(400),
+    ));
     final type = random.nextBool() ? _RecordType.enter : _RecordType.exit;
     records.add(_Record(name, time, type));
   }
