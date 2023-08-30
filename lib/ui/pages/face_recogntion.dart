@@ -17,6 +17,7 @@
  */
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,8 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
   late final List<CameraDescription> _cameras;
   late final CameraController _controller;
   late final Socket _socket;
+
+  bool _rotationError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -108,11 +111,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
       enableAudio: false,
     );
 
-    await _controller.initialize();
-
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     _socket = io(
       PreferencesProvider.of(context).preferences.serverUrl!.value,
@@ -126,6 +125,19 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
           .disableAutoConnect()
           .build(),
     )..connect();
+
+    try {
+      await _controller.initialize();
+    } catch (e) {
+      if (!mounted) return;
+      clean();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.cameraInitError),
+        ),
+      );
+      return;
+    }
 
     _socket.on('success', (_) {
       bool lock = false;
@@ -155,7 +167,17 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
         }
 
         if (Platform.isAndroid) {
-          final rotation = (await getScreenRotation() -
+          // TODO: 这种方式仍存在很多问题，可想办法使用 CameraX 来解决
+          // TODO: 包括等待 Flutter CameraX 插件稳定和自行编写
+          int screenRotation = await getScreenRotation();
+          if (screenRotation == -1) {
+            _rotationError = true;
+            screenRotation = 0;
+          } else {
+            _rotationError = false;
+          }
+
+          final rotation = (screenRotation -
                   360 +
                   _controller.description.sensorOrientation) %
               360;
@@ -184,11 +206,23 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
           }
         }
 
-        _socket.emit('detection', {
-          'width': width,
-          'height': height,
-          'bytes': bytes,
-        });
+        if (width > height) {
+          List<int> temp = [];
+          for (int i = 0; i < height; i++) {
+            temp.addAll(bytes.sublist(
+              i * width + (width - height) ~/ 2,
+              i * width + height + (width - height) ~/ 2,
+            ));
+          }
+          bytes = temp;
+        } else if (width < height) {
+          bytes = bytes.sublist(
+            (height - width) ~/ 2 * width,
+            (height - width) ~/ 2 * width + width * width,
+          );
+        }
+
+        _socket.emit('detection', Uint8List.fromList(bytes));
       });
     });
 
@@ -197,11 +231,15 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
     });
   }
 
-  @override
-  void dispose() {
+  void clean() {
     _controller.stopImageStream();
     _controller.dispose();
     _socket.dispose();
+  }
+
+  @override
+  void dispose() {
+    clean();
     super.dispose();
   }
 }

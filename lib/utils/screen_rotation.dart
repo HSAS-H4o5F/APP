@@ -22,7 +22,9 @@ const _channel = MethodChannel('hsas_h4o5f_app/screen_rotation');
 
 Future<int> getScreenRotation() async {
   try {
-    return 90 * (await _channel.invokeMethod<int>('get'))!;
+    final rotation = (await _channel.invokeMethod<int>('get'))!;
+    if (rotation == -1) return -1;
+    return 90 * rotation;
   } catch (_) {
     return 0;
   }

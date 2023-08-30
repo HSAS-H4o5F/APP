@@ -14,6 +14,7 @@
   "error": "Error",
   "fetchingError": "Fetching error",
   "formatError": "Format error",
+  "cameraInitError": "Camera initialization error",
   "requiredField": "Required field",
   "undefined": "Undefined",
   "available": "Available",
