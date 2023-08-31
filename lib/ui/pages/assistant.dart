@@ -79,51 +79,36 @@ class _AssistantPageState extends State<AssistantPage>
         title: widget.title,
       ),
       body: Stack(alignment: Alignment.center, children: _steps),
-      bottomNavigationBar: Wrap(
-        alignment: WrapAlignment.spaceAround,
-        children: [
-          AnimatedOpacity(
-            opacity: _currentStep > 0 ? 1 : 0,
-            curve: Curves.easeInOut,
-            duration: const Duration(milliseconds: 300),
-            child: TextButton(
-              onPressed: _currentStep > 0 ? _decreaseStep : null,
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  Icon(Icons.adaptive.arrow_back),
-                  Text(AppLocalizations.of(context)!.previous),
-                ],
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            AnimatedOpacity(
+              opacity: _currentStep != 0 ? 1 : 0,
+              curve: Curves.easeInOut,
+              duration: const Duration(milliseconds: 300),
+              child: TextButton.icon(
+                onPressed: _currentStep > 0 ? _decreaseStep : null,
+                icon: Icon(Icons.adaptive.arrow_back),
+                label: Text(AppLocalizations.of(context)!.previous),
               ),
             ),
-          ),
-          if (widget.onSkip != null)
-            TextButton(
-              onPressed: widget.onSkip,
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  const Icon(Icons.skip_next),
-                  Text(AppLocalizations.of(context)!.skip),
-                ],
+            if (widget.onSkip != null)
+              TextButton.icon(
+                onPressed: widget.onSkip,
+                icon: const Icon(Icons.skip_next),
+                label: Text(AppLocalizations.of(context)!.skip),
               ),
+            TextButton.icon(
+              onPressed: _increaseStep,
+              icon: Icon(Icons.adaptive.arrow_forward),
+              label: Text(AppLocalizations.of(context)!.next),
             ),
-          AnimatedOpacity(
-            opacity: _currentStep > 0 ? 1 : 0,
-            curve: Curves.easeInOut,
-            duration: const Duration(milliseconds: 300),
-            child: TextButton(
-              onPressed: _currentStep > 0 ? _increaseStep : null,
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  Icon(Icons.adaptive.arrow_forward),
-                  Text(AppLocalizations.of(context)!.next),
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
