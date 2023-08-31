@@ -140,21 +140,22 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: [
-                        ActionChip(
-                          avatar: const Icon(Icons.face),
-                          label: Text(
-                              AppLocalizations.of(context)!.useFaceRecognition),
-                          onPressed: () {
-                            context.push('/face-recognition');
-                          },
-                        ),
-                      ],
-                    ),
+                    if (widget.type == LoginRegisterPageType.login)
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 4,
+                        runSpacing: 4,
+                        children: [
+                          ActionChip(
+                            avatar: const Icon(Icons.face),
+                            label: Text(AppLocalizations.of(context)!
+                                .useFaceRecognition),
+                            onPressed: () {
+                              context.push('/face-recognition');
+                            },
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -206,7 +207,8 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
     void goToHome() {
       if (!mounted) return;
       TextInput.finishAutofillContext();
-      context.go('/home');
+      // TODO
+      context.go('/face-registration-guide');
     }
 
     if (response.success) {
