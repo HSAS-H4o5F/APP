@@ -80,7 +80,7 @@ jobs:
         name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - if: matrix.platform == 'Android'
+      - if: github.event_name == 'push' && matrix.platform == 'Android'
         name: Configure Android signing
         run: |
           cd android/app
