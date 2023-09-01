@@ -28,7 +28,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 part 'widgets/animated_linear_progress_indicator.dart';
 part 'widgets/app_bar.dart';
-part 'widgets/circle_camera_preview.dart';
+part 'widgets/camera_preview.dart';
 part 'widgets/dialog.dart';
 part 'widgets/information_flow.dart';
 part 'widgets/preferences.dart';

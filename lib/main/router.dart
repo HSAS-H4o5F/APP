@@ -130,8 +130,17 @@ class AppRouter extends GoRouter {
             ),
             GoRoute(
               parentNavigatorKey: navigatorKey,
+              path: '/face-registration',
+              builder: (context, state) => const FaceProcessingPage(
+                mode: FaceProcessingMode.registration,
+              ),
+            ),
+            GoRoute(
+              parentNavigatorKey: navigatorKey,
               path: '/face-recognition',
-              builder: (context, state) => const FaceRecognitionPage(),
+              builder: (context, state) => const FaceProcessingPage(
+                mode: FaceProcessingMode.recognition,
+              ),
             ),
           ],
         );

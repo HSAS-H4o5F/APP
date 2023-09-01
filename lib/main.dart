@@ -28,7 +28,7 @@ import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
 import 'package:hsas_h4o5f_app/ui/pages/about.dart';
 import 'package:hsas_h4o5f_app/ui/pages/assistant.dart';
-import 'package:hsas_h4o5f_app/ui/pages/face_recogntion.dart';
+import 'package:hsas_h4o5f_app/ui/pages/face_processing.dart';
 import 'package:hsas_h4o5f_app/ui/pages/home.dart';
 import 'package:hsas_h4o5f_app/ui/pages/login_register.dart';
 import 'package:hsas_h4o5f_app/ui/pages/settings.dart';

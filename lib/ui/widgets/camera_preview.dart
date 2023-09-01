@@ -18,8 +18,8 @@
 
 part of '../widgets.dart';
 
-class CircleCameraPreview extends StatelessWidget {
-  const CircleCameraPreview(
+class SquareCameraPreview extends StatelessWidget {
+  const SquareCameraPreview(
     CameraController controller, {
     super.key,
   }) : _controller = controller;
@@ -35,33 +35,30 @@ class CircleCameraPreview extends StatelessWidget {
               final aspectRatio =
                   value.isPortrait ? 1 / value.aspectRatio : value.aspectRatio;
 
-              return ClipPath.shape(
-                shape: const CircleBorder(),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final widgetSize = constraints.biggest.shortestSide;
+              return AspectRatio(
+                aspectRatio: 1,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final widgetSize = constraints.biggest.shortestSide;
 
-                      return OverflowBox(
-                        maxWidth: double.infinity,
-                        maxHeight: double.infinity,
-                        alignment: Alignment.center,
-                        child: FittedBox(
-                          fit: BoxFit.none,
-                          child: SizedBox(
-                            width: aspectRatio > 1
-                                ? widgetSize * aspectRatio
-                                : widgetSize,
-                            height: aspectRatio < 1
-                                ? widgetSize / aspectRatio
-                                : widgetSize,
-                            child: CameraPreview(_controller),
-                          ),
+                    return OverflowBox(
+                      maxWidth: double.infinity,
+                      maxHeight: double.infinity,
+                      alignment: Alignment.center,
+                      child: FittedBox(
+                        fit: BoxFit.none,
+                        child: SizedBox(
+                          width: aspectRatio > 1
+                              ? widgetSize * aspectRatio
+                              : widgetSize,
+                          height: aspectRatio < 1
+                              ? widgetSize / aspectRatio
+                              : widgetSize,
+                          child: CameraPreview(_controller),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               );
             },

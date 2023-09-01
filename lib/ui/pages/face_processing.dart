@@ -21,25 +21,31 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets.dart';
 import 'package:hsas_h4o5f_app/utils.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-class FaceRecognitionPage extends StatefulWidget {
-  const FaceRecognitionPage({Key? key}) : super(key: key);
+class FaceProcessingPage extends StatefulWidget {
+  const FaceProcessingPage({
+    super.key,
+    required this.mode,
+  });
+
+  final FaceProcessingMode mode;
 
   @override
-  State<FaceRecognitionPage> createState() => _FaceRecognitionPageState();
+  State<FaceProcessingPage> createState() => _FaceProcessingPageState();
 }
 
-class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
+class _FaceProcessingPageState extends State<FaceProcessingPage> {
   late final Future<void> _initFuture;
   late final List<CameraDescription> _cameras;
   late final CameraController _controller;
   late final Socket _socket;
 
-  bool _rotationError = false;
+  late String _statusMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -47,47 +53,79 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.faceRecognition),
       ),
-      body: FutureBuilder(
-        future: _initFuture,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            case ConnectionState.done:
-              if (snapshot.hasError) {
-                // TODO: 处理错误
-                return const SizedBox();
-              }
-              // TODO: 优化相机授权
-              // TODO: 增加文字提示
-              return Align(
-                alignment: const Alignment(0, -0.75),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: FractionallySizedBox(
-                    widthFactor: 0.75,
-                    heightFactor: 0.75,
-                    child: CircleCameraPreview(_controller),
-                  ),
-                ),
-              );
-          }
-        },
+      body: Align(
+        alignment: const Alignment(0, -0.75),
+        child: FractionallySizedBox(
+          widthFactor: 0.75,
+          heightFactor: 0.75,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: FutureBuilder(
+              future: _initFuture,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return const Icon(Icons.error);
+                    }
+
+                    return Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 16,
+                      runAlignment: WrapAlignment.center,
+                      runSpacing: 16,
+                      children: [
+                        ClipPath.shape(
+                          shape: const CircleBorder(),
+                          child: SquareCameraPreview(_controller),
+                        ),
+                        Text(
+                          _statusMessage,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
+                    );
+                }
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
 
   @override
   void initState() {
+    _statusMessage = AppLocalizations.of(context)!.faceDetectionMessage;
     _initFuture = _init();
     super.initState();
   }
 
   Future<void> _init() async {
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      return await showAlertDialog(
+        context: context,
+        barrierDismissible: false,
+        title: Text(AppLocalizations.of(context)!.error),
+        content: Text(AppLocalizations.of(context)!.cameraSupportMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.popDialog();
+              context.pop();
+            },
+            child: Text(MaterialLocalizations.of(context).okButtonLabel),
+          ),
+        ],
+      );
+    }
+
     _cameras = (await availableCameras())
       ..sort((a, b) {
         if (a.lensDirection == b.lensDirection) {
@@ -105,13 +143,32 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
         }
       });
 
+    if (!mounted) return;
+
+    if (_cameras.isEmpty) {
+      return await showAlertDialog(
+        context: context,
+        barrierDismissible: false,
+        title: Text(AppLocalizations.of(context)!.error),
+        content: Text(AppLocalizations.of(context)!.noAvailableCamera),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.popDialog();
+              context.pop();
+            },
+            child: Text(MaterialLocalizations.of(context).okButtonLabel),
+          ),
+        ],
+      );
+    }
+
+    // TODO: 优化相机授权
     _controller = CameraController(
       _cameras.first,
       ResolutionPreset.low,
       enableAudio: false,
     );
-
-    if (!mounted) return;
 
     _socket = io(
       PreferencesProvider.of(context).preferences.serverUrl!.value,
@@ -131,20 +188,58 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
     } catch (e) {
       if (!mounted) return;
       clean();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.cameraInitError),
-        ),
+      return await showAlertDialog(
+        context: context,
+        barrierDismissible: false,
+        title: Text(AppLocalizations.of(context)!.error),
+        content: Text(AppLocalizations.of(context)!.cameraInitError),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.popDialog();
+              context.pop();
+            },
+            child: Text(MaterialLocalizations.of(context).okButtonLabel),
+          ),
+        ],
       );
-      return;
     }
 
     _socket.on('success', (_) {
       bool lock = false;
+      bool rotationError = false;
 
       _socket.on('detection', (data) {
         lock = false;
-        print(data);
+
+        if (data is! Uint8List) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.fetchingError),
+            ),
+          );
+          return;
+        }
+
+        if (data == [0]) {
+          _statusMessage = AppLocalizations.of(context)!.faceDetectionMessage;
+          return;
+        }
+
+        if (data == [1]) {
+          _statusMessage =
+              AppLocalizations.of(context)!.faceDetectionTooManyMessage;
+          return;
+        }
+
+        if (data == [2]) {
+          _statusMessage =
+              AppLocalizations.of(context)!.faceDetectionTooSmallMessage;
+          return;
+        }
+
+        _statusMessage =
+            AppLocalizations.of(context)!.faceDetectionProcessingMessage;
       });
 
       _controller.startImageStream((image) async {
@@ -163,6 +258,7 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
             bytes = image.planes[0].bytes.toList();
             break;
           default:
+            // TODO: 支持更多格式
             return;
         }
 
@@ -171,16 +267,24 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
           // TODO: 包括等待 Flutter CameraX 插件稳定和自行编写
           int screenRotation = await getScreenRotation();
           if (screenRotation == -1) {
-            _rotationError = true;
+            if (!rotationError && mounted) {
+              rotationError = true;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.cameraStreamRotationError),
+                  duration: const Duration(seconds: 5),
+                ),
+              );
+            }
+
             screenRotation = 0;
           } else {
-            _rotationError = false;
+            rotationError = false;
           }
 
-          final rotation = (screenRotation -
-                  360 +
-                  _controller.description.sensorOrientation) %
-              360;
+          final sensorOrientation = _controller.description.sensorOrientation;
+          final rotation = (screenRotation - 360 + sensorOrientation) % 360;
 
           if (rotation == 180) {
             bytes = bytes.reversed.toList();
@@ -242,4 +346,9 @@ class _FaceRecognitionPageState extends State<FaceRecognitionPage> {
     clean();
     super.dispose();
   }
+}
+
+enum FaceProcessingMode {
+  registration,
+  recognition,
 }
