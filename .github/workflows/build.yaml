@@ -80,11 +80,14 @@ jobs:
         name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - if: github.event_name == 'push' && matrix.platform == 'Android'
+      - if: matrix.platform == 'Android'
         name: Configure Android signing
+        shell: bash
         run: |
-          cd android/app
-          echo ${{ secrets.KEY }} | base64 --decode > key.jks
+          if [ "${{ secrets.KEY }}" != "" ]; then
+            cd android/app
+            echo ${{ secrets.KEY }} | base64 --decode > key.jks
+          fi
 
       - name: Setup Python
         uses: actions/setup-python@v4
