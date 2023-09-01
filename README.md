@@ -1,6 +1,6 @@
 # HSAS 智慧社区 APP
 
-[![Build status](https://github.com/HSAS-H4o5F/APP/workflows/build.yaml/badge.svg)](https://github.com/HSAS-H4o5F/APP/actions/workflows/build.yaml)
+[![Build status](https://github.com/HSAS-H4o5F/APP/actions/workflows/build.yaml/badge.svg)](https://github.com/HSAS-H4o5F/APP/actions/workflows/build.yaml)
 
 ## 编译方法
 
