@@ -45,7 +45,7 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
   late final CameraController _controller;
   late final Socket _socket;
 
-  late String _statusMessage;
+  String? _statusMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,9 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
                           child: SquareCameraPreview(_controller),
                         ),
                         Text(
-                          _statusMessage,
+                          _statusMessage ??
+                              AppLocalizations.of(context)!
+                                  .faceDetectionMessage,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
@@ -102,7 +104,6 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
 
   @override
   void initState() {
-    _statusMessage = AppLocalizations.of(context)!.faceDetectionMessage;
     _initFuture = _init();
     super.initState();
   }
@@ -212,7 +213,9 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
       _socket.on('detection', (data) {
         lock = false;
 
-        if (data is! Uint8List) {
+        if (data is! Uint8List ||
+            data.isEmpty ||
+            (data.length != 1 && data.length != 4)) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.fetchingError),
@@ -221,25 +224,36 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
           return;
         }
 
-        if (data == [0]) {
-          _statusMessage = AppLocalizations.of(context)!.faceDetectionMessage;
+        ScaffoldMessenger.of(context).clearSnackBars();
+
+        if (data.length == 1) {
+          setState(() {
+            switch (data.first) {
+              case 0:
+                _statusMessage =
+                    AppLocalizations.of(context)!.faceDetectionMessage;
+                break;
+              case 1:
+                _statusMessage =
+                    AppLocalizations.of(context)!.faceDetectionTooManyMessage;
+                break;
+              case 2:
+                _statusMessage =
+                    AppLocalizations.of(context)!.faceDetectionTooSmallMessage;
+                break;
+              default:
+                _statusMessage =
+                    AppLocalizations.of(context)!.faceDetectionMessage;
+                break;
+            }
+          });
           return;
         }
 
-        if (data == [1]) {
+        setState(() {
           _statusMessage =
-              AppLocalizations.of(context)!.faceDetectionTooManyMessage;
-          return;
-        }
-
-        if (data == [2]) {
-          _statusMessage =
-              AppLocalizations.of(context)!.faceDetectionTooSmallMessage;
-          return;
-        }
-
-        _statusMessage =
-            AppLocalizations.of(context)!.faceDetectionProcessingMessage;
+              AppLocalizations.of(context)!.faceDetectionProcessingMessage;
+        });
       });
 
       _controller.startImageStream((image) async {
