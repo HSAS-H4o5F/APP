@@ -25,6 +25,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def signingKeyFile = file('key.jks')
+
 android {
     compileSdk 33
     ndkVersion '25.2.9519653'
@@ -63,7 +65,9 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            if (signingKeyFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
