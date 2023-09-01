@@ -6,8 +6,8 @@
 
 ### 安装 Flutter SDK
 
-参考 [Flutter 官方文档](https://flutter.dev/docs/get-started/install)（英文）
-或 [Flutter 中文文档](https://flutter.cn/docs/get-started/install)（中文）。
+参考 [Flutter 官方文档](https://flutter.dev/docs/get-started/install)（英文） 或
+[Flutter 中文文档](https://flutter.cn/docs/get-started/install)（中文）。
 
 ### 安装 Python
 
