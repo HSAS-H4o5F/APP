@@ -17,7 +17,7 @@ dependencies:
     sdk: flutter
   go_router: ^10.0.0
   http: ^0.13.5
-  intl: any
+  intl: ^0.18.1
   parse_server_sdk_flutter: ^6.0.0
   shared_preferences: ^2.0.18
   sliver_tools: ^0.2.10
@@ -27,7 +27,6 @@ dependencies:
   package_info_plus: ^4.0.2
   camera: ^0.10.5+3
   socket_io_client: ^2.0.3+1
-  camera_windows: ^0.2.1+7
 
 dev_dependencies:
   flutter_test:
