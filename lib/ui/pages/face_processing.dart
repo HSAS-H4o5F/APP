@@ -40,11 +40,13 @@ class FaceProcessingPage extends StatefulWidget {
   State<FaceProcessingPage> createState() => _FaceProcessingPageState();
 }
 
-class _FaceProcessingPageState extends State<FaceProcessingPage> {
+class _FaceProcessingPageState extends State<FaceProcessingPage>
+    with WidgetsBindingObserver {
   late final Future<void> _initFuture;
   late final List<CameraDescription> _cameras;
-  late final CameraController _controller;
   late final Socket _socket;
+
+  CameraController? _controller;
 
   String? _statusMessage;
 
@@ -120,12 +122,14 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
       );
     }
 
-    // TODO: 优化相机授权
-    _controller = CameraController(
-      _cameras.first,
-      ResolutionPreset.low,
-      enableAudio: false,
-    );
+    setState(() {
+      // TODO: 优化相机授权
+      _controller = CameraController(
+        _cameras.first,
+        ResolutionPreset.low,
+        enableAudio: false,
+      );
+    });
 
     _socket = io(
       PreferencesProvider.of(context).preferences.serverUrl!.value,
@@ -141,7 +145,7 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
     )..connect();
 
     try {
-      await _controller.initialize();
+      await _controller!.initialize();
     } catch (e) {
       if (!mounted) return;
       clean();
@@ -212,7 +216,7 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
         });
       });
 
-      _controller.startImageStream((image) async {
+      _controller!.startImageStream((image) async {
         if (lock) return;
         lock = true;
 
@@ -262,7 +266,7 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
             rotationError = false;
           }
 
-          final sensorOrientation = _controller.description.sensorOrientation;
+          final sensorOrientation = _controller!.description.sensorOrientation;
           final rotation = (screenRotation - 360 + sensorOrientation) % 360;
 
           if (rotation == 180) {
@@ -317,8 +321,8 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
   }
 
   void clean() {
-    _controller.stopImageStream();
-    _controller.dispose();
+    _controller?.stopImageStream();
+    _controller?.dispose();
     _socket.dispose();
   }
 
@@ -327,55 +331,73 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
     clean();
     super.dispose();
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final controller = _controller;
+
+    if (controller == null || !controller.value.isInitialized) {
+      return;
+    }
+
+    if (state == AppLifecycleState.inactive) {
+      clean();
+    } else if (state == AppLifecycleState.resumed) {
+      _initFuture = _init();
+    }
+  }
 }
 
 class _Preview extends StatelessWidget {
   const _Preview(this._initFuture, this._controller, this._statusMessage);
 
   final Future<void> _initFuture;
-  final CameraController _controller;
+  final CameraController? _controller;
   final String? _statusMessage;
 
   @override
   Widget build(BuildContext context) {
-    return CustomMultiChildLayout(
-      delegate: _PreviewLayoutDelegate(),
-      children: [
-        LayoutId(
-          id: #preview,
-          child: ClipPath.shape(
-            shape: const CircleBorder(),
-            child: FutureBuilder(
-              future: _initFuture,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                  case ConnectionState.active:
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  case ConnectionState.done:
-                    if (snapshot.hasError) {
-                      return const Icon(Icons.error);
-                    }
+    return SafeArea(
+      top: false,
+      child: CustomMultiChildLayout(
+        delegate: _PreviewLayoutDelegate(),
+        children: [
+          LayoutId(
+            id: #preview,
+            child: ClipPath.shape(
+              shape: const CircleBorder(),
+              child: FutureBuilder(
+                future: _initFuture,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                    case ConnectionState.waiting:
+                    case ConnectionState.active:
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    case ConnectionState.done:
+                      if (snapshot.hasError) {
+                        return const Icon(Icons.error);
+                      }
 
-                    return SquareCameraPreview(_controller);
-                }
-              },
+                      return SquareCameraPreview(_controller!);
+                  }
+                },
+              ),
             ),
           ),
-        ),
-        LayoutId(
-          id: #statusText,
-          child: Text(
-            _statusMessage ??
-                AppLocalizations.of(context)!.faceDetectionMessage,
-            style: Theme.of(context).textTheme.titleMedium,
-            textAlign: TextAlign.center,
+          LayoutId(
+            id: #statusText,
+            child: Text(
+              _statusMessage ??
+                  AppLocalizations.of(context)!.faceDetectionMessage,
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -383,8 +405,9 @@ class _Preview extends StatelessWidget {
 class _PreviewLayoutDelegate extends MultiChildLayoutDelegate {
   @override
   void performLayout(Size size) {
-    const padding = 8;
-    const minLandscapeSpace = 800;
+    const padding = 32;
+    const minLandscapeSpace = 600;
+    const previewScale = 0.75;
     final maxPreviewSize = size.shortestSide;
     final minPreviewSize = size.shortestSide * 0.65;
 
@@ -394,7 +417,7 @@ class _PreviewLayoutDelegate extends MultiChildLayoutDelegate {
     Offset textOffset = Offset.zero;
     Offset previewOffset = Offset.zero;
 
-    if (size.height >= maxPreviewSize ||
+    if (size.height > maxPreviewSize ||
         size.width - maxPreviewSize < minLandscapeSpace) {
       final textDisplayWidth = size.width - padding * 2;
       textSize = layoutChild(
@@ -406,40 +429,52 @@ class _PreviewLayoutDelegate extends MultiChildLayoutDelegate {
         ),
       );
 
+      final minPreviewDisplaySize = minPreviewSize * previewScale;
       final maxPreviewDisplaySize = min(
-        size.height - textSize.height - padding,
-        maxPreviewSize,
-      );
-
+            size.height - textSize.height - padding,
+            maxPreviewSize,
+          ) *
+          previewScale;
       previewSize = layoutChild(
         #preview,
         BoxConstraints(
-          minWidth: minPreviewSize,
+          minWidth: minPreviewDisplaySize,
           maxWidth: maxPreviewDisplaySize,
-          minHeight: minPreviewSize,
+          minHeight: minPreviewDisplaySize,
           maxHeight: maxPreviewDisplaySize,
         ),
       );
 
+      final previewSizeEdgeLength = previewSize.width;
+      final previewSpaceSize = previewSizeEdgeLength / previewScale;
+
       textOffset = Offset(
         (size.width - textSize.width) / 2,
-        padding + (size.height - textSize.height - previewSize.height) * 0.8,
+        padding + (size.height - textSize.height - previewSpaceSize) * 0.1,
       );
 
+      final previewDy = textSize.height +
+          textOffset.dy +
+          (previewSpaceSize - previewSizeEdgeLength) / 2;
+
       previewOffset = Offset(
-        (size.width - previewSize.width) / 2,
-        textSize.height + textOffset.dy,
+        (size.width - previewSizeEdgeLength) / 2,
+        previewDy,
       );
     } else {
+      final previewDisplaySize = maxPreviewSize * previewScale;
       previewSize = layoutChild(
         #preview,
         BoxConstraints.tightFor(
-          width: maxPreviewSize,
-          height: maxPreviewSize,
+          width: previewDisplaySize,
+          height: previewDisplaySize,
         ),
       );
 
-      final textDisplayWidth = (size.width - previewSize.width) / 2 - padding;
+      final previewSizeEdgeLength = previewSize.width;
+      final previewSpaceSize = previewSizeEdgeLength / previewScale;
+
+      final textDisplayWidth = (size.width - previewSpaceSize) / 2 - padding;
       textSize = layoutChild(
         #statusText,
         BoxConstraints(
@@ -449,7 +484,10 @@ class _PreviewLayoutDelegate extends MultiChildLayoutDelegate {
         ),
       );
 
-      previewOffset = Offset((size.width - previewSize.width) / 2, 0);
+      previewOffset = Offset(
+        (size.width - previewSizeEdgeLength) / 2,
+        (previewSpaceSize - previewSizeEdgeLength) / 2,
+      );
 
       textOffset = Offset(
         previewOffset.dx - textSize.width - padding,
