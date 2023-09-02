@@ -16,6 +16,8 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -140,7 +142,8 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    if (widget.type == LoginRegisterPageType.login)
+                    if ((Platform.isAndroid || Platform.isIOS) &&
+                        widget.type == LoginRegisterPageType.login)
                       Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 4,

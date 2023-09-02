@@ -17,6 +17,7 @@
  */
 
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
@@ -53,52 +54,7 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.faceRecognition),
       ),
-      body: Align(
-        alignment: const Alignment(0, -0.75),
-        child: FractionallySizedBox(
-          widthFactor: 0.75,
-          heightFactor: 0.75,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: FutureBuilder(
-              future: _initFuture,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                  case ConnectionState.active:
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  case ConnectionState.done:
-                    if (snapshot.hasError) {
-                      return const Icon(Icons.error);
-                    }
-
-                    return Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 16,
-                      runAlignment: WrapAlignment.center,
-                      runSpacing: 16,
-                      children: [
-                        ClipPath.shape(
-                          shape: const CircleBorder(),
-                          child: SquareCameraPreview(_controller),
-                        ),
-                        Text(
-                          _statusMessage ??
-                              AppLocalizations.of(context)!
-                                  .faceDetectionMessage,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
-                    );
-                }
-              },
-            ),
-          ),
-        ),
-      ),
+      body: _Preview(_initFuture, _controller, _statusMessage),
     );
   }
 
@@ -260,21 +216,30 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
         if (lock) return;
         lock = true;
 
+        if (image.format.group == ImageFormatGroup.unknown) {
+          showAlertDialog(
+            context: context,
+            barrierDismissible: false,
+            title: Text(AppLocalizations.of(context)!.error),
+            content:
+                Text(AppLocalizations.of(context)!.cameraStreamFormatError),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  clean();
+                  context.popDialog();
+                  context.pop();
+                },
+                child: Text(MaterialLocalizations.of(context).okButtonLabel),
+              ),
+            ],
+          );
+          return;
+        }
+
         int width = image.width;
         int height = image.height;
-        List<int> bytes;
-
-        switch (image.format.group) {
-          case ImageFormatGroup.yuv420:
-            bytes = image.planes[0].bytes.toList();
-            break;
-          case ImageFormatGroup.bgra8888:
-            bytes = image.planes[0].bytes.toList();
-            break;
-          default:
-            // TODO: 支持更多格式
-            return;
-        }
+        List<int> bytes = image.planes[0].bytes.toList();
 
         if (Platform.isAndroid) {
           // TODO: 这种方式仍存在很多问题，可想办法使用 CameraX 来解决
@@ -340,6 +305,8 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
           );
         }
 
+        bytes.add(image.format.group.index - 1);
+
         _socket.emit('detection', Uint8List.fromList(bytes));
       });
     });
@@ -360,6 +327,142 @@ class _FaceProcessingPageState extends State<FaceProcessingPage> {
     clean();
     super.dispose();
   }
+}
+
+class _Preview extends StatelessWidget {
+  const _Preview(this._initFuture, this._controller, this._statusMessage);
+
+  final Future<void> _initFuture;
+  final CameraController _controller;
+  final String? _statusMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomMultiChildLayout(
+      delegate: _PreviewLayoutDelegate(),
+      children: [
+        LayoutId(
+          id: #preview,
+          child: ClipPath.shape(
+            shape: const CircleBorder(),
+            child: FutureBuilder(
+              future: _initFuture,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return const Icon(Icons.error);
+                    }
+
+                    return SquareCameraPreview(_controller);
+                }
+              },
+            ),
+          ),
+        ),
+        LayoutId(
+          id: #statusText,
+          child: Text(
+            _statusMessage ??
+                AppLocalizations.of(context)!.faceDetectionMessage,
+            style: Theme.of(context).textTheme.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PreviewLayoutDelegate extends MultiChildLayoutDelegate {
+  @override
+  void performLayout(Size size) {
+    const padding = 8;
+    const minLandscapeSpace = 800;
+    final maxPreviewSize = size.shortestSide;
+    final minPreviewSize = size.shortestSide * 0.65;
+
+    Size textSize = Size.zero;
+    Size previewSize = Size.zero;
+
+    Offset textOffset = Offset.zero;
+    Offset previewOffset = Offset.zero;
+
+    if (size.height >= maxPreviewSize ||
+        size.width - maxPreviewSize < minLandscapeSpace) {
+      final textDisplayWidth = size.width - padding * 2;
+      textSize = layoutChild(
+        #statusText,
+        BoxConstraints(
+          minWidth: textDisplayWidth,
+          maxWidth: textDisplayWidth,
+          maxHeight: size.height - minPreviewSize - padding,
+        ),
+      );
+
+      final maxPreviewDisplaySize = min(
+        size.height - textSize.height - padding,
+        maxPreviewSize,
+      );
+
+      previewSize = layoutChild(
+        #preview,
+        BoxConstraints(
+          minWidth: minPreviewSize,
+          maxWidth: maxPreviewDisplaySize,
+          minHeight: minPreviewSize,
+          maxHeight: maxPreviewDisplaySize,
+        ),
+      );
+
+      textOffset = Offset(
+        (size.width - textSize.width) / 2,
+        padding + (size.height - textSize.height - previewSize.height) * 0.8,
+      );
+
+      previewOffset = Offset(
+        (size.width - previewSize.width) / 2,
+        textSize.height + textOffset.dy,
+      );
+    } else {
+      previewSize = layoutChild(
+        #preview,
+        BoxConstraints.tightFor(
+          width: maxPreviewSize,
+          height: maxPreviewSize,
+        ),
+      );
+
+      final textDisplayWidth = (size.width - previewSize.width) / 2 - padding;
+      textSize = layoutChild(
+        #statusText,
+        BoxConstraints(
+          minWidth: textDisplayWidth,
+          maxWidth: textDisplayWidth,
+          maxHeight: size.height - padding * 2,
+        ),
+      );
+
+      previewOffset = Offset((size.width - previewSize.width) / 2, 0);
+
+      textOffset = Offset(
+        previewOffset.dx - textSize.width - padding,
+        (size.height - textSize.height) / 2,
+      );
+    }
+
+    positionChild(#statusText, textOffset);
+    positionChild(#preview, previewOffset);
+  }
+
+  @override
+  bool shouldRelayout(covariant MultiChildLayoutDelegate oldDelegate) => false;
 }
 
 enum FaceProcessingMode {
