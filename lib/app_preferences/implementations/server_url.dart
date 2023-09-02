@@ -58,14 +58,17 @@ class ServerUrlPreference extends StringPreference {
           ),
         );
 
-        if (context.mounted && result) {
+        if (result) {
           try {
             await (await ParseUser.currentUser() as ParseUser).logout();
           } finally {
-            // TODO: 优化此处逻辑
-            context.go('/');
+            if (context.mounted) {
+              // TODO: 优化此处逻辑
+              context.go('/');
+            }
           }
         } else {
+          if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.error),

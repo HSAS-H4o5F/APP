@@ -164,6 +164,7 @@ class _HomePageState extends State<HomePage> {
         queryParameters: {'origin': 'zhihu'},
       ));
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.fetchingError)),
       );
