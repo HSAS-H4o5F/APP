@@ -16,7 +16,7 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../vectors.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/vector.dart';
 
 class Logo extends Vector {
   const Logo({

@@ -25,6 +25,9 @@ dependencies:
   flutter_svg: ^2.0.0
   vector_graphics: ^1.1.7
   package_info_plus: ^4.0.2
+  camera: ^0.10.5+3
+  socket_io_client: ^2.0.3+1
+  camera_windows: ^0.2.1+7
 
 dev_dependencies:
   flutter_test:

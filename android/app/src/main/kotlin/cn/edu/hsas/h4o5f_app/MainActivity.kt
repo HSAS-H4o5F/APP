@@ -18,6 +18,42 @@
 
 package cn.edu.hsas.h4o5f_app
 
+import android.hardware.display.DisplayManager
+import android.os.Bundle
+import android.view.Display
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.plugin.common.MethodChannel
 
-class MainActivity : FlutterActivity() {}
+class MainActivity : FlutterActivity() {
+    private val rotation
+        get() = (getSystemService(DISPLAY_SERVICE) as? DisplayManager)?.getDisplay(Display.DEFAULT_DISPLAY)?.rotation
+            ?: -1
+    private var rotationChannel: MethodChannel? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        rotationChannel = flutterEngine?.dartExecutor?.let {
+            MethodChannel(
+                it.binaryMessenger, "hsas_h4o5f_app/screen_rotation"
+            )
+        }
+        rotationChannel?.setMethodCallHandler { call, result ->
+            if (call.method == "get") {
+                result.success(rotation)
+            } else {
+                result.notImplemented()
+            }
+        }
+    }
+
+    /*
+    暂时不需要实现该方法
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        rotationChannel?.invokeMethod("set", rotation)
+    }
+    */
+}

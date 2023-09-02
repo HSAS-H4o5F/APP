@@ -16,21 +16,33 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:ui';
-
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:hsas_h4o5f_app/app_preferences.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 
-part 'widgets/animated_linear_progress_indicator.dart';
-part 'widgets/app_bar.dart';
-part 'widgets/camera_preview.dart';
-part 'widgets/dialog.dart';
-part 'widgets/information_flow.dart';
-part 'widgets/preferences.dart';
-part 'widgets/safe_area.dart';
-part 'widgets/text_form_field.dart';
+class Vector extends StatelessWidget {
+  const Vector({
+    super.key,
+    required this.assetName,
+    this.size,
+    this.fill,
+    this.semanticsLabel,
+  });
+
+  final String assetName;
+  final double? size;
+  final Color? fill;
+  final String? semanticsLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture(
+      AssetBytesLoader(assetName),
+      width: size,
+      height: size,
+      colorFilter:
+          fill != null ? ColorFilter.mode(fill!, BlendMode.srcIn) : null,
+      semanticsLabel: semanticsLabel,
+    );
+  }
+}

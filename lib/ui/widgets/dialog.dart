@@ -20,6 +20,7 @@ part of '../widgets.dart';
 
 Future<T?> showStatefulAlertDialog<T>({
   required BuildContext context,
+  bool barrierDismissible = true,
   required StatefulAlertDialogContent Function(
     BuildContext context,
     StateSetter setState,
@@ -27,6 +28,7 @@ Future<T?> showStatefulAlertDialog<T>({
 }) {
   return showDialog<T>(
     context: context,
+    barrierDismissible: barrierDismissible,
     builder: (context) {
       return StatefulBuilder(
         builder: (context, setState) {
@@ -59,12 +61,14 @@ class StatefulAlertDialogContent {
 
 Future<T?> showAlertDialog<T>({
   required BuildContext context,
+  bool barrierDismissible = true,
   required Widget title,
   required Widget content,
   required List<Widget> actions,
 }) {
   return showStatefulAlertDialog<T>(
     context: context,
+    barrierDismissible: barrierDismissible,
     builder: (context, setState) {
       return StatefulAlertDialogContent(
         title: title,

@@ -18,14 +18,30 @@
 
 part of '../widgets.dart';
 
+class BlurredAppBar extends AppBar {
+  BlurredAppBar({
+    super.key,
+    super.leading,
+    super.title,
+    super.actions,
+  }) : super(
+          flexibleSpace: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(),
+            ),
+          ),
+        );
+}
+
 class SliverBlurredLargeAppBar extends StatelessWidget {
   const SliverBlurredLargeAppBar({
-    Key? key,
+    super.key,
     this.leading,
     this.automaticallyImplyLeading = true,
     this.title,
     this.actions,
-  }) : super(key: key);
+  });
 
   final Widget? leading;
   final bool automaticallyImplyLeading;

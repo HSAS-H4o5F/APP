@@ -16,35 +16,8 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:vector_graphics/vector_graphics.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 
-part 'vectors/logo.dart';
-
-class Vector extends StatelessWidget {
-  const Vector({
-    super.key,
-    required this.assetName,
-    this.size,
-    this.fill,
-    this.semanticsLabel,
-  });
-
-  final String assetName;
-  final double? size;
-  final Color? fill;
-  final String? semanticsLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture(
-      AssetBytesLoader(assetName),
-      width: size,
-      height: size,
-      colorFilter:
-          fill != null ? ColorFilter.mode(fill!, BlendMode.srcIn) : null,
-      semanticsLabel: semanticsLabel,
-    );
-  }
-}
+part 'utils/camera.dart';
+part 'utils/screen_rotation.dart';
