@@ -16,21 +16,25 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:ui';
+part of '../../home.dart';
 
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import 'package:hsas_h4o5f_app/app_preferences.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+class MutualAidPage extends StatefulWidget {
+  const MutualAidPage({Key? key}) : super(key: key);
 
-part 'widgets/animated_linear_progress_indicator.dart';
-part 'widgets/app_bar.dart';
-part 'widgets/camera_preview.dart';
-part 'widgets/dialog.dart';
-part 'widgets/information_flow.dart';
-part 'widgets/preferences.dart';
-part 'widgets/safe_area.dart';
-part 'widgets/text_form_field.dart';
+  @override
+  State<MutualAidPage> createState() => _MutualAidPageState();
+}
+
+class _MutualAidPageState extends State<MutualAidPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.mutualAid),
+      ),
+      body: Center(
+        child: Text(AppLocalizations.of(context)!.mutualAid),
+      ),
+    );
+  }
+}

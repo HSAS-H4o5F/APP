@@ -16,35 +16,22 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:vector_graphics/vector_graphics.dart';
+part of '../assistant.dart';
 
-part 'vectors/logo.dart';
-
-class Vector extends StatelessWidget {
-  const Vector({
-    super.key,
-    required this.assetName,
-    this.size,
-    this.fill,
-    this.semanticsLabel,
-  });
-
-  final String assetName;
-  final double? size;
-  final Color? fill;
-  final String? semanticsLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture(
-      AssetBytesLoader(assetName),
-      width: size,
-      height: size,
-      colorFilter:
-          fill != null ? ColorFilter.mode(fill!, BlendMode.srcIn) : null,
-      semanticsLabel: semanticsLabel,
-    );
-  }
+class FaceRegistrationGuidePage extends AssistantPage {
+  FaceRegistrationGuidePage(BuildContext context, {super.key})
+      : super(
+          title: Text(AppLocalizations.of(context)!.faceRegistrationGuide),
+          steps: [
+            AssistantStep(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                    AppLocalizations.of(context)!.faceRegistrationGuideContent),
+              ),
+            ),
+          ],
+          onCompleted: () => context.go('/face-recognition'),
+          onSkip: () => context.go('/home'),
+        );
 }

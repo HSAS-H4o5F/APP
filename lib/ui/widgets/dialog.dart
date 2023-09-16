@@ -20,6 +20,7 @@ part of '../widgets.dart';
 
 Future<T?> showStatefulAlertDialog<T>({
   required BuildContext context,
+  bool barrierDismissible = true,
   required StatefulAlertDialogContent Function(
     BuildContext context,
     StateSetter setState,
@@ -27,13 +28,14 @@ Future<T?> showStatefulAlertDialog<T>({
 }) {
   return showDialog<T>(
     context: context,
+    barrierDismissible: barrierDismissible,
     builder: (context) {
       return StatefulBuilder(
         builder: (context, setState) {
           final content = builder(context, setState);
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-            child: AlertDialog(
+            child: AlertDialog.adaptive(
               title: content.title,
               content: content.content,
               actions: content.actions,
@@ -59,12 +61,14 @@ class StatefulAlertDialogContent {
 
 Future<T?> showAlertDialog<T>({
   required BuildContext context,
+  bool barrierDismissible = true,
   required Widget title,
   required Widget content,
   required List<Widget> actions,
 }) {
   return showStatefulAlertDialog<T>(
     context: context,
+    barrierDismissible: barrierDismissible,
     builder: (context, setState) {
       return StatefulAlertDialogContent(
         title: title,

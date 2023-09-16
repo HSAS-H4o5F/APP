@@ -16,21 +16,16 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import 'dart:ui';
+part of '../utils.dart';
 
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import 'package:hsas_h4o5f_app/app_preferences.dart';
-import 'package:hsas_h4o5f_app/ext.dart';
-import 'package:hsas_h4o5f_app/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+const _channel = MethodChannel('hsas_h4o5f_app/screen_rotation');
 
-part 'widgets/animated_linear_progress_indicator.dart';
-part 'widgets/app_bar.dart';
-part 'widgets/camera_preview.dart';
-part 'widgets/dialog.dart';
-part 'widgets/information_flow.dart';
-part 'widgets/preferences.dart';
-part 'widgets/safe_area.dart';
-part 'widgets/text_form_field.dart';
+Future<int> getScreenRotation() async {
+  try {
+    final rotation = (await _channel.invokeMethod<int>('get'))!;
+    if (rotation == -1) return -1;
+    return 90 * rotation;
+  } catch (_) {
+    return 0;
+  }
+}

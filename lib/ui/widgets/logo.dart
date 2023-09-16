@@ -16,25 +16,26 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../home.dart';
+import 'package:hsas_h4o5f_app/ui/widgets/vector.dart';
 
-class MutualAidPage extends StatefulWidget {
-  const MutualAidPage({Key? key}) : super(key: key);
-
-  @override
-  State<MutualAidPage> createState() => _MutualAidPageState();
+class Logo extends Vector {
+  const Logo({
+    super.key,
+    super.size,
+    super.fill,
+  }) : super(
+          assetName: 'assets/vectors/logo.svg.vec',
+          semanticsLabel: 'H4o5F',
+        );
 }
 
-class _MutualAidPageState extends State<MutualAidPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.mutualAid),
-      ),
-      body: Center(
-        child: Text(AppLocalizations.of(context)!.mutualAid),
-      ),
-    );
-  }
+class LogoWithText extends Vector {
+  const LogoWithText({
+    super.key,
+    super.size,
+    super.fill,
+  }) : super(
+          assetName: 'assets/vectors/logo_with_text.svg.vec',
+          semanticsLabel: 'H4o5F',
+        );
 }

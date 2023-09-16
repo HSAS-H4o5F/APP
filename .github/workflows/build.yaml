@@ -55,11 +55,11 @@ jobs:
           channel: master
           cache: true
 
-      - if: matrix.os == 'ubuntu-latest'
-        name: Upgrade Ubuntu packages
-        run: |
-          sudo apt update
-          sudo apt upgrade -y
+#      - if: matrix.os == 'ubuntu-latest'
+#        name: Upgrade Ubuntu packages
+#        run: |
+#          sudo apt update
+#          sudo apt upgrade -y
 
       - if: matrix.platform == 'Linux'
         name: Install Linux dependencies
@@ -82,14 +82,22 @@ jobs:
 
       - if: matrix.platform == 'Android'
         name: Configure Android signing
+        shell: bash
         run: |
-          cd android/app
-          echo ${{ secrets.KEY }} | base64 --decode > key.jks
+          if [ "${{ secrets.KEY }}" != "" ]; then
+            cd android/app
+            echo ${{ secrets.KEY }} | base64 --decode > key.jks
+          fi
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
       - name: Pre-build
         run: |
-          dart run build_runner build --delete-conflicting-outputs
-          dart run vector_graphics_compiler --input-dir assets/vectors
+          pip install PyYAML
+          python scripts/pre-build.py ${{ github.sha }}
 
       - name: Build ${{ matrix.platform }} app
         run: ${{ matrix.command }} -v

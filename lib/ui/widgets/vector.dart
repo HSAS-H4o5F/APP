@@ -16,25 +16,33 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../home.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 
-class MedicalCarePage extends StatefulWidget {
-  const MedicalCarePage({Key? key}) : super(key: key);
+class Vector extends StatelessWidget {
+  const Vector({
+    super.key,
+    required this.assetName,
+    this.size,
+    this.fill,
+    this.semanticsLabel,
+  });
 
-  @override
-  State<MedicalCarePage> createState() => _MedicalCarePageState();
-}
+  final String assetName;
+  final double? size;
+  final Color? fill;
+  final String? semanticsLabel;
 
-class _MedicalCarePageState extends State<MedicalCarePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.medicalCare),
-      ),
-      body: Center(
-        child: Text(AppLocalizations.of(context)!.medicalCare),
-      ),
+    return SvgPicture(
+      AssetBytesLoader(assetName),
+      width: size,
+      height: size,
+      colorFilter:
+          fill != null ? ColorFilter.mode(fill!, BlendMode.srcIn) : null,
+      semanticsLabel: semanticsLabel,
     );
   }
 }

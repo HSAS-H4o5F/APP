@@ -18,23 +18,59 @@
 
 part of '../widgets.dart';
 
+class BlurredAppBar extends AppBar {
+  BlurredAppBar({
+    super.key,
+    super.leading,
+    super.title,
+    super.actions,
+  }) : super(
+          flexibleSpace: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(),
+            ),
+          ),
+        );
+}
+
 class SliverBlurredLargeAppBar extends StatelessWidget {
   const SliverBlurredLargeAppBar({
-    Key? key,
+    super.key,
     this.leading,
+    this.automaticallyImplyLeading = true,
     this.title,
     this.actions,
-  }) : super(key: key);
+  });
 
   final Widget? leading;
+  final bool automaticallyImplyLeading;
   final Widget? title;
   final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
+    ScaffoldState? scaffold = Scaffold.maybeOf(context);
+    ModalRoute<dynamic>? parentRoute = ModalRoute.of(context);
+    Widget? leading = this.leading;
+
+    if (leading == null && automaticallyImplyLeading) {
+      if (scaffold?.hasDrawer == true) {
+        leading = const DrawerButton();
+      } else if ((scaffold?.hasEndDrawer == false &&
+              parentRoute?.canPop == true) ||
+          (parentRoute?.impliesAppBarDismissal == true)) {
+        leading =
+            parentRoute is PageRoute<dynamic> && parentRoute.fullscreenDialog
+                ? const CloseButton()
+                : const BackButton();
+      }
+    }
+
     return SliverStack(
       children: [
         SliverAppBar.large(
+          automaticallyImplyLeading: false,
           flexibleSpace: ClipRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -45,6 +81,7 @@ class SliverBlurredLargeAppBar extends StatelessWidget {
         ),
         SliverAppBar.large(
           leading: leading,
+          automaticallyImplyLeading: false,
           title: title,
           actions: actions,
           surfaceTintColor: Colors.transparent,

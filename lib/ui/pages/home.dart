@@ -33,22 +33,14 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-part 'home/fitness_equipments.dart';
-
-part 'home/guide_dogs.dart';
-
 part 'home/lifestyle.dart';
-
-part 'home/medical_care.dart';
-
-part 'home/mutual_aid.dart';
-
+part 'home/lifestyle/fitness_equipments.dart';
+part 'home/lifestyle/guide_dogs.dart';
+part 'home/lifestyle/medical_care.dart';
+part 'home/lifestyle/mutual_aid.dart';
 part 'home/news.dart';
-
 part 'home/profile.dart';
-
 part 'home/route.dart';
-
 part 'home/security.dart';
 
 class HomePage extends StatefulWidget {
@@ -172,6 +164,7 @@ class _HomePageState extends State<HomePage> {
         queryParameters: {'origin': 'zhihu'},
       ));
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.fetchingError)),
       );
