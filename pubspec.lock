@@ -537,10 +537,10 @@ packages:
     dependency: "direct main"
     description:
       name: parse_server_sdk_flutter
-      sha256: "78024196d32a4ec099017b305f445371c4d9405975e861ac78cc317ea8362560"
+      sha256: "26b1eb98c4f6443daaa20c675d8046033cf994bba777d14763f1c4e1f12b24bb"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.0"
+    version: "7.0.0"
   path:
     dependency: transitive
     description:
