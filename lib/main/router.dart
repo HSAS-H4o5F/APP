@@ -22,7 +22,8 @@ class AppRouter {
   AppRouter({
     required super.navigatorKey,
     required this.shellRouteNavigatorKey,
-  }) : router = GoRouter(
+  }) {
+    router = GoRouter(
           initialLocation: '/',
           routes: [
             GoRoute(
@@ -144,6 +145,7 @@ class AppRouter {
             ),
           ],
         );
+  }
 
   final GlobalKey<NavigatorState> shellRouteNavigatorKey;
   final router;
