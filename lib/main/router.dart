@@ -18,11 +18,11 @@
 
 part of '../main.dart';
 
-class AppRouter extends GoRouter {
+class AppRouter {
   AppRouter({
     required super.navigatorKey,
     required this.shellRouteNavigatorKey,
-  }) : super(
+  }) : router = GoRouter(
           initialLocation: '/',
           routes: [
             GoRoute(
@@ -146,4 +146,5 @@ class AppRouter extends GoRouter {
         );
 
   final GlobalKey<NavigatorState> shellRouteNavigatorKey;
+  final router;
 }
