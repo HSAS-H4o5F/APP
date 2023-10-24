@@ -134,7 +134,7 @@ class _SmartCommunityAppState extends State<SmartCommunityApp> {
     router = AppRouter(
       navigatorKey: _globalNavigatorKey,
       shellRouteNavigatorKey: _shellRouteNavigatorKey,
-    );
+    ).router;
 
     _initFuture = _initApp();
     super.initState();
