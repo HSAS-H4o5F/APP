@@ -19,7 +19,7 @@
 part of '../../home.dart';
 
 class FitnessEquipmentsPage extends StatefulWidget {
-  const FitnessEquipmentsPage({Key? key}) : super(key: key);
+  const FitnessEquipmentsPage({super.key});
 
   @override
   State<FitnessEquipmentsPage> createState() => _FitnessEquipmentsPageState();

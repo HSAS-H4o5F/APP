@@ -19,7 +19,7 @@
 part of '../../home.dart';
 
 class GuideDogsPage extends StatefulWidget {
-  const GuideDogsPage({Key? key}) : super(key: key);
+  const GuideDogsPage({super.key});
 
   @override
   State<GuideDogsPage> createState() => _GuideDogsPagePageState();

@@ -19,7 +19,7 @@
 part of '../../home.dart';
 
 class MutualAidPage extends StatefulWidget {
-  const MutualAidPage({Key? key}) : super(key: key);
+  const MutualAidPage({super.key});
 
   @override
   State<MutualAidPage> createState() => _MutualAidPageState();

@@ -19,7 +19,7 @@
 part of '../home.dart';
 
 class HomePageSecurity extends StatefulWidget {
-  const HomePageSecurity({Key? key}) : super(key: key);
+  const HomePageSecurity({super.key});
 
   @override
   State<HomePageSecurity> createState() => _HomePageSecurityState();

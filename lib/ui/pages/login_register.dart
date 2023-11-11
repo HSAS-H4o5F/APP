@@ -27,9 +27,9 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class LoginRegisterPage extends StatefulWidget {
   const LoginRegisterPage({
-    Key? key,
+    super.key,
     required this.type,
-  }) : super(key: key);
+  });
 
   final LoginRegisterPageType type;
 

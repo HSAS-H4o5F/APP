@@ -19,7 +19,7 @@
 part of '../../home.dart';
 
 class MedicalCarePage extends StatefulWidget {
-  const MedicalCarePage({Key? key}) : super(key: key);
+  const MedicalCarePage({super.key});
 
   @override
   State<MedicalCarePage> createState() => _MedicalCarePageState();
