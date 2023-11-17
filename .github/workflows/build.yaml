@@ -29,7 +29,7 @@ jobs:
           - platform: Windows
             os: windows-latest
             command: flutter build windows --obfuscate --split-debug-info=build
-            output: build/windows/runner/Release/
+            output: build/windows/x64/runner/Release/
 
     name: Build ${{ matrix.platform }} app
     runs-on: ${{ matrix.os }}
