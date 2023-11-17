@@ -27,6 +27,7 @@ dependencies:
   package_info_plus: ^4.0.2
   camera: ^0.10.5+3
   socket_io_client: ^2.0.3+1
+  camera_android_camerax: ^0.5.0+22
 
 dev_dependencies:
   flutter_test:
