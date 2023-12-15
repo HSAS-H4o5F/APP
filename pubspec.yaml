@@ -36,7 +36,7 @@ dev_dependencies:
   built_value_generator: ^8.6.1
   build_runner: ^2.4.5
 
-dependencies_overrides:
+dependency_overrides:
   connectivity_plus: ^5.0.0
 
 flutter:
