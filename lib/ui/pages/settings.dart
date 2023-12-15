@@ -31,27 +31,45 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverBlurredLargeAppBar(
-            title: Text(AppLocalizations.of(context)!.settings),
-          ),
-          SliverList.list(
-            children: [
-              PreferencesProvider.of(context)
-                  .preferences
-                  .serverUrl!
-                  .listTile(context),
-            ].mapWithFirstLast((first, last, child) {
-              return SafeArea(
-                top: false,
-                bottom: last,
-                child: child,
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+      body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverBlurredLargeAppBar(
+                  title: Text(AppLocalizations.of(context)!.settings),
+                ),
+              ),
+            ];
+          },
+          body: CustomScrollView(
+            slivers: [
+              Builder(
+                builder: (context) {
+                  return SliverOverlapInjector(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                      context,
+                    ),
+                  );
+                },
+              ),
+              SliverList.list(
+                children: [
+                  PreferencesProvider.of(context)
+                      .preferences
+                      .serverUrl!
+                      .listTile(context),
+                ].mapWithFirstLast((first, last, child) {
+                  return SafeArea(
+                    top: false,
+                    bottom: last,
+                    child: child,
+                  );
+                }).toList(),
+              ),
+            ],
+          )),
     );
   }
 
