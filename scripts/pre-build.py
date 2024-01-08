@@ -18,12 +18,12 @@ import logging
 import os
 import sys
 
-import yaml
-
 logging.basicConfig(level=logging.DEBUG)
 logging.info("Running pre-build script.")
 
 if len(sys.argv) > 1:
+    import yaml
+
     logging.info("Opening pubspec.yaml for reading.")
     file = open(os.path.abspath("pubspec.yaml"), "r")
 
