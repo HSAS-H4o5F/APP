@@ -117,10 +117,10 @@ packages:
     dependency: "direct main"
     description:
       name: camera
-      sha256: f3813a634fd1350a9d2a78ee70e5b247cebedc9c58a24560992620e57a8a5600
+      sha256: "9499cbc2e51d8eb0beadc158b288380037618ce4e30c9acbc4fae1ac3ecb5797"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.10.5+8"
+    version: "0.10.5+9"
   camera_android:
     dependency: transitive
     description:
@@ -189,10 +189,10 @@ packages:
     dependency: transitive
     description:
       name: code_builder
-      sha256: feee43a5c05e7b3199bb375a86430b8ada1b04104f2923d0e03cc01ca87b6d84
+      sha256: f692079e25e7869c14132d39f223f8eec9830eb76131925143b2129c4bb01b37
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.9.0"
+    version: "4.10.0"
   collection:
     dependency: transitive
     description:
@@ -989,26 +989,26 @@ packages:
     dependency: "direct main"
     description:
       name: vector_graphics
-      sha256: "0f0c746dd2d6254a0057218ff980fc7f5670fd0fcf5e4db38a490d31eed4ad43"
+      sha256: "18f6690295af52d081f6808f2f7c69f0eed6d7e23a71539d75f4aeb8f0062172"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.9+1"
+    version: "1.1.9+2"
   vector_graphics_codec:
     dependency: transitive
     description:
       name: vector_graphics_codec
-      sha256: "0edf6d630d1bfd5589114138ed8fada3234deacc37966bec033d3047c29248b7"
+      sha256: "531d20465c10dfac7f5cd90b60bbe4dd9921f1ec4ca54c83ebb176dbacb7bb2d"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.9+1"
+    version: "1.1.9+2"
   vector_graphics_compiler:
     dependency: transitive
     description:
       name: vector_graphics_compiler
-      sha256: d24333727332d9bd20990f1483af4e09abdb9b1fc7c3db940b56ab5c42790c26
+      sha256: "03012b0a33775c5530576b70240308080e1d5050f0faf000118c20e6463bc0ad"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.9+1"
+    version: "1.1.9+2"
   vector_math:
     dependency: transitive
     description:
