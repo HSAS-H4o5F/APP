@@ -1,6 +1,6 @@
 /*
  * This file is part of hsas_h4o5f_app.
- * Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+ * Copyright (c) 2023-2024 HSAS H4o5F Team. All Rights Reserved.
  *
  * hsas_h4o5f_app is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -18,6 +18,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -142,7 +143,8 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    if ((Platform.isAndroid || Platform.isIOS) &&
+                    if (!kIsWeb &&
+                        (Platform.isAndroid || Platform.isIOS) &&
                         widget.type == LoginRegisterPageType.login)
                       Wrap(
                         alignment: WrapAlignment.center,
