@@ -55,12 +55,6 @@ jobs:
           channel: stable
           cache: true
 
-      #      - if: matrix.os == 'ubuntu-latest'
-      #        name: Upgrade Ubuntu packages
-      #        run: |
-      #          sudo apt update
-      #          sudo apt upgrade -y
-
       - if: matrix.platform == 'Linux'
         name: Install Linux dependencies
         run: |
@@ -107,3 +101,31 @@ jobs:
         with:
           name: ${{ matrix.platform }}-app
           path: ${{ matrix.output }}
+
+      - if: matrix.platform == 'Web'
+        name: Upload Pages artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ matrix.output }}
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    needs:
+      - build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: Web App
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
