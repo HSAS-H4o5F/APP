@@ -1,6 +1,6 @@
 /*
  * This file is part of hsas_h4o5f_app.
- * Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+ * Copyright (c) 2023-2024 HSAS H4o5F Team. All Rights Reserved.
  *
  * hsas_h4o5f_app is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,7 +25,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
 import 'package:hsas_h4o5f_app/ui/widgets.dart';
-import 'package:hsas_h4o5f_app/utils.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class FaceProcessingPage extends StatefulWidget {
@@ -168,14 +167,13 @@ class _FaceProcessingPageState extends State<FaceProcessingPage>
 
     _socket.on('success', (_) {
       bool lock = false;
-      bool rotationError = false;
+      int width = 1;
+      // bool rotationError = false;
 
-      _socket.on('detection', (data) {
+      _socket.on('register', (data) {
         lock = false;
 
-        if (data is! Uint8List ||
-            data.isEmpty ||
-            (data.length != 1 && data.length != 4)) {
+        if (data is! int) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.fetchingError),
@@ -186,33 +184,25 @@ class _FaceProcessingPageState extends State<FaceProcessingPage>
 
         ScaffoldMessenger.of(context).clearSnackBars();
 
-        if (data.length == 1) {
-          setState(() {
-            switch (data.first) {
-              case 0:
-                _statusMessage =
-                    AppLocalizations.of(context)!.faceDetectionMessage;
-                break;
-              case 1:
-                _statusMessage =
-                    AppLocalizations.of(context)!.faceDetectionTooManyMessage;
-                break;
-              case 2:
-                _statusMessage =
-                    AppLocalizations.of(context)!.faceDetectionTooSmallMessage;
-                break;
-              default:
-                _statusMessage =
-                    AppLocalizations.of(context)!.faceDetectionMessage;
-                break;
-            }
-          });
-          return;
-        }
-
         setState(() {
-          _statusMessage =
-              AppLocalizations.of(context)!.faceDetectionProcessingMessage;
+          switch (data) {
+            case 0:
+              _statusMessage =
+                  AppLocalizations.of(context)!.faceDetectionProcessingMessage;
+              break;
+            case 1:
+              _statusMessage =
+                  AppLocalizations.of(context)!.faceDetectionTooManyMessage;
+              break;
+            case 2:
+              _statusMessage =
+                  AppLocalizations.of(context)!.faceDetectionTooSmallMessage;
+              break;
+            default:
+              _statusMessage =
+                  AppLocalizations.of(context)!.faceDetectionMessage;
+              break;
+          }
         });
       });
 
@@ -220,7 +210,10 @@ class _FaceProcessingPageState extends State<FaceProcessingPage>
         if (lock) return;
         lock = true;
 
-        if (image.format.group == ImageFormatGroup.unknown) {
+        final format = image.format.group;
+        if (format == ImageFormatGroup.unknown ||
+            (format != ImageFormatGroup.yuv420 &&
+                format != ImageFormatGroup.bgra8888)) {
           showAlertDialog(
             context: context,
             barrierDismissible: false,
@@ -241,83 +234,81 @@ class _FaceProcessingPageState extends State<FaceProcessingPage>
           return;
         }
 
-        int width = image.width;
-        int height = image.height;
-        List<int> bytes = image.planes[0].bytes.toList();
+        if (width != image.width) {
+          width = image.width;
+          _socket.emit('resize', width);
+        }
 
-        if (Platform.isAndroid) {
-          // TODO: 这种方式仍存在很多问题，可想办法使用 CameraX 来解决
-          // TODO: 包括等待 Flutter CameraX 插件稳定和自行编写
-          int screenRotation = await getScreenRotation();
-          if (screenRotation == -1) {
-            if (!rotationError && mounted) {
-              rotationError = true;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.cameraStreamRotationError),
-                  duration: const Duration(seconds: 5),
-                ),
-              );
-            }
+        List<int> bytes = [];
+        final planes = image.planes;
 
-            screenRotation = 0;
-          } else {
-            rotationError = false;
-          }
+        if (format == ImageFormatGroup.yuv420) {
+          bytes.add(0x00);
+        } else {
+          bytes.add(0x01);
+        }
 
-          final sensorOrientation = _controller!.description.sensorOrientation;
-          final rotation = (screenRotation - 360 + sensorOrientation) % 360;
-
-          if (rotation == 180) {
-            bytes = bytes.reversed.toList();
-          } else if (rotation != 0) {
-            List<int> temp = [];
-            if (rotation == 90) {
-              for (int i = 0; i < width; i++) {
-                for (int j = height - 1; j >= 0; j--) {
-                  temp.add(bytes[j * width + i]);
-                }
-              }
-            } else if (rotation == 270) {
-              for (int i = width - 1; i >= 0; i--) {
-                for (int j = 0; j < height; j++) {
-                  temp.add(bytes[j * width + i]);
-                }
-              }
-            }
-
-            width = image.height;
-            height = image.width;
-            bytes = temp;
+        for (final plane in planes) {
+          for (int i = 0;
+              i < plane.bytes.length;
+              i += plane.bytesPerPixel ?? 1) {
+            bytes.add(plane.bytes[i]);
           }
         }
 
-        if (width > height) {
-          List<int> temp = [];
-          for (int i = 0; i < height; i++) {
-            temp.addAll(bytes.sublist(
-              i * width + (width - height) ~/ 2,
-              i * width + height + (width - height) ~/ 2,
-            ));
-          }
-          bytes = temp;
-        } else if (width < height) {
-          bytes = bytes.sublist(
-            (height - width) ~/ 2 * width,
-            (height - width) ~/ 2 * width + width * width,
-          );
-        }
+        // if (Platform.isAndroid) {
+        //   // TODO: 这种方式仍存在很多问题，可想办法使用 CameraX 来解决
+        //   // TODO: 包括等待 Flutter CameraX 插件稳定和自行编写
+        //   int screenRotation = await getScreenRotation();
+        //   if (screenRotation == -1) {
+        //     if (!rotationError && mounted) {
+        //       rotationError = true;
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //         SnackBar(
+        //           content: Text(
+        //               AppLocalizations.of(context)!.cameraStreamRotationError),
+        //           duration: const Duration(seconds: 5),
+        //         ),
+        //       );
+        //     }
+        //
+        //     screenRotation = 0;
+        //   } else {
+        //     rotationError = false;
+        //   }
+        //
+        //   final sensorOrientation = _controller!.description.sensorOrientation;
+        //   final rotation = (screenRotation - 360 + sensorOrientation) % 360;
+        //
+        //   if (rotation == 180) {
+        //     bytes = bytes.reversed.toList();
+        //   } else if (rotation != 0) {
+        //     List<int> temp = [];
+        //     if (rotation == 90) {
+        //       for (int i = 0; i < width; i++) {
+        //         for (int j = height - 1; j >= 0; j--) {
+        //           temp.add(bytes[j * width + i]);
+        //         }
+        //       }
+        //     } else if (rotation == 270) {
+        //       for (int i = width - 1; i >= 0; i--) {
+        //         for (int j = 0; j < height; j++) {
+        //           temp.add(bytes[j * width + i]);
+        //         }
+        //       }
+        //     }
+        //
+        //     width = image.height;
+        //     height = image.width;
+        //     bytes = temp;
+        //   }
+        // }
 
-        bytes.add(image.format.group.index - 1);
-
-        _socket.emit('detection', Uint8List.fromList(bytes));
+        _socket.emit('register', Uint8List.fromList(bytes));
       });
     });
 
-    _socket.emit('request', {
-      'operation': 'detection',
-    });
+    _socket.emit('request', {'operation': 'register', 'userId': 'jyCV2JNe4O'});
   }
 
   void clean() {
