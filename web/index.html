@@ -17,6 +17,7 @@
   -->
 
 <!DOCTYPE html>
+<!--suppress HtmlRequiredLangAttribute -->
 <html>
 <head>
     <!--
@@ -54,9 +55,10 @@
 
     <script>
       // The value below is injected by flutter build, do not touch.
-      var serviceWorkerVersion = null;
+      const serviceWorkerVersion = null;
     </script>
     <!-- This script adds the flutter initialization JS code -->
+    <!--suppress HtmlUnknownTarget -->
     <script defer src="flutter.js"></script>
 
     <style id="loading-style">
@@ -160,6 +162,7 @@
 </head>
 <body>
 
+<!--suppress JSUnresolvedReference, JSUnusedGlobalSymbols, JSUnusedLocalSymbols -->
 <script id="init">
   function onAppReady() {
     document.getElementById("progress-bar").style.right = "0";
