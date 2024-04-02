@@ -19,7 +19,7 @@
 part of '../home.dart';
 
 class HomePageProfile extends StatefulWidget {
-  const HomePageProfile({Key? key}) : super(key: key);
+  const HomePageProfile({super.key});
 
   @override
   State<HomePageProfile> createState() => _HomePageProfileState();
@@ -35,7 +35,7 @@ class _HomePageProfileState extends State<HomePageProfile> {
         ),
         SliverList.list(
           children: [
-            ListTile(
+            const ListTile(
               title: Text(''),
             ),
             ListTile(

@@ -22,127 +22,133 @@ class AppRouter extends GoRouter {
   AppRouter({
     required super.navigatorKey,
     required this.shellRouteNavigatorKey,
-  }) : super(
-          initialLocation: '/',
-          routes: [
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/',
-              redirect: (context, state) => '/home',
-            ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/home',
-              redirect: (context, state) async {
-                final currentUser = await ParseUser.currentUser();
-                if (currentUser == null) {
-                  return '/login';
-                }
-
-                if (state.uri.path == '/home') {
-                  return HomePageRoute.routes.keys.first;
-                }
-
-                return null;
-              },
+  }) : super.routingConfig(
+          routingConfig: ValueNotifier(
+            RoutingConfig(
               routes: [
                 GoRoute(
                   parentNavigatorKey: navigatorKey,
-                  path: ':medical-care',
-                  builder: (context, state) => const MedicalCarePage(),
+                  path: '/',
+                  redirect: (context, state) => '/home',
                 ),
                 GoRoute(
                   parentNavigatorKey: navigatorKey,
-                  path: ':guide-dogs',
-                  builder: (context, state) => const GuideDogsPage(),
+                  path: '/home',
+                  redirect: (context, state) async {
+                    final currentUser = await ParseUser.currentUser();
+                    if (currentUser == null) {
+                      return '/login';
+                    }
+
+                    if (state.uri.path == '/home') {
+                      return HomePageRoute.routes.keys.first;
+                    }
+
+                    return null;
+                  },
+                  routes: [
+                    GoRoute(
+                      parentNavigatorKey: navigatorKey,
+                      path: ':medical-care',
+                      builder: (context, state) => const MedicalCarePage(),
+                    ),
+                    GoRoute(
+                      parentNavigatorKey: navigatorKey,
+                      path: ':guide-dogs',
+                      builder: (context, state) => const GuideDogsPage(),
+                    ),
+                    GoRoute(
+                      parentNavigatorKey: navigatorKey,
+                      path: ':mutual-aid',
+                      builder: (context, state) => const MutualAidPage(),
+                    ),
+                    GoRoute(
+                      parentNavigatorKey: navigatorKey,
+                      path: ':fitness-equipments',
+                      builder: (context, state) =>
+                          const FitnessEquipmentsPage(),
+                    ),
+                  ],
                 ),
-                GoRoute(
-                  parentNavigatorKey: navigatorKey,
-                  path: ':mutual-aid',
-                  builder: (context, state) => const MutualAidPage(),
-                ),
-                GoRoute(
-                  parentNavigatorKey: navigatorKey,
-                  path: ':fitness-equipments',
-                  builder: (context, state) => const FitnessEquipmentsPage(),
-                ),
-              ],
-            ),
-            ShellRoute(
-              navigatorKey: shellRouteNavigatorKey,
-              builder: (context, state, child) => HomePage(
-                location: state.uri.path,
-                child: child,
-              ),
-              routes: HomePageRoute.routes.entries.map((entry) {
-                return GoRoute(
-                  parentNavigatorKey: shellRouteNavigatorKey,
-                  path: entry.key,
-                  pageBuilder: (context, state) {
-                    return CustomTransitionPage(
-                      key: state.pageKey,
-                      child: entry.value.builder(context, state),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: animation
-                              .drive(CurveTween(curve: Curves.easeInOut)),
-                          child: FadeTransition(
-                            opacity: ReverseAnimation(secondaryAnimation)
-                                .drive(CurveTween(curve: Curves.easeInOut)),
-                            child: child,
-                          ),
+                ShellRoute(
+                  navigatorKey: shellRouteNavigatorKey,
+                  builder: (context, state, child) => HomePage(
+                    location: state.uri.path,
+                    child: child,
+                  ),
+                  routes: HomePageRoute.routes.entries.map((entry) {
+                    return GoRoute(
+                      parentNavigatorKey: shellRouteNavigatorKey,
+                      path: entry.key,
+                      pageBuilder: (context, state) {
+                        return CustomTransitionPage(
+                          key: state.pageKey,
+                          child: entry.value.builder(context, state),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation
+                                  .drive(CurveTween(curve: Curves.easeInOut)),
+                              child: FadeTransition(
+                                opacity: ReverseAnimation(secondaryAnimation)
+                                    .drive(CurveTween(curve: Curves.easeInOut)),
+                                child: child,
+                              ),
+                            );
+                          },
                         );
                       },
                     );
-                  },
-                );
-              }).toList(),
+                  }).toList(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: '/settings',
+                  builder: (context, state) => const SettingsPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: '/about',
+                  builder: (context, state) => const AboutPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: '/login',
+                  builder: (context, state) => const LoginRegisterPage(
+                    type: LoginRegisterPageType.login,
+                  ),
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: '/register',
+                  builder: (context, state) => const LoginRegisterPage(
+                    type: LoginRegisterPageType.register,
+                  ),
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: '/face-registration-guide',
+                  builder: (context, state) =>
+                      FaceRegistrationGuidePage(context),
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: '/face-registration',
+                  builder: (context, state) => const FaceProcessingPage(
+                    mode: FaceProcessingMode.registration,
+                  ),
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: '/face-recognition',
+                  builder: (context, state) => const FaceProcessingPage(
+                    mode: FaceProcessingMode.recognition,
+                  ),
+                ),
+              ],
             ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/settings',
-              builder: (context, state) => const SettingsPage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/about',
-              builder: (context, state) => const AboutPage(),
-            ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/login',
-              builder: (context, state) => const LoginRegisterPage(
-                type: LoginRegisterPageType.login,
-              ),
-            ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/register',
-              builder: (context, state) => const LoginRegisterPage(
-                type: LoginRegisterPageType.register,
-              ),
-            ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/face-registration-guide',
-              builder: (context, state) => FaceRegistrationGuidePage(context),
-            ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/face-registration',
-              builder: (context, state) => const FaceProcessingPage(
-                mode: FaceProcessingMode.registration,
-              ),
-            ),
-            GoRoute(
-              parentNavigatorKey: navigatorKey,
-              path: '/face-recognition',
-              builder: (context, state) => const FaceProcessingPage(
-                mode: FaceProcessingMode.recognition,
-              ),
-            ),
-          ],
+          ),
+          initialLocation: '/',
         );
 
   final GlobalKey<NavigatorState> shellRouteNavigatorKey;

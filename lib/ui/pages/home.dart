@@ -45,10 +45,10 @@ part 'home/security.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
-    Key? key,
+    super.key,
     required this.location,
     required this.child,
-  }) : super(key: key);
+  });
 
   final String location;
   final Widget child;

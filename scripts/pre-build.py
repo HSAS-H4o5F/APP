@@ -1,5 +1,5 @@
 #  This file is part of hsas_h4o5f_app.
-#  Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+#  Copyright (c) 2023-2024 HSAS H4o5F Team. All Rights Reserved.
 #
 #  hsas_h4o5f_app is free software: you can redistribute it and/or modify it
 #  under the terms of the GNU General Public License as published by the Free
@@ -18,12 +18,12 @@ import logging
 import os
 import sys
 
-import yaml
-
 logging.basicConfig(level=logging.DEBUG)
 logging.info("Running pre-build script.")
 
 if len(sys.argv) > 1:
+    import yaml
+
     logging.info("Opening pubspec.yaml for reading.")
     file = open(os.path.abspath("pubspec.yaml"), "r")
 
@@ -31,8 +31,11 @@ if len(sys.argv) > 1:
     data = yaml.safe_load(file)
     file.close()
 
-    logging.info("Replacing version with {}.".format(sys.argv[1]))
-    data['version'] = data['version'].replace("+", "-{}+".format(sys.argv[1]))
+    logging.info("Getting current commit hash.")
+    hash = os.popen("git rev-parse --short HEAD").read().strip()
+
+    logging.info("Replacing version hash with {}.".format(hash))
+    data['version'] = data['version'].replace("+", "-{}+".format(hash))
 
     logging.info("Opening pubspec.yaml for writing.")
     file = open(os.path.abspath("pubspec.yaml"), "w")

@@ -1,6 +1,6 @@
 /*
  * This file is part of hsas_h4o5f_app.
- * Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+ * Copyright (c) 2024 HSAS H4o5F Team. All Rights Reserved.
  *
  * hsas_h4o5f_app is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,25 +16,8 @@
  * hsas_h4o5f_app. If not, see <https://www.gnu.org/licenses/>.
  */
 
-part of '../../home.dart';
+import 'package:hsas_h4o5f_app/platform/web_init/stub.dart'
+    if (dart.library.html) 'package:hsas_h4o5f_app/platform/web_init/web.dart'
+    as impl;
 
-class MedicalCarePage extends StatefulWidget {
-  const MedicalCarePage({super.key});
-
-  @override
-  State<MedicalCarePage> createState() => _MedicalCarePageState();
-}
-
-class _MedicalCarePageState extends State<MedicalCarePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.medicalCare),
-      ),
-      body: Center(
-        child: Text(AppLocalizations.of(context)!.medicalCare),
-      ),
-    );
-  }
-}
+Function get onAppReady => impl.onAppReadyImpl;

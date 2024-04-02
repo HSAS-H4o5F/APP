@@ -19,7 +19,7 @@
 part of '../home.dart';
 
 class HomePageNews extends StatefulWidget {
-  const HomePageNews({Key? key}) : super(key: key);
+  const HomePageNews({super.key});
 
   @override
   State<HomePageNews> createState() => _HomePageNewsState();

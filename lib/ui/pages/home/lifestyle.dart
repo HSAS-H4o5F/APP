@@ -19,7 +19,7 @@
 part of '../home.dart';
 
 class HomePageLifestyle extends StatefulWidget {
-  const HomePageLifestyle({Key? key}) : super(key: key);
+  const HomePageLifestyle({super.key});
 
   @override
   State<HomePageLifestyle> createState() => _HomePageLifestyleState();
@@ -172,13 +172,13 @@ class _HomePageLifestyleState extends State<HomePageLifestyle> {
 
 class LifeStyleCard extends StatelessWidget {
   const LifeStyleCard({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.subhead,
     this.actions = const [],
     required this.onTap,
-  }) : super(key: key);
+  });
 
   final IconData icon;
   final String title;
@@ -247,12 +247,12 @@ class LifeStyleCard extends StatelessWidget {
 
 class EducationFlowItem extends StatelessWidget {
   const EducationFlowItem({
-    Key? key,
+    super.key,
     required this.articleUrl,
     required this.title,
     this.summary,
     this.imageUrl,
-  }) : super(key: key);
+  });
 
   final String articleUrl;
   final String title;

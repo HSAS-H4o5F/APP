@@ -1,6 +1,6 @@
 /*
  * This file is part of hsas_h4o5f_app.
- * Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+ * Copyright (c) 2023-2024 HSAS H4o5F Team. All Rights Reserved.
  *
  * hsas_h4o5f_app is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -81,33 +81,36 @@ class _AssistantPageState extends State<AssistantPage>
       body: Stack(alignment: Alignment.center, children: _steps),
       bottomNavigationBar: SafeArea(
         top: false,
-        child: Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            AnimatedOpacity(
-              opacity: _currentStep != 0 ? 1 : 0,
-              curve: Curves.easeInOut,
-              duration: const Duration(milliseconds: 300),
-              child: TextButton.icon(
-                onPressed: _currentStep > 0 ? _decreaseStep : null,
-                icon: Icon(Icons.adaptive.arrow_back),
-                label: Text(AppLocalizations.of(context)!.previous),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              AnimatedOpacity(
+                opacity: _currentStep != 0 ? 1 : 0,
+                curve: Curves.easeInOut,
+                duration: const Duration(milliseconds: 300),
+                child: TextButton.icon(
+                  onPressed: _currentStep > 0 ? _decreaseStep : null,
+                  icon: Icon(Icons.adaptive.arrow_back),
+                  label: Text(AppLocalizations.of(context)!.previous),
+                ),
               ),
-            ),
-            if (widget.onSkip != null)
+              if (widget.onSkip != null)
+                TextButton.icon(
+                  onPressed: widget.onSkip,
+                  icon: const Icon(Icons.skip_next),
+                  label: Text(AppLocalizations.of(context)!.skip),
+                ),
               TextButton.icon(
-                onPressed: widget.onSkip,
-                icon: const Icon(Icons.skip_next),
-                label: Text(AppLocalizations.of(context)!.skip),
+                onPressed: _increaseStep,
+                icon: Icon(Icons.adaptive.arrow_forward),
+                label: Text(AppLocalizations.of(context)!.next),
               ),
-            TextButton.icon(
-              onPressed: _increaseStep,
-              icon: Icon(Icons.adaptive.arrow_forward),
-              label: Text(AppLocalizations.of(context)!.next),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

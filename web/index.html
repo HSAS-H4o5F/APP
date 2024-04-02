@@ -1,6 +1,6 @@
 <!--
   ~ This file is part of hsas_h4o5f_app.
-  ~ Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+  ~ Copyright (c) 2023-2024 HSAS H4o5F Team. All Rights Reserved.
   ~
   ~ hsas_h4o5f_app is free software: you can redistribute it and/or modify it
   ~ under the terms of the GNU General Public License as published by the Free
@@ -17,6 +17,7 @@
   -->
 
 <!DOCTYPE html>
+<!--suppress HtmlRequiredLangAttribute -->
 <html>
 <head>
     <!--
@@ -53,14 +54,15 @@
     <link href="manifest.json" rel="manifest">
 
     <script>
-        // The value below is injected by flutter build, do not touch.
-        var serviceWorkerVersion = null;
+      // The value below is injected by flutter build, do not touch.
+      const serviceWorkerVersion = null;
     </script>
     <!-- This script adds the flutter initialization JS code -->
+    <!--suppress HtmlUnknownTarget -->
     <script defer src="flutter.js"></script>
 
     <style id="loading-style">
-        * {
+        #loading * {
             transition: all 0.5s;
         }
 
@@ -148,6 +150,7 @@
 
         body {
             background-color: var(--color-light);
+            transition: background-color 0.5s;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -158,31 +161,35 @@
     </style>
 </head>
 <body>
-<script>
-    window.addEventListener('load', function (ev) {
-        let progressBar = document.getElementById('progress-bar');
 
-        // Download main.dart.js
-        _flutter.loader.loadEntrypoint({
-            serviceWorker: {
-                serviceWorkerVersion: serviceWorkerVersion,
-            },
-            onEntrypointLoaded: async function (engineInitializer) {
-                progressBar.style.right = '50%';
-                let appRunner = await engineInitializer.initializeEngine();
+<!--suppress JSUnresolvedReference, JSUnusedGlobalSymbols, JSUnusedLocalSymbols -->
+<script id="init">
+  function onAppReady() {
+    document.getElementById("progress-bar").style.right = "0";
+    document.getElementById("loading").classList.remove("visible");
+    setTimeout(() => {
+      document.getElementById("loading").remove();
+      document.getElementById("loading-style").remove();
+      document.getElementById("init").remove();
+    }, 500);
+  }
 
-                progressBar.style.right = '10%';
-                await appRunner.runApp();
+  window.addEventListener("load", function (ev) {
+    // Download main.dart.js
+    _flutter.loader.loadEntrypoint({
+      serviceWorker: { serviceWorkerVersion }, onEntrypointLoaded: async function (engineInitializer) {
+        const progressBar = document.getElementById("progress-bar");
 
-                document.getElementById('loading').classList.remove('visible');
-                setTimeout(() => {
-                    document.getElementById('loading').remove();
-                    document.getElementById('loading-style').remove();
-                }, 500);
-            }
-        });
+        progressBar.style.right = "50%";
+        const appRunner = await engineInitializer.initializeEngine();
+
+        progressBar.style.right = "10%";
+        await appRunner.runApp();
+      },
     });
+  });
 </script>
+
 <div class="visible" id="loading">
     <svg id="logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
         <polygon

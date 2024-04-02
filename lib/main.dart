@@ -1,6 +1,6 @@
 /*
  * This file is part of hsas_h4o5f_app.
- * Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+ * Copyright (c) 2023-2024 HSAS H4o5F Team. All Rights Reserved.
  *
  * hsas_h4o5f_app is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hsas_h4o5f_app/ext.dart';
+import 'package:hsas_h4o5f_app/platform/web_init/web_init.dart';
 import 'package:hsas_h4o5f_app/ui/color_schemes.dart';
 import 'package:hsas_h4o5f_app/ui/pages/about.dart';
 import 'package:hsas_h4o5f_app/ui/pages/assistant.dart';

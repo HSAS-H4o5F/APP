@@ -29,17 +29,17 @@ jobs:
           - platform: Windows
             os: windows-latest
             command: flutter build windows --obfuscate --split-debug-info=build
-            output: build/windows/runner/Release/
+            output: build/windows/x64/runner/Release/
 
     name: Build ${{ matrix.platform }} app
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - if: matrix.platform == 'Android'
-        name: Setup Android cache
-        uses: actions/cache@v3
+        name: Set up Android cache
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -49,17 +49,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Setup Flutter with cache
+      - name: Set up Flutter with cache
         uses: subosito/flutter-action@v2
         with:
           channel: master
           cache: true
-
-#      - if: matrix.os == 'ubuntu-latest'
-#        name: Upgrade Ubuntu packages
-#        run: |
-#          sudo apt update
-#          sudo apt upgrade -y
 
       - if: matrix.platform == 'Linux'
         name: Install Linux dependencies
@@ -70,15 +64,15 @@ jobs:
         run: flutter pub get
 
       - if: matrix.platform == 'Android'
-        name: Setup JDK
-        uses: actions/setup-java@v3
+        name: Set up JDK
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '19'
 
       - if: matrix.platform == 'Android'
-        name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
       - if: matrix.platform == 'Android'
         name: Configure Android signing
@@ -89,21 +83,49 @@ jobs:
             echo ${{ secrets.KEY }} | base64 --decode > key.jks
           fi
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Pre-build
         run: |
           pip install PyYAML
-          python scripts/pre-build.py ${{ github.sha }}
+          python scripts/pre-build.py hello
 
       - name: Build ${{ matrix.platform }} app
         run: ${{ matrix.command }} -v
 
       - name: Archive ${{ matrix.platform }} app
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-app
           path: ${{ matrix.output }}
+
+      - if: matrix.platform == 'Web'
+        name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ matrix.output }}
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    needs:
+      - build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: Web App
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

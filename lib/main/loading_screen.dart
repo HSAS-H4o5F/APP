@@ -1,6 +1,6 @@
 /*
  * This file is part of hsas_h4o5f_app.
- * Copyright (c) 2023 HSAS H4o5F Team. All Rights Reserved.
+ * Copyright (c) 2023-2024 HSAS H4o5F Team. All Rights Reserved.
  *
  * hsas_h4o5f_app is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -97,6 +97,8 @@ class _LoadingScreenState extends State<LoadingScreen>
 
   @override
   void initState() {
+    super.initState();
+
     _pageTransitionStatusListener = (status) {
       if (status == AnimationStatus.completed) {
         widget.onAnimationCompleted();
@@ -110,19 +112,27 @@ class _LoadingScreenState extends State<LoadingScreen>
     };
 
     _progressIndicatorController = AnimationController(
-      vsync: this,
       duration: const Duration(milliseconds: 500),
-    )..animateTo(0.9);
-    _pageTransitionController = AnimationController(
       vsync: this,
+    );
+
+    if (kIsWeb) {
+      _progressIndicatorController.value = 0.5;
+    }
+
+    _progressIndicatorController.animateTo(0.9);
+    onAppReady();
+
+    _pageTransitionController = AnimationController(
       duration: const Duration(milliseconds: 1000),
+      vsync: this,
     )..addStatusListener(_pageTransitionStatusListener);
 
-    widget.future.then((_) => {
-          _progressIndicatorController.forward(),
-          _pageTransitionController.forward(),
-        });
-
-    super.initState();
+    widget.future.then(
+      (_) => {
+        _progressIndicatorController.forward(),
+        _pageTransitionController.forward(),
+      },
+    );
   }
 }
