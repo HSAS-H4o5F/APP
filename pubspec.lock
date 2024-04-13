@@ -133,10 +133,10 @@ packages:
     dependency: "direct main"
     description:
       name: camera_android_camerax
-      sha256: "5d3ee11ca8b98274a304f1083a55eec6905546438620f93f6b6bcac9ce52a25e"
+      sha256: dd67193ad841efc179cd4f831c2a6e6dc862048fc321af7fa9af69696966f8a6
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.1+1"
+    version: "0.6.3"
   camera_avfoundation:
     dependency: transitive
     description:
