@@ -18,7 +18,7 @@ dependencies:
   go_router: ^14.0.0
   http: ^0.13.5
   intl: ">=0.18.1 <0.20.0"
-  parse_server_sdk_flutter: ^7.0.0
+  parse_server_sdk_flutter: ">=7.0.0 <9.0.0"
   shared_preferences: ^2.0.18
   sliver_tools: ^0.2.10
   url_launcher: ^6.1.10
