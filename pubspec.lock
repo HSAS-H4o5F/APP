@@ -782,18 +782,18 @@ packages:
     dependency: "direct main"
     description:
       name: socket_io_client
-      sha256: "1ad43703f9a4050dac9ea47dc41906f45a73c3b6e01ad16f6aa3ddf606da73ab"
+      sha256: "98d4ad59316c359cf0a80380b068c53cd50fa425c73da12a672543715fe36f9c"
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   socket_io_common:
     dependency: transitive
     description:
       name: socket_io_common
-      sha256: "392c3613c88ad3ee0e15911db2e7e9dbd675622c2589ce99383630603b097619"
+      sha256: "41fdf2d333d1f8209d9c39885c2805141afc570df6bd93ae791e12e271e2e42c"
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   source_gen:
     dependency: transitive
     description:
