@@ -374,10 +374,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "6f1b756f6e863259a99135ff3c95026c3cdca17d10ebef2bba2261a25ddc8bbc"
+      sha256: "7c2d40b59890a929824f30d442e810116caf5088482629c894b9e4478c67472d"
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "14.3.0"
+    version: "14.6.3"
   graphs:
     dependency: transitive
     description:
