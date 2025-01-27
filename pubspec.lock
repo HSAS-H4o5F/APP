@@ -106,10 +106,10 @@ packages:
     dependency: "direct main"
     description:
       name: built_value
-      sha256: c7913a9737ee4007efedaffc968c049fd0f3d0e49109e778edc10de9426005cb
+      sha256: "28a712df2576b63c6c005c465989a348604960c0958d28be5303ba9baa841ac2"
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "8.9.2"
+    version: "8.9.3"
   built_value_generator:
     dependency: "direct dev"
     description:
