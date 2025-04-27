@@ -9,11 +9,14 @@ updates:
     directory: /
     schedule:
       interval: daily
+      timezone: Asia/Shanghai
   - package-ecosystem: gradle
     directory: /android/
     schedule:
       interval: daily
+      timezone: Asia/Shanghai
   - package-ecosystem: github-actions
     directory: .github/workflows
     schedule:
       interval: daily
+      timezone: Asia/Shanghai
