@@ -15,7 +15,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^14.0.0
+  go_router: ">=14.0.0 <16.0.0"
   http: ^0.13.5
   intl: ">=0.18.1 <0.20.0"
   parse_server_sdk_flutter: ">=7.0.0 <9.0.0"
@@ -26,13 +26,13 @@ dependencies:
   vector_graphics: ^1.1.7
   package_info_plus: ^4.0.2
   camera: ">=0.10.5+3 <0.12.0"
-  socket_io_client: ^2.0.3+1
+  socket_io_client: ">=2.0.3+1 <4.0.0"
   camera_android_camerax: ">=0.5.0+22 <0.7.0"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ">=4.0.0 <6.0.0"
   built_value_generator: ^8.6.1
   build_runner: ^2.4.5
 
